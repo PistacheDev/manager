@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= guildName %> - Manager</title>
+    <link rel="shortcut icon" href="/assets/icon.png">
+    <link rel="stylesheet" href="/css/all.css">
+    <link rel="stylesheet" href="/css/guildsBar.css">
+    <link rel="stylesheet" href="/css/guildOptions.css">
+    <link rel="stylesheet" href="/css/guildInput.css">
+</head>
+<body>
+    <nav class="guilds">
+        <ul>
+            <% for (var i = 0; i < availableGuilds.length; i++) { %>
+                <li>
+                    <a href="/dashboard/guilds/<%= availableGuilds[i].id %>/connections"><img src="https://cdn.discordapp.com/icons/<%= availableGuilds[i].id %>/<%= availableGuilds[i].icon %>"></a>
+                </li>
+            <% }; %>
+            <br>
+        </ul>
+    </nav>
+    <main>
+        <div class="menu">
+            <img src="<%= guildIcon %>">
+            <p class="title"><%= guildName %></p> <br>
+            <a href="/dashboard/guilds/<%= guildID %>/security">🛡️・Security</a> <br>
+            <a class="display" href="/dashboard/guilds/<%= guildID %>/connections">🖇️・Connections</a> <br>
+            <a href="/dashboard/guilds/<%= guildID %>/members">🛬・Members</a> <br>
+            <a href="/dashboard/guilds/<%= guildID %>/logs">📁・Logs</a> <br>
+            <br>
+            <a href="/dashboard/guilds">↩️・Back</a>
+        </div>
+        <div class="config">
+            <p class="title">Connections</p>
+            <div>
+                <% if (youtubeNotification != null) { %>
+                    <% const [channelID, roleID, youtubeID, latestVideoID] = youtubeNotification.split(' ') %>
+                    <p class="status">YouTube Notifications: Active.</p>
+                    <p class="data">・Channel: <%= channelID %></p>
+                    <% if (roleID != 'null') { %>
+                        <p class="data">・Role: <%= roleID %></p>
+                    <% } else { %>
+                        <p class="data">・Role: Awaiting configuration.</p>
+                    <% }; %>
+                    <% if (youtubeID != 'null') { %>
+                        <p class="data">・YouTube Channel: <%= youtubeID %></p>
+                    <% } else { %>
+                        <p class="data">・YouTube Channel: Awaiting configuration.</p>
+                    <% }; %>
+                <% } else { %>
+                    <p class="status">YouTube Notifications: Inactive.</p>
+                <% }; %>
+                <form action="/dashboard/guilds/<%= guildID %>/connections" method="get">
+                    <input class="input" type="text" name="value" value="youtubeNotification" hidden/>
+                    <input class="input" type="text" name="channel" placeholder="Enter the channel ID here."/> <br>
+                    <input class="input" type="text" name="role" placeholder="Enter the role ID or @everyone here."/> <br>
+                    <input class="input" type="text" name="target" placeholder="Enter the YouTube channel URL here."/> <br>
+                    <input class="submit" type="submit" value="Submit"/>
+                    <% if (youtubeNotification != null) { %>
+                        <style>
+                            form {
+                                margin-top: 5px;
+                            }
+                        </style>
+                        <a href="/dashboard/guilds/<%= guildID %>/connections?value=youtubeNotif&channel=null">Disable</a>
+                    <% }; %>
+                </form>
+            </div>
+        </div>
+    </main>
+    <nav class="navbar">
+        <a href="/home" class="logo">Manager</a>
+        <div class="nav-links">
+            <ul>
+                <li><a href="/home">Home</a></li>
+                <li class="display"><a href="/dashboard">Dashboard</a></li>
+                <li><a href="https://github.com/PistacheDev/manager">GitHub</a></li>
+                <li><a href="https://discord.com/invite/RkB3ZQsmGV">Support</a></li>
+            </ul>
+        </div>
+        <img src="/assets/menu.png" alt="menu.png" class="hamburgerMenu">
+    </nav>
+    <script src="/js/menu.js"></script>
+</body>
+</html>

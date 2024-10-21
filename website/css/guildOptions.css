@@ -1,0 +1,78 @@
+main
+{
+    display: flex;
+    position: absolute;
+    width: calc(100vw - 80px);
+    margin-left: 80px;
+    top: 100px;
+}
+
+main div.menu
+{
+    width: 30%;
+    height: calc(100vh - 100px);
+    background-color: rgb(40, 40, 40);
+    text-align: center;
+    overflow: auto;
+}
+
+main div.menu img
+{
+    width: 30%;
+    margin-top: 35px;
+}
+
+main div.menu p
+{
+    color: rgb(255, 255, 255);
+    font-weight: 900;
+    font-size: calc(6px + 1vw);
+}
+
+main div.menu a
+{
+    color: rgb(255, 255, 255);
+    font-weight: 900;
+    font-size: calc(4px + 1vw);
+    text-decoration: none;
+}
+
+main div.menu a.display
+{
+    color: rgb(255, 0, 0);
+}
+
+main div.menu a:hover
+{
+    color: rgb(255, 0, 0);
+    text-decoration: underline;
+}
+
+main div.config p
+{
+    margin-top: 6px;
+    margin-left: 10px;
+    color: rgb(255, 255, 255);
+    font-weight: 900;
+}
+
+main div.config p.title
+{
+    text-decoration: underline;
+    font-size: calc(15px + 1vw);
+}
+
+@media screen and (max-width: 800px)
+{
+    main ul
+    {
+        margin-top: 85px;
+        height: calc(100vh - 85px);
+    }
+
+    main div.menu
+    {
+        top: 85px;
+        height: calc(100vh - 85px);
+    }
+}

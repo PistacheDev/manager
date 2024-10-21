@@ -1,0 +1,10 @@
+{
+    "version": "3.0",
+    "express":
+    {
+        "host": "localhost",
+        "port": 8080,
+        "debug": true,
+        "login": "https://discord.com/oauth2/authorize?client_id=1211390696334958654&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fcallback&scope=identify+guilds"
+    }
+}

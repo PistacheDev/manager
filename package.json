@@ -1,0 +1,24 @@
+{
+  "dependencies": {
+    "@discordjs/rest": "^2.4.0",
+    "axios": "^1.7.7",
+    "cheerio": "^1.0.0",
+    "cookie-parser": "^1.4.7",
+    "discord.js": "^14.16.3",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.21.1",
+    "fs": "^0.0.1-security",
+    "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.11.3",
+    "path": "^0.12.7",
+    "querystring": "^0.2.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.7",
+    "@typescript-eslint/eslint-plugin": "^8.10.0",
+    "@typescript-eslint/parser": "^8.10.0",
+    "eslint": "^9.13.0",
+    "typescript": "^5.6.3"
+  }
+}

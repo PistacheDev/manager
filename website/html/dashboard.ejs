@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Manager</title>
+    <link rel="shortcut icon" href="/assets/icon.png">
+    <link rel="stylesheet" href="/css/all.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+    <header>
+        <img src="https://cdn.discordapp.com/avatars/<%= userID %>/<%= userIcon %>">
+        <p class="login">
+            Logged as @<%= username %>. <br>
+            ---------------------------------------------------------------------
+        </p>
+        <p class="options">
+            <a href="/dashboard/guilds">Manage your servers</a> <br>
+            <a href="https://discord.com/oauth2/authorize?client_id=1211390696334958654&permissions=8&integration_type=0&scope=bot+applications.commands">Add the application</a> <br>
+            <a href="https://discord.com/invite/RkB3ZQsmGV">Support server</a> <br>
+            <a href="/logout" class="logout">Logout</a>
+        </p>
+    </header>
+    <nav class="navbar">
+        <a href="/home" class="logo">Manager</a>
+        <div class="nav-links">
+            <ul>
+                <li><a href="/home">Home</a></li>
+                <li class="display"><a href="/dashboard">Dashboard</a></li>
+                <li><a href="https://github.com/PistacheDev/manager">GitHub</a></li>
+                <li><a href="https://discord.com/invite/RkB3ZQsmGV">Support</a></li>
+            </ul>
+        </div>
+        <img src="/assets/menu.png" alt="menu.png" class="hamburgerMenu">
+    </nav>
+    <script src="/js/menu.js"></script>
+</body>
+</html>

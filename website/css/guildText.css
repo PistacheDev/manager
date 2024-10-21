@@ -1,0 +1,48 @@
+main div.config div p
+{
+    font-size: calc(8px + 1vw);
+}
+
+main div.config div form input
+{
+    font-size: calc(1px  + 1vw);
+}
+
+main div.config div form a
+{
+    color: rgb(255, 0, 0);
+    font-weight: 900;
+    font-size: calc(5px + 1vw);
+    margin-left: 5px;
+}
+
+main div.config div form a:hover
+{
+    text-decoration: underline;
+}
+
+main div.config p.status
+{
+    font-size: calc(8px + 1vw);
+}
+
+main div.config div a
+{
+    padding-top: 6px;
+    color: red;
+    font-size: calc(7px + 1vw);
+    font-weight: 900;
+    margin-left: 30px;
+}
+
+main div.config div a:hover
+{
+    text-decoration: underline;
+}
+
+main div.config div
+{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}

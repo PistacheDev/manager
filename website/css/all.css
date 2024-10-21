@@ -1,0 +1,135 @@
+*
+{
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+    list-style: none;
+}
+
+body
+{
+    font-family: 'Comic Sans MS';
+    background-color: rgb(77, 77, 77);
+}
+
+nav.navbar
+{
+    position: fixed;
+    padding: 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 1vh;
+    box-sizing: border-box;
+    top: 0px;
+    background: rgba(0, 0, 0, 0.37);
+    backdrop-filter: blur(7px);
+}
+
+nav.navbar a
+{
+    color: white;
+}
+
+nav.navbar a.logo
+{
+    font-size: 2em;
+    font-weight: bold;
+}
+
+nav.navbar div.nav-links ul
+{
+    display: flex;
+}
+
+nav.navbar div.nav-links ul li
+{
+    margin: 25px;
+}
+
+nav.navbar div.nav-links ul li a
+{
+    font-weight: 900;
+    font-size: 20px;
+}
+
+nav.navbar div.nav-links ul li.display a
+{
+    color: red;
+}
+
+nav.navbar div.nav-links ul li a:hover
+{
+    color: red;
+    text-decoration: underline;
+}
+
+nav.navbar img.hamburgerMenu
+{
+    display: none;
+    position: absolute;
+    right: 50px;
+    width: 35px;
+}
+
+@media screen and (max-width: 800px)
+{
+    nav.navbar a.logo
+    {
+        position: absolute;
+        top: 21px;
+        left: 45px;
+    }    
+
+    nav.navbar
+    {
+        padding: 0;
+    }
+
+    nav.navbar img.hamburgerMenu
+    {
+        display: block;
+        top: 30px;
+        right: 35px;
+    }
+
+    nav.navbar div.nav-links
+    {
+        position: absolute;
+        background: rgba(0, 0, 0, 0.37);
+        backdrop-filter: blur(7px);
+        width: 100%;
+        height: 100vh;
+        top: 0;
+        left: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-left: -100%;
+        transition: all 0.5s ease;
+    }
+
+    nav.navbar div.nav-links.mobile-menu
+    {
+        margin-left: 0;
+    }
+
+    nav.navbar div.nav-links ul
+    {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    nav.navbar div.nav-links ul li
+    {
+        margin: 5px;
+    }
+
+    nav.navbar div.nav-links ul li
+    {
+        margin: 15px 0;
+        font-size: 1.5em;
+    }
+}

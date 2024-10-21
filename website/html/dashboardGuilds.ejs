@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Servers - Manager</title>
+    <link rel="shortcut icon" href="/assets/icon.png">
+    <link rel="stylesheet" href="/css/all.css">
+    <link rel="stylesheet" href="/css/guildsBar.css">
+    <link rel="stylesheet" href="/css/dashboardGuilds.css">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/home" class="logo">Manager</a>
+        <div class="nav-links">
+            <ul>
+                <li><a href="/home">Home</a></li>
+                <li class="display"><a href="/dashboard">Dashboard</a></li>
+                <li><a href="https://github.com/PistacheDev/manager">GitHub</a></li>
+                <li><a href="https://discord.com/invite/RkB3ZQsmGV">Support</a></li>
+            </ul>
+        </div>
+        <img src="/assets/menu.png" alt="menu.png" class="hamburgerMenu">
+    </nav>
+    <nav class="guilds">
+        <ul>
+            <% for (let i = 0; i < availableGuilds.length; i++) { %>
+                <li>
+                    <a href="/dashboard/guilds/<%= availableGuilds[i].id %>/security"><img src="https://cdn.discordapp.com/icons/<%= availableGuilds[i].id %>/<%= availableGuilds[i].icon %>"></a>
+                </li>
+            <% }; %>
+            <br>
+        </ul>
+        <p>
+            <span>Configure Manager with the dashboard!</span> <br>
+            To start your configuration, select a server with the sidebar on your left. <br>
+            <a href="/dashboard">Back to dashboard</a>
+        </p>
+    </nav>
+    <script src="/js/menu.js"></script>
+</body>
+</html>
