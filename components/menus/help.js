@@ -33,7 +33,7 @@ module.exports =
                 .setColor('Orange')
                 .setAuthor({ name: 'Assistance menu', iconURL: client.user.avatarURL() })
                 .setThumbnail(client.user.avatarURL())
-                .setDescription('Quickly obtain the list of **commands by categories**! \nTo configure the application, run `/config`! \nYou can **navigate between the tabs** with the selective menu below. >>> To manage the application **more easily**, use the website! \nThe URL is **present** with the button **below**.')
+                .setDescription('Quickly obtain the list of **commands by categories**!\nTo configure the application, run `/config`!\nYou can **navigate between the tabs** with the selective menu below.\n>>> To manage the application **more easily**, use the website! \nThe URL is **present** with the button **below**.')
                 .setTimestamp()
                 .setFooter({ text: `Executed by @${interaction.user.username}`, iconURL: interaction.user.avatarURL() })
 

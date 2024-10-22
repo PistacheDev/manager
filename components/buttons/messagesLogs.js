@@ -15,7 +15,7 @@ module.exports =
             const modalOption = new TextInputBuilder()
             .setCustomId('messagesLogsModalOption')
             .setLabel('Channel ID:')
-            .setPlaceholder('An unexpected **error** occured!')
+            .setPlaceholder('To disable this option, let this field empty')
             .setStyle(TextInputStyle.Short)
             .setRequired(false)
 

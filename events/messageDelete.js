@@ -7,7 +7,7 @@ module.exports =
     {
         try
         {
-            if (!message.guild) return; // If the message wasn't in a guild.
+            if (!message.guild) return; // If the message wasn't in server.
             setTimeout(() => {}, 100); // Wait for the new audit log.
 
             db.query('SELECT * FROM config WHERE guild = ?', [message.guild.id], async (err, data) =>
