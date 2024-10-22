@@ -7,7 +7,7 @@ module.exports =
     {
         try
         {
-            if (!oldMessage.guild) return; // If the message isn't in a guild.
+            if (!oldMessage.guild) return; // If the message isn't in a server.
 
             db.query('SELECT * FROM config WHERE guild = ?', [oldMessage.guild.id], async (err, data) =>
             {
