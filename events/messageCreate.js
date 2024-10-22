@@ -12,7 +12,11 @@ module.exports =
 
             db.query('SELECT * FROM xp WHERE guild = ? AND user = ?', [message.guild.id, message.author.id], async (err, data) =>
             {
-                if (data.length < 1) return db.query('INSERT INTO xp (`user`, `guild`, `xp`) VALUES (?, ?, ?)', [message.author.id, message.guild.id, generateNumber(15)]);
+                if (data.length < 1)
+                {
+                    db.query('INSERT INTO xp (`user`, `guild`, `xp`) VALUES (?, ?, ?)', [message.author.id, message.guild.id, generateNumber(15)]);
+                    return;
+                };
 
                 const currentXP = parseInt(data[0].xp);
                 const currentLevel = parseInt(data[0].level);
