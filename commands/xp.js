@@ -3,7 +3,7 @@ const { EmbedBuilder, SlashCommandBuilder } = require('discord.js');
 
 module.exports =
 {
-    name: 'experience',
+    name: 'xp',
     type: 'gaming',
     async run(client, db, interaction)
     {

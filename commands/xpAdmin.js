@@ -2,7 +2,7 @@ const { PermissionsBitField, SlashCommandBuilder } = require('discord.js');
 
 module.exports =
 {
-    name: 'experience-admin',
+    name: 'xpadmin',
     type: 'management',
     permission: PermissionsBitField.Flags.Administrator,
     async run(client, db, interaction)
@@ -41,10 +41,14 @@ module.exports =
                 db.query('SELECT * FROM xp WHERE guild = ? AND user = ?', [interaction.guild.id, target.id], async (err, data) =>
                 {
                     // Some verifications.
-                    if (data.length < 1) return interaction.reply(':warning: This user **doesn\'t have** any XP!');
                     if (xpToGive > 1000 || xpToGive < 1) return interaction.reply(':warning: You can\'t give **more than 1000 XP points** and **less than 1 XP point** per giveaway!');
+                    if (data.length < 1)
+                    {
+                        db.query('INSERT INTO xp (`user`, `guild`, `xp`) VALUES (?, ?, ?)', [target.id, interaction.guild.id, 0]);
+                        await new Promise(resolve => setTimeout(resolve, 100)); // Wait to let the database insert correctly the data.
+                    };
 
-                    db.query('UPDATE xp SET xp = ? WHERE guild = ? AND user = ?', [xpToGive + parseInt(data[0].xp), interaction.guild.id, ], async () =>
+                    db.query('UPDATE xp SET xp = ? WHERE guild = ? AND user = ?', [xpToGive + parseInt(data[0].xp), interaction.guild.id, target.id], async () =>
                     {
                         interaction.reply(`:white_check_mark: **${xpToGive} XP points** were gave to <@${interaction.user.id}> @${interaction.user.username}!`);
 
@@ -61,7 +65,7 @@ module.exports =
 
                             // Update user informations in the database.
                             db.query('UPDATE xp SET xp = ?, level = ? WHERE guild = ? AND user = ?', [currentXP, currentLevel, interaction.guild.id, interaction.user.id]);
-                            interaction.channel.send(`:tada: Congratulation <@${message.author.id}> @${message.author.username}! You just passed to **level ${currentLevel}**!`);
+                            interaction.channel.send(`:tada: Congratulation <@${target.id}> @${target.user.username}! You just passed to **level ${currentLevel}**!`);
                         };
                     });
                 });
@@ -117,7 +121,7 @@ module.exports =
         catch (err)
         {
             interaction.reply(`:warning: An unexpected **error** occured!\n\`\`\`${err}\`\`\``);
-            console.error(`[error] experience-admin ${interaction.options.getSubcommand()}, ${err}, ${Date.now()}`);
+            console.error(`[error] xpadmin ${interaction.options.getSubcommand()}, ${err}, ${Date.now()}`);
         };
     },
     get data()

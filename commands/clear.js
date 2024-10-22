@@ -9,11 +9,11 @@ module.exports =
     {
         try
         {
-            const amount = interaction.options.getNumber('amount');
-	        const messages = await channel.messages.fetch({ limit: 100 }); // Save the 100 latest messages.
-
             var channel = interaction.options.getChannel('channel');
             if (!channel) channel = interaction.channel; // Select the current channel if nothing is specified.
+
+            const amount = interaction.options.getNumber('amount');
+	        const messages = await channel.messages.fetch({ limit: 100 }); // Save the 100 latest messages.
 
             // Some verifications.
     	    if (amount < 1 || amount > 100) return interaction.reply(':warning: Please! Enter a number **between 1** and **100**!');
@@ -30,14 +30,14 @@ module.exports =
                     interaction.reply(`:white_check_mark: **${deletedCount} messages** has been **successfully deleted** in <#${channel.id}>!`);
                     channel.send(`\`${deletedCount}\` messages were **deleted** by <@${interaction.user.id}>.`).then(sentMessage =>
                     {
-                        messageToDelete = sentMessage.id; // Set the message to delete.
+                        messageToDelete = sentMessage; // Set the message to delete.
                     });
                 }
                 else
                 {
-                    interaction.reply(`**${deletedCount} messages** has been **successfully deleted**!`).then(sentMessage =>
+                    interaction.reply(`:white_check_mark: **${deletedCount} messages** has been **successfully deleted**!`).then(sentMessage =>
                     {
-                        messageToDelete = sentMessage.id; // Set the message to delete.
+                        messageToDelete = sentMessage; // Set the message to delete.
                     });
                 };
 
