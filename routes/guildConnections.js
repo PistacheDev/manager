@@ -81,33 +81,45 @@ module.exports =
             // Configuration edition.
             async function editData()
             {
-                // Some request verifications.
-                if (req.query.value != 'youtubeNotif') return res.status(403).send('The setting provided is invalid!');
-                if (!req.query.channel) return res.status(403).send('Some informations in your request are missing!');
-                let newData;
+                const disable = req.query.disable;
 
-                if (req.query.channel != 'null')
+                switch (req.query.value)
                 {
-                    // Some values verifications.
-                    if (!req.query.role || !req.query.target) return res.status(403).send('Some informations in your request are missing!');
-                    if (!guild.channels.cache.get(req.query.channel)) return res.status(403).send('This channel doesn\'t exist or the application can\'t access it!');
-                    if (req.query.role != '@everyone' && !guild.roles.cache.get(req.query.role)) return res.status(403).send('This role doesn\'t exist!');
+                    case 'youtubeNotif':
+                        var statut = null;
 
-                    const request = await axios.get(`${req.query.newTarget}/videos`);
-                    const html = cheerio.load(request.data).html(); // Convert the data into HTML.
+                        if (!disable)
+                        {
+                            // Some shortcuts.
+                            const channel = req.query.channel;
+                            const role = req.query.role;
+                            const target = req.query.target;
 
-                    // Fetch required information.
-                    const regex = /"webCommandMetadata":{"url":"\/watch\?v=([^"]+)"/;
-                    const latestVideoID = `${html.match(regex) ? html.match(regex)[1] : null}`; // Check if this YouTube channel has already uploaded a video.
-                    const youtubeID = html.match(/"channelUrl":"([^"]+)"/)[1].split('channel/')[1];
+                            // Some verifications.
+                            if (!channel || !role || !target) return res.status(403).send('Some information in your request are missing!');
+                            if (!guild.channels.cache.get(channel)) return res.status(403).send('This channel doesn\'t exist or the application can\'t access it!');
+                            if (role != '@everyone' && !guild.roles.cache.get(role)) return res.status(403).send('This role doesn\'t exist!');
 
-                    newData = `${req.query.newChannel} ${req.query.newRole} ${youtubeID} ${latestVideoID}`;
-                } else newData = null; // Disable the functionality.
+                            const request = await axios.get(`${req.query.newTarget}/videos`);
+                            const html = cheerio.load(request.data).html(); // Convert the data into HTML.
 
-                db.query('UPDATE config SET ? = ? WHERE guild = ?', [req.query.value, newData, req.params.id], async () =>
-                {
-                    await res.redirect(`/dashboard/guilds/${req.params.id}/connections`); // Reload the page.
-                });
+                            // Fetch required information.
+                            const regex = /"webCommandMetadata":{"url":"\/watch\?v=([^"]+)"/;
+                            const youtubeID = html.match(/"channelUrl":"([^"]+)"/)[1].split('channel/')[1];
+                            const latestVideoID = `${html.match(regex) ? html.match(regex)[1] : null}`; // Check if this YouTube channel has already uploaded a video.
+
+                            statut = `${channel} ${role} ${youtubeID} ${latestVideoID}`;
+                        };
+
+                        db.query('UPDATE config SET youtubeNotification = ? WHERE guild = ?', [statut, guild.id]);
+                        break;
+
+                    default:
+                        res.status(403).send('The setting that your request provided is invalid!');
+                        break;
+                };
+
+                res.status(200).redirect(`/dashboard/guilds/${req.params.id}/connections`); // Reload the page.
             };
         }
         catch (err)

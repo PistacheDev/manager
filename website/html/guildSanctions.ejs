@@ -56,7 +56,6 @@
                 <% }; %>
                 <form action="/dashboard/guilds/<%= guildID %>/sanctions" method="get">
                     <input class="input" type="text" name="value" value="antispam" hidden/>
-                    <input class="input" type="text" name="data" value="true" hidden/>
                     <input class="input" type="text" name="bots" placeholder='Answer by "yes" or "no".'/> <br>
                     <input class="input" type="text" name="messages" placeholder="Maximum number of warns before the sanction."/> <br>
                     <input class="input" type="text" name="interval" placeholder="Interval of time in seconds."/> <br>
@@ -69,7 +68,7 @@
                                 margin-top: 5px;
                             }
                         </style>
-                        <a href="/dashboard/guilds/<%= guildID %>/sanctions?value=antispam&data=false">Disable</a>
+                        <a href="/dashboard/guilds/<%= guildID %>/sanctions?value=antispam&disable=hi">Disable</a>
                     <% }; %>
                 </form>
             </div>
@@ -88,7 +87,6 @@
                 <% }; %>
                 <form action="/dashboard/guilds/<%= guildID %>/sanctions" method="get">
                     <input class="input" type="text" name="value" value="warn" hidden/>
-                    <input class="input" type="text" name="data" value="true" hidden/>
                     <input class="input" type="text" name="warns" placeholder="Maximum number of warns before the sanction."/> <br>
                     <input class="input" type="text" name="sanction" placeholder='Enter "ban" to ban or a number (in hours) to mute.'/> <br>
                     <input class="submit" type="submit" value="Submit"/>
@@ -98,7 +96,7 @@
                                 margin-top: 5px;
                             }
                         </style>
-                        <a href="/dashboard/guilds/<%= guildID %>/sanctions?value=warn&data=false">Disable</a>
+                        <a href="/dashboard/guilds/<%= guildID %>/sanctions?value=warn&disable=hi">Disable</a>
                     <% }; %>
                 </form>
             </div>

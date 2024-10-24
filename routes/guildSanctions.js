@@ -80,44 +80,66 @@ module.exports =
             // Configuration edition.
             async function editData()
             {
-                // Some request verifications.
-                if (req.query.value != 'antispam' && req.query.value != 'warn') return res.status(403).send('The setting provided is invalid!');
-                if (!req.query.data) return res.status(403).send('Some informations in your request are missing!');
+                const disable = req.query.disable;
 
-                if (req.query.data == 'false')
+                switch (req.query.value)
                 {
-                    if (req.query.value == 'antispam') db.query('UPDATE config SET antispam = ? WHERE guild = ?', ['false', guild.id]);
-                    else db.query('UPDATE config SET warn = ? WHERE guild = ?', ['false', guild.id]);
-                    res.status(200).redirect(`/dashboard/guilds/${guild.id}/sanctions`); // Reload the page.
-                }
-                else
-                {
-                    switch (req.query.value)
-                    {
-                        case 'antispam':
-                            if (!req.query.bots || !req.query.messages || !req.query.interval || !req.query.warns || !req.query.sanction) return res.status(403).send('Some informations in your request are missing!');
-                            if (req.query.bots != 'yes' && req.query.bots != 'no') return res.status(403).send('Your answer for the Ignore Bots option is invalid!');
-                            if (isNaN(req.query.messages) || isNaN(req.query.interval) || isNaN(req.query.warns) || (req.query.sanction != 'ban' && isNaN(req.query.sanction))) return interaction.reply('Please! Enter a number!');
-                            if (req.query.messages < 1 || req.query.messages > 10) return interaction.reply('The maximum messages must be between 1 and 10 messages!');
-                            if (req.query.interval < 1 || req.query.interval > 10) return interaction.reply('The interval must be between 1 and 10 seconds!');
-                            if (req.query.warns < 1 || req.query.warns > 5) return interaction.reply('The maximum warns must be between 1 and 5 warns!');
-                            if (req.query.sanction != 'ban' && (req.query.sanction < 1 || req.query.sanction > 70560)) return interaction.reply('The mute can\'t last less than 1 minute or longer than 7 days (70560)!');
+                    case 'antispam':
+                        var statut = 'false'; // Disable the option.
 
-                            db.query('UPDATE config SET antispam = ? WHERE guild = ?', [`true ${req.query.data == 'yes' ? 'true' : 'false'} ${req.query.messages} ${req.query.interval} ${req.query.warns} ${req.query.sanction}`, guild.id]);
-                            res.status(200).redirect(`/dashboard/guilds/${guild.id}/sanctions`); // Reload the page.
-                            break;
+                        if (!disable)
+                        {
+                            // Some shortcuts.
+                            const ignoreBots = req.query.bots;
+                            const maxMessages = req.query.messages;
+                            const interval = req.query.interval;
+                            const maxWarns = req.query.warns;
+                            const sanction = req.query.sanction;
 
-                        case 'warn':
-                            if (!req.query.warns || !req.query.sanction) return res.status(403).send('Some informations in your request are missing!');
-                            if (isNaN(req.query.warns) || (req.query.sanction != 'ban' && isNaN(req.query.sanction))) return interaction.reply('Please! Enter a number!');
-                            if (req.query.warns < 1 || req.query.warns > 10) return interaction.reply('The maximum warns must be between 1 and 10 warns!');
-                            if (req.query.sanction != 'ban' && (req.query.sanction < 1 || req.query.sanction > 168)) return interaction.reply('The mute can\'t last less than 1 minute or longer than 7 days (168)!');
+                            // Some verifications
+                            if (!ignoreBots || !maxMessages || !interval || !maxWarns || !sanction) return res.status(403).send('Some information in your request are missing!');
+                            if (ignoreBots != 'yes' && ignoreBots != 'no') return res.status(403).send('Your answer for the Ignore Bots option is invalid!');
+                            if (isNaN(maxMessages) || isNaN(interval) || isNaN(maxWarns) || (sanction != 'ban' && isNaN(sanction))) return interaction.reply('Please! Enter a number!');
+                            if (maxMessages < 1 || maxMessages > 10) return interaction.reply('The maximum messages must be between 1 and 10 messages!');
+                            if (interval < 1 || interval > 10) return interaction.reply('The interval must be between 1 and 10 seconds!');
+                            if (maxWarns < 1 || maxWarns > 5) return interaction.reply('The maximum warns must be between 1 and 5 warns!');
+                            if (sanction != 'ban' && (sanction < 1 || sanction > 70560)) return interaction.reply('The mute can\'t last less than 1 minute or longer than 7 days (70560)!');
 
-                            db.query('UPDATE config SET warn = ? WHERE guild = ?', [`true ${req.query.warns} ${req.query.sanction}`, guild.id]);
-                            res.status(200).redirect(`/dashboard/guilds/${guild.id}/sanctions`); // Reload the page.
-                            break;
-                    };
+                            statut = `true ${ignoreBots == 'yes' ? 'true' : 'false'} ${maxMessages} ${interval} ${maxWarns} ${sanction}`;
+                        };
+
+                        // Update the configuration.
+                        db.query('UPDATE config SET antispam = ? WHERE guild = ?', [statut, guild.id]);
+                        break;
+
+                    case 'warn':
+                        var statut = 'false'; // Disable the option.
+
+                        if (!disable)
+                        {
+                            // Some shortcuts.
+                            const maxWarns = req.query.warns;
+                            const sanction = req.query.sanction;
+
+                            // Some verifications.
+                            if (!maxWarns || !sanction) return res.status(403).send('Some information in your request are missing!');
+                            if (isNaN(maxWarns) || (sanction != 'ban' && isNaN(sanction))) return interaction.reply('Please! Enter a number!');
+                            if (maxWarns < 1 || maxWarns > 10) return interaction.reply('The maximum warns must be between 1 and 10 warns!');
+                            if (sanction != 'ban' && (sanction < 1 || sanction > 168)) return interaction.reply('The mute can\'t last less than 1 minute or longer than 7 days (168)!');
+
+                            statut = `true ${maxWarns} ${sanction}`;
+                        };
+
+                        // Update the configuration.
+                        db.query('UPDATE config SET warn = ? WHERE guild = ?', [statut, guild.id]);
+                        break;
+
+                    default:
+                        res.status(403).send('The setting that your request provided is invalid!');
+                        break;
                 };
+
+                res.status(200).redirect(`/dashboard/guilds/${guild.id}/sanctions`); // Reload the page.
             };
         }
         catch (err)
