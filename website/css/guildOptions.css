@@ -48,6 +48,12 @@ main div.menu a:hover
     text-decoration: underline;
 }
 
+main div.config
+{
+    overflow: scroll;
+    max-height: 80vh;
+}
+
 main div.config p
 {
     margin-top: 6px;

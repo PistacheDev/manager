@@ -25,7 +25,44 @@ module.exports =
             // Add the warn to the database.
             db.query('INSERT INTO warns (`guild`, `warnID`, `target`, `moderator`, `reason`, `date`) VALUES (?, ?, ?, ?, ?, ?)', [interaction.guild.id, warnID, target.id, interaction.user.id, reason.replace(/'/g, "\\'"), Date.now()], async () =>
             {
-                interaction.reply(`:warning: <@${target.id}> @${target.user.username}, you have been warned by <@${interaction.user.id}> @${interaction.user.username}!\n:man_judge: **Reason**: \`${reason}\`.\n:paperclip: **Warn ID**: \`${warnID}\`.`);
+                db.query('SELECT * FROM warns WHERE target = ? AND guild = ?', [target.id, interaction.guild.id], async (err, data) =>
+                {
+                    db.query('SELECT * FROM config WHERE guild = ?', [interaction.guild.id], async (err, conf) =>
+                    {
+                        if (conf[0].warn == 'false')
+                        {
+                            interaction.reply(`:warning: <@${target.id}> @${target.user.username}, you have been warned by <@${interaction.user.id}> @${interaction.user.username}!\n:man_judge: **Reason**: \`${reason}\`.\n:paperclip: **Warn ID**: \`${warnID}\`.`);
+                        }
+                        else
+                        {
+                            const [_, maxWarns, sanction] = conf[0].warn.split(' ');
+
+                            if (data.length > maxWarns)
+                            {
+                                if (sanction == 'ban')
+                                {
+                                    target.ban({ reason: `[Warns] Banned after ${data.length} warns.` }).then(() =>
+                                    {
+                                        interaction.reply(`:man_judge: @${interaction.member.username} (${interaction.user.id}) has been **banned for too many warns**!`);
+                                    });
+                                }
+                                else
+                                {
+                                    target.timeout(sanction * 3600000).then(() =>
+                                    {
+                                        message.reply(`:man_judge: <@${target.id}>, you've been **muted for ${sanction} hours** for too many warns!`);
+                                        db.query('DELETE FROM warns WHERE target = ? AND guild = ?', [target.id, interaction.guild.id]);
+                                    });
+                                };
+                            }
+                            else
+                            {
+                                interaction.reply(`:warning: <@${target.id}> @${target.user.username}, you have been warned by <@${interaction.user.id}> @${interaction.user.username}!\n:man_judge: **Reason**: \`${reason}\`.\n:paperclip: **Warn ID**: \`${warnID}\`.`);
+                                if (data.length == maxWarns) interaction.channel.send(`:man_judge: Next time, you **will be ${sanction == 'ban' ? 'ban' : `muted for ${sanction} hours`}** for too many warns!`);
+                            };
+                        };
+                    });
+                });
             });
         }
         catch (err)

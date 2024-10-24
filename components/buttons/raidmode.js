@@ -16,8 +16,7 @@ module.exports =
                 .setColor('Gold')
                 .setAuthor({ name: 'Configuration Panel', iconURL: client.user.avatarURL() })
                 .setDescription('Press the button with the **emoji corresponding** to **the option** you want to modify.')
-                .addFields([{ name: ':closed_lock_with_key:・Raidmode:', value: `>>> **Status**: ${data[0].raidmode == 'true' ? ':x: Inactive' : ':white_check_mark: Active'}.\n**Function**: Blocks the arrival of **new members**.` }])
-                .addFields([{ name: ':robot:・Anti-bot:', value: `>>> **Status**: ${data[0].antibot == 'true' ? ':white_check_mark: Active' : ':x: Inactive'}.\n**Function**: Blocks the **addition of applications**.` }])
+                .addFields([{ name: ':hand_splayed:・Anti spam:', value: `>>> **Status**: ${statut}.\n**Function**: Prevent the members from **spamming messages**.` }])
                 .setThumbnail(client.user.avatarURL())
                 .setTimestamp()
                 .setFooter({ text: interaction.guild.name, iconURL: interaction.guild.iconURL() });

@@ -16,6 +16,7 @@ module.exports =
                 .setOptions([
                     { emoji: '🏡', label: 'Home', description: 'Return to home.', value: 'home' },
                     { emoji: '🛡️', label: 'Security', description: 'Configure security options.', value: 'security' },
+                    { emoji: '🔨', label: 'Sanctions', description: 'Configure automatic sanctions.', value: 'sanctions' },
                     { emoji: '🖇️', label: 'Connections', description: 'Configure external connections.', value: 'API' },
                     { emoji: '🛬', label: 'Members', description: 'Configure arrivals/departures.', value: 'members' },
                     { emoji: '📁', label: 'Logs', description: 'Configure logs.', value: 'logs' },
@@ -43,6 +44,10 @@ module.exports =
 
                     case 'security':
                         securityMenu(data);
+                        break;
+
+                    case 'sanctions':
+                        sanctionsMenu(data);
                         break;
 
                     case 'API':
@@ -78,7 +83,7 @@ module.exports =
                     .setURL(`https://manager.pistachedev.fr/dashboard`)
                     .setLabel('Dashboard')
                     .setStyle(ButtonStyle.Link)
-                );
+                )
 
                 const embed = new EmbedBuilder()
                 .setColor('Orange')
@@ -108,7 +113,45 @@ module.exports =
                     .setCustomId('antibotButton')
                     .setEmoji('🤖')
                     .setStyle(ButtonStyle.Primary)
-                );
+                )
+
+                await interaction.message.edit({ embeds: [embed], components: [buttons, menu] });
+            };
+
+            // Render the sanctions menu.
+            async function sanctionsMenu(data)
+            {
+                let statut = ':x: Inactive';
+
+                if (data[0].antispam != 'false')
+                {
+                    const [_, ignoreBot, maxMessages, interval, maxWarns, sanction] = data[0].antispam.split(' ');
+                    statut = `:white_check_mark: Active.\n**Ignore Bots**: ${ignoreBot == 'true' ? 'Yes' : 'No'}.\n**Spam Detection:** More than ${maxMessages} messages in ${interval} seconds.\n**Maximum Warns**: ${maxWarns} warns.\n**Sanction**: ${sanction == 'ban' ? 'Ban' : `Mute for ${sanction} minutes`}`;
+                };
+
+                embed.addFields([{ name: ':hand_splayed:・Anti spam:', value: `>>> **Status**: ${statut}.\n**Function**: Prevent the members from **spamming messages**.` }])
+                statut = ':x: Inactive';
+
+                if (data[0].warn != 'false')
+                {
+                    const [_, maxWarns, sanction] = data[0].warn.split(' ');
+                    statut = `:white_check_mark: Active.\n**Maximum Warns**: ${maxWarns} warns.\n**Sanction**: ${sanction == 'ban' ? 'Ban' : `Mute for ${sanction} hours`}`;
+                };
+
+                embed.addFields([{ name: ':warning:・Warns:', value: `>>> **Status**: ${statut}.\n**Function**: The member **is sanctionned** if its warns count reached the **maximum amount**.` }])
+
+                var buttons = new ActionRowBuilder()
+                .addComponents(
+                    new ButtonBuilder()
+                    .setCustomId('antispamButton')
+                    .setEmoji('🖐️')
+                    .setStyle(ButtonStyle.Primary)
+                ).addComponents(
+                    new ButtonBuilder()
+                    .setCustomId('warnButton')
+                    .setEmoji('⚠️')
+                    .setStyle(ButtonStyle.Primary)
+                )
 
                 await interaction.message.edit({ embeds: [embed], components: [buttons, menu] });
             };
@@ -160,7 +203,7 @@ module.exports =
                     .setCustomId('memberRemoveButton')
                     .setEmoji('🛫')
                     .setStyle(ButtonStyle.Primary)
-                );
+                )
 
                 await interaction.message.edit({ embeds: [embed], components: [buttons, menu] });
             };
@@ -188,7 +231,7 @@ module.exports =
                     .setCustomId('bansLogsButton')
                     .setEmoji('⚖️')
                     .setStyle(ButtonStyle.Primary)
-                );
+                )
 
                 await interaction.message.edit({ embeds: [embed], components: [buttons, menu] });
             };

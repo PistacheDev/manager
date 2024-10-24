@@ -2,7 +2,7 @@ const { PermissionsBitField, EmbedBuilder, SlashCommandBuilder } = require('disc
 
 module.exports =
 {
-    name: 'warn-admin',
+    name: 'warnadmin',
     type: 'moderation',
     permission: PermissionsBitField.Flags.Administrator,
     async run(client, db, interaction)

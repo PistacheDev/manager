@@ -26,6 +26,7 @@
             <img src="<%= guildIcon %>">
             <p class="title"><%= guildName %></p> <br>
             <a href="/dashboard/guilds/<%= guildID %>/security">🛡️・Security</a> <br>
+            <a href="/dashboard/guilds/<%= guildID %>/sanctions">🔨・Sanctions</a> <br>
             <a class="display" href="/dashboard/guilds/<%= guildID %>/connections">🖇️・Connections</a> <br>
             <a href="/dashboard/guilds/<%= guildID %>/members">🛬・Members</a> <br>
             <a href="/dashboard/guilds/<%= guildID %>/logs">📁・Logs</a> <br>
@@ -53,7 +54,7 @@
                     <p class="status">YouTube Notifications: Inactive.</p>
                 <% }; %>
                 <form action="/dashboard/guilds/<%= guildID %>/connections" method="get">
-                    <input class="input" type="text" name="value" value="youtubeNotification" hidden/>
+                    <input class="input" type="text" name="value" value="youtubeNotif" hidden/>
                     <input class="input" type="text" name="channel" placeholder="Enter the channel ID here."/> <br>
                     <input class="input" type="text" name="role" placeholder="Enter the role ID or @everyone here."/> <br>
                     <input class="input" type="text" name="target" placeholder="Enter the YouTube channel URL here."/> <br>
