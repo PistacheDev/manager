@@ -80,16 +80,31 @@ module.exports =
             // Configuration edition.
             function editData()
             {
-                // Some verifications.
-                if (!req.query.data) return res.status(403).send('Some informations in your request are missing!');
-                if (req.query.value != 'raidmode' && req.query.value != 'antibot') return res.status(403).send('The setting provided is invalid!');
-                if (req.query.data != 'true' && req.query.data != 'false') return res.status(403).send('The new data provided is invalid!');
-                if (guild.ownerId != userIdentity.data.id) return res.status(403).send('Only the server\'s owner can edit this setting!');
+                const data = req.query.data; // Shortcut.
+                if (!data) return res.status(403).send('Some information in your request are missing!')
 
-                db.query('UPDATE config SET ? = ? WHERE guild = ?', [req.query.value, req.query.data, guild.id], async () =>
+                switch (req.query.value)
                 {
-                    await res.status(200).redirect(`/dashboard/guilds/${guild.id}/security`); // Reload the page.
-                });
+                    case 'raidmode':
+                        if (guild.ownerId != userIdentity.data.id) return res.status(403).send('Only the server\'s owner can edit this setting!');
+                        if (data != 'true' && data != 'false') return res.status(403).send('The new data provided is invalid!');
+
+                        db.query('UPDATE config SET raidmode = ? WHERE guild = ?', [data, guild.id]);
+                        break;
+
+                    case 'antibot':
+                        if (guild.ownerId != userIdentity.data.id) return res.status(403).send('Only the server\'s owner can edit this setting!');
+                        if (data != 'true' && data != 'false') return res.status(403).send('The new data provided is invalid!');
+
+                        db.query('UPDATE config SET antibot = ? WHERE guild = ?', [data, guild.id]);
+                        break;
+
+                    default:
+                        res.status(403).send('The setting that your request provided is invalid!');
+                        break;
+                };
+
+                res.status(200).redirect(`/dashboard/guilds/${guild.id}/security`); // Reload the page.
             };
         }
         catch (err)

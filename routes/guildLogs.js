@@ -81,15 +81,56 @@ module.exports =
             // Configuration edition.
             function editData()
             {
-                // Some verifications.
-                if (!req.query.data) return res.status(403).send('Some informations in your request are missing!');
-                if (req.query.value != 'messagesLogs' && req.query.value != 'channelsLogs' && req.query.value != 'bansLogs') return res.status(403).send('The setting provided is invalid!');
-                if (req.query.newData != 'null' && !guild.channels.cache.get(req.query.newData)) return res.status(403).send('This channel doesn\'t exist or the application can\'t access it!');
+                const data = req.query.data;
+                if (!data) return res.status(403).send('Some information in your request are missing!');
 
-                db.query('UPDATE config SET ? = ? WHERE guild = ?', [req.query.value, req.query.data == 'null' ? null : req.query.data, guild.id], async () =>
+                switch (req.query.value)
                 {
-                    await res.status(200).redirect(`/dashboard/guilds/${guild.id}/logs`); // Reload the page.
-                });
+                    case 'messagesLogs':
+                        var statut = null;
+
+                        if (data != 'null')
+                        {
+                            if (!guild.channels.cache.get(data)) return res.status(403).send('This channel doesn\'t exist or the application can\'t access it!');
+                            statut = data;
+                        };
+
+                        // Update the configuration.
+                        db.query('UPDATE config SET messagesLogs = ? WHERE guild = ?', [statut, guild.id]);
+                        break;
+
+                    case 'channelsLogs':
+                        var statut = null;
+
+                        if (data != 'null')
+                        {
+                            if (!guild.channels.cache.get(data)) return res.status(403).send('This channel doesn\'t exist or the application can\'t access it!');
+                            statut = data;
+                        };
+
+                        // Update the configuration.
+                        db.query('UPDATE config SET channelsLogs = ? WHERE guild = ?', [statut, guild.id]);
+                        break;
+
+                    case 'bansLogs':
+                        var statut = null;
+
+                        if (data != 'null')
+                        {
+                            if (!guild.channels.cache.get(data)) return res.status(403).send('This channel doesn\'t exist or the application can\'t access it!');
+                            statut = data;
+                        };
+
+                        // Update the configuration.
+                        db.query('UPDATE config SET bansLogs = ? WHERE guild = ?', [statut, guild.id]);
+                        break;
+
+                    default:
+                        res.status(403).send('The setting that your request provided is invalid!');
+                        break;
+                };
+
+                res.status(200).redirect(`/dashboard/guilds/${guild.id}/logs`); // Reload the page.
             };
         }
         catch (err)

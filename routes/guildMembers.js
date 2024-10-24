@@ -81,18 +81,53 @@ module.exports =
             // Configuration edition.
             function editData()
             {
-                // Some request verifications.
-                if (!req.query.data) return res.status(403).send('Some informations in your request are missing!');
-                if (req.query.value != 'memberAdd' && req.query.value != 'joinRole' && req.query.value != 'memberRemove') return res.status(403).send('The setting provided is invalid!');
+                const data = req.query.data;
+                if (!data) return res.status(403).send('Some information in your request are missing!');
 
-                // Some values verifications.
-                if (req.query.data != 'null' && req.query.value == 'joinRole' && !guild.roles.cache.get(req.query.data)) return res.status(403).send('This role doesn\'t exist!');
-                else if (req.query.data != 'null' && !guild.channels.cache.get(req.query.data)) return res.status(403).send('This channel doesn\'t exist or the application can\'t access it!');
-
-                db.query('UPDATE config SET ? = ? WHERE guild = ?', [req.query.value, req.query.data == 'null' ? null : req.query.data, guild.id], async () =>
+                switch (req.query.value)
                 {
-                    await res.status(200).redirect(`/dashboard/guilds/${guild.id}/members`); // Reload the page.
-                });
+                    case 'memberAdd':
+                        var statut = null;
+
+                        if (data != 'null')
+                        {
+                            if (!guild.channels.cache.get(data)) return res.status(403).send('This channel doesn\'t exist or the application can\'t access it!');
+                            statut = data;
+                        };
+
+                        db.query('UPDATE config SET memberAdd = ? WHERE guild = ?', [statut, guild.id]);
+                        break;
+
+                    case 'joinRole':
+                        var statut = null;
+
+                        if (data != null)
+                        {
+                            if (!guild.roles.cache.get(data)) return res.status(403).send('This role doesn\'t exist!');
+                            statut = data;
+                        };
+
+                        db.query('UPDATE config SET joinRole = ? WHERE guild = ?', [statut, guild.id]);
+                        break;
+
+                    case 'memberRemove':
+                        statut = null;
+
+                        if (data != 'null')
+                        {
+                            if (!guild.channels.cache.get(data)) return res.status(403).send('This channel doesn\'t exist or the application can\'t access it!');
+                            statut = data;
+                        };
+
+                        db.query('UPDATE config SET memberAdd = ? WHERE guild = ?', [statut, guild.id]);
+                        break;
+
+                    default:
+                        res.status(403).send('The setting that your request provided is invalid!');
+                        break;
+                };
+
+                res.status(200).redirect(`/dashboard/guilds/${guild.id}/members`); // Reload the page.
             };
         }
         catch (err)
