@@ -26,10 +26,7 @@ module.exports =
                 if (oldChannel.parent != newChannel.parent) modifications = `${modifications}**Category**: ${oldChannel.parent ? oldChannel.parent.name : 'None'} :arrow_right: ${newChannel.parent ? newChannel.parent.name : 'None'}.\n`;
                 if (oldChannel.rateLimitPerUser != newChannel.rateLimitPerUser) modifications = `${modifications}**Slow Mode**: ${oldChannel.rateLimitPerUser ? `${oldChannel.rateLimitPerUser} second(s)` : 'Disabled'} :arrow_right: ${newChannel.rateLimitPerUser ? `${newChannel.rateLimitPerUser} second(s)` : 'Disabled'}.\n`;
                 if (oldChannel.nsfw != newChannel.nsfw) modifications = `${modifications}**${newChannel.nsfw ? 'NSFW Mode Enabled' : 'NSFW Mode Disabled'}**.\n`;
-
-                // Avoid sending an empty report embed.
-                // Some modifications can't be detected.
-                if (modifications == '') return;
+                if (modifications == '') modifications = '**Modications detection failed!**';
 
                 const embed = new EmbedBuilder()
                 .setColor('Blue')

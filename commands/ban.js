@@ -12,6 +12,7 @@ module.exports =
         {
             const target = interaction.guild.members.cache.get(interaction.options.getUser('user').id); // Fetch the user in the server list.
             const reason = interaction.options.getString('reason');
+            const deleteTime = interaction.options.getNumber('messages');
 
             // Some verifications.
             if (target.id == interaction.user.id) return interaction.reply(':warning: You can\'t ban **yourself**!' );
@@ -20,8 +21,9 @@ module.exports =
             if (target.id == client.user.id) return interaction.reply(':warning: You can\'t **ban the application** with this command!' );
             if (interaction.user.id != interaction.guild.ownerId && target.permissions.has(Perms.Administrator)) return interaction.reply(`:warning: **Only the owner** can ban an administrator!`);
             if (!target.bannable) return interaction.reply(':warning: **Impossible** to ban this member!' );
+            if (deleteTime && (deleteTime < 1 || deleteTime > 7)) return interaction.reply(':warning: You can\'t delete messages **older than 7 days** and **the minimum allowed is 1 day**.');
 
-            target.ban({ reason: reason }).then(() =>
+            target.ban({ reason: reason, deleteMessageDays: deleteTime ? deleteTime : 0 }).then(() =>
             {
                 interaction.channel.send(`:man_judge: ${interaction.user.username} (${interaction.user.id}) has been banned by <@${interaction.user.id}>!\n**Reason**: **\`${reason}\`**`);
                 interaction.deferUpdate(); // To avoid an error.
@@ -60,6 +62,10 @@ module.exports =
             .setName('reason')
             .setDescription('Sanction reason.')
             .setRequired(true)
+        ).addNumberOption(
+            opt => opt
+            .setName('messages')
+            .setDescription('Delete the messages sent in a period of time in days.')
         ).setDefaultMemberPermissions(this.permission)
     }
 };

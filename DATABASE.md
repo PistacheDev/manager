@@ -47,26 +47,30 @@ CREATE TABLE warns (
 
 ========== "config" table: ==========
 - Array:
-+---------------------+--------------+------+-----+---------+-------+
-| Field               | Type         | Null | Key | Default | Extra |
-+---------------------+--------------+------+-----+---------+-------+
-| guild               | varchar(255) | NO   | PRI | NULL    |       |
-| raidmode            | varchar(255) | YES  |     | false   |       |
-| antibot             | varchar(255) | YES  |     | true    |       |
-| youtubeNotification | varchar(255) | YES  |     | NULL    |       |
-| memberAdd           | varchar(255) | YES  |     | NULL    |       |
-| joinRole            | varchar(255) | YES  |     | NULL    |       |
-| memberRemove        | varchar(255) | YES  |     | NULL    |       |
-| messagesLogs        | varchar(255) | YES  |     | NULL    |       |
-| channelsLogs        | varchar(255) | YES  |     | NULL    |       |
-| bansLogs            | varchar(255) | YES  |     | NULL    |       |
-+---------------------+--------------+------+-----+---------+-------+
++---------------------+--------------+------+-----+---------------------+-------+
+| Field               | Type         | Null | Key | Default             | Extra |
++---------------------+--------------+------+-----+---------------------+-------+
+| guild               | varchar(255) | NO   | PRI | NULL                |       |
+| raidmode            | varchar(255) | YES  |     | false               |       |
+| antibot             | varchar(255) | YES  |     | true                |       |
+| antispam            | varchar(255) | YES  |     | true false 5 5 3 10 |       |
+| warn                | varchar(255) | YES  |     | true 3 1            |       |
+| youtubeNotification | varchar(255) | YES  |     | NULL                |       |
+| memberAdd           | varchar(255) | YES  |     | NULL                |       |
+| joinRole            | varchar(255) | YES  |     | NULL                |       |
+| memberRemove        | varchar(255) | YES  |     | NULL                |       |
+| messagesLogs        | varchar(255) | YES  |     | NULL                |       |
+| channelsLogs        | varchar(255) | YES  |     | NULL                |       |
+| bansLogs            | varchar(255) | YES  |     | NULL                |       |
++---------------------+--------------+------+-----+---------------------+-------+
 - SQL command:
 ``` sh
 CREATE TABLE config (
     guild VARCHAR(255) PRIMARY KEY,
     raidmode VARCHAR(255) DEFAULT 'false',
     antibot VARCHAR(255) DEFAULT 'true',
+    antispam VARCHAR(255) DEFAULT 'true false 5 5 3 10',
+    warn VARCHAR(255) DEFAULT 'true 3 1',
     youtubeNotification VARCHAR(255) DEFAULT NULL,
     memberAdd VARCHAR(255) DEFAULT NULL,
     joinRole VARCHAR(255) DEFAULT NULL,

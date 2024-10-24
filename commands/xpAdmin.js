@@ -1,4 +1,4 @@
-const { PermissionsBitField, SlashCommandBuilder } = require('discord.js');
+const { PermissionsBitField, SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 
 module.exports =
 {
@@ -17,15 +17,19 @@ module.exports =
             switch (interaction.options.getSubcommand())
             {
                 case 'give':
-                    giveExperience();
+                    giveXP();
                     break;
 
                 case 'remove':
-                    removeExperience();
+                    removeXP();
                     break;
 
                 case 'clear':
-                    clearExperience();
+                    clearXP();
+                    break;
+
+                case 'drop':
+                    dropXP();
                     break;
 
                 default:
@@ -34,7 +38,7 @@ module.exports =
             };
 
             // Give subcommand script.
-            function giveExperience()
+            function giveXP()
             {
                 const xpToGive = interaction.options.getNumber('amount');
 
@@ -65,14 +69,13 @@ module.exports =
 
                             // Update user informations in the database.
                             db.query('UPDATE xp SET xp = ?, level = ? WHERE guild = ? AND user = ?', [currentXP, currentLevel, interaction.guild.id, interaction.user.id]);
-                            interaction.channel.send(`:tada: Congratulation <@${target.id}> @${target.user.username}! You just passed to **level ${currentLevel}**!`);
                         };
                     });
                 });
             };
 
             // Remove subcommand script.
-            function removeExperience()
+            function removeXP()
             {
                 const xpToRemove = interaction.options.getNumber('amount');
 
@@ -104,7 +107,7 @@ module.exports =
             };
 
             // Clear subcommand script.
-            function clearExperience()
+            function clearXP()
             {
                 db.query('SELECT * FROM xp WHERE guild = ? AND user = ?', [interaction.guild.id, target.id], async (err, data) =>
                 {
@@ -116,6 +119,26 @@ module.exports =
                         interaction.reply(`:white_check_mark: **${data[0].level} levels** and **${data[0].xp} XP points** of <@${target.id}> were deleted successfully!`);
                     });
                 });
+            };
+
+            function dropXP()
+            {
+                const amountXP = interaction.options.getNumber('amount');
+                if (amountXP > 1000 || amountXP < 1) return interaction.reply(':warning: You can\'t drop **more than 1000 XP points** and **less than 1 XP point**!');
+
+                const embed = new EmbedBuilder()
+                .setColor('Orange')
+                .setDescription(`:tada: The **first person** who click on the **button bellow** will gain **${amountXP} XP points**!`)
+
+                var button = new ActionRowBuilder()
+                .addComponents(
+                    new ButtonBuilder()
+                    .setCustomId('dropxpButton')
+                    .setLabel('Claim the reward')
+                    .setStyle(ButtonStyle.Success)
+                )
+
+                interaction.reply({ content: `||[${amountXP}]||`, embeds: [embed], components: [button] });
             };
         }
         catch (err)
@@ -167,6 +190,16 @@ module.exports =
                 opt => opt
                 .setName('user')
                 .setDescription('User who will lost all of his XP.')
+                .setRequired(true)
+            )
+        ).addSubcommand(
+            cmd => cmd
+            .setName('drop')
+            .setDescription('Drop some XP points!')
+            .addNumberOption(
+                opt => opt
+                .setName('amount')
+                .setDescription('Amount of XP points to drop.')
                 .setRequired(true)
             )
         ).setDefaultMemberPermissions(this.permission)
