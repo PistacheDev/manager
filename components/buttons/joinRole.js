@@ -9,12 +9,12 @@ module.exports =
         try
         {
             const modal = new ModalBuilder()
-            .setCustomId('channelsLogsModal')
-            .setTitle('Setup the channel:')
+            .setCustomId('joinRoleModal')
+            .setTitle('Setup the role:')
 
             const modalOption = new TextInputBuilder()
-            .setCustomId('channelsLogsModalOption')
-            .setLabel('Channel ID:')
+            .setCustomId('joinRoleModalOption')
+            .setLabel('Role ID:')
             .setPlaceholder('To disable this option, let this field empty.')
             .setStyle(TextInputStyle.Short)
             .setRequired(false)
