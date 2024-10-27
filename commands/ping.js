@@ -8,7 +8,7 @@ module.exports =
     {
         try
         {
-            await interaction.reply(`:ping_pong: **Application latency**: \`${client.ws.ping}\`ms.`);
+            await interaction.reply(`:ping_pong: **Application Latency**: \`${client.ws.ping}\`ms.`);
         }
         catch (err)
         {

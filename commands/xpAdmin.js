@@ -9,112 +9,138 @@ module.exports =
     {
         try
         {
+            const guild = interaction.guild;
+
+            // Command option.
             var target = interaction.options.getUser('user');
             if (!target) target = interaction.member; // Select the current user if nothing is specified.
             target = interaction.guild.members.cache.get(target.id); // Fetch the user in the server list.
 
-            // Check what subcommand has been executed.
-            switch (interaction.options.getSubcommand())
+            db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, config) =>
             {
-                case 'give':
-                    giveXP();
-                    break;
+                if (config.length < 1) return interaction.reply(':warning: Your server isn\'t registered in the database!\n:grey_question: To fix this issue, run the \`/repair\` command.');
+                if (config[0].xp == 0) return interaction.reply(':warning: The XP system is **disabled** in this server!');
 
-                case 'remove':
-                    removeXP();
-                    break;
+                // Check what subcommand has been executed.
+                switch (interaction.options.getSubcommand())
+                {
+                    case 'give':
+                        giveXP();
+                        break;
 
-                case 'clear':
-                    clearXP();
-                    break;
+                    case 'remove':
+                        removeXP();
+                        break;
 
-                case 'drop':
-                    dropXP();
-                    break;
+                    case 'clear':
+                        clearXP();
+                        break;
 
-                default:
-                    interaction.reply(':warning: Unknown **command**!');
-                    break;
-            };
+                    case 'drop':
+                        dropXP();
+                        break;
 
-            // Give subcommand script.
+                    default:
+                        interaction.reply(':warning: Unknown **command**!');
+                        break;
+                };
+            });
+
             function giveXP()
             {
+                // Command option.
                 const xpToGive = interaction.options.getNumber('amount');
 
-                db.query('SELECT * FROM xp WHERE guild = ? AND user = ?', [interaction.guild.id, target.id], async (err, data) =>
+                db.query('SELECT * FROM xp WHERE guild = ? AND user = ?', [guild.id, target.id], async (err, data) =>
                 {
-                    // Some verifications.
                     if (xpToGive > 1000 || xpToGive < 1) return interaction.reply(':warning: You can\'t give **more than 1000 XP points** and **less than 1 XP point** per giveaway!');
                     if (data.length < 1)
                     {
-                        db.query('INSERT INTO xp (`user`, `guild`, `xp`) VALUES (?, ?, ?)', [target.id, interaction.guild.id, 0]);
-                        await new Promise(resolve => setTimeout(resolve, 100)); // Wait to let the database insert correctly the data.
+                        db.query('INSERT INTO xp (`user`, `guild`, `xp`) VALUES (?, ?, ?)', [target.id, guild.id, 0]);
+                        await new Promise(resolve => setTimeout(resolve, 100)); // Wait to let the database correctly insert the data.
                     };
 
-                    db.query('UPDATE xp SET xp = ? WHERE guild = ? AND user = ?', [xpToGive + parseInt(data[0].xp), interaction.guild.id, target.id], async () =>
+                    db.query('UPDATE xp SET xp = ? WHERE guild = ? AND user = ?', [xpToGive + parseInt(data[0].xp), guild.id, target.id], async () =>
                     {
-                        interaction.reply(`:white_check_mark: **${xpToGive} XP points** were gave to <@${interaction.user.id}> @${interaction.user.username}!`);
+                        interaction.reply(`:white_check_mark: **${xpToGive} XP points** were gave to <@${target.id}>!`);
 
-                        let currentXP = parseInt(xpToGive + parseInt(data[0].xp)); // New amount of XP.
+                        // Some data.
+                        let currentXP = parseInt(xpToGive + parseInt(data[0].xp));
                         let currentLevel = parseInt(data[0].level);
-                        let nextLevel = 500 + (currentLevel * 10); // Calculate the next level goal.
+                        let nextLevel = 500 + (currentLevel * 10);
 
-                        // Level-up the user while his XP is greater than the next level goal.
-                        while (currentXP >= nextLevel)
+                        while (currentXP >= nextLevel) // Level up while the user has enough XP.
                         {
-                            currentXP -= nextLevel; // Update the amount of XP.
+                            // Update the data.
+                            currentXP -= nextLevel;
                             currentLevel += 1;
-                            nextLevel = 500 + (currentLevel * 10); // Calculate the new next level goal.
+                            nextLevel = 500 + (currentLevel * 10);
 
-                            // Update user informations in the database.
-                            db.query('UPDATE xp SET xp = ?, level = ? WHERE guild = ? AND user = ?', [currentXP, currentLevel, interaction.guild.id, interaction.user.id]);
+                            db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, config) =>
+                            {
+                                if (err) throw err;
+
+                                for (let i = 0; i < 4; i++)
+                                {
+                                    const goal = config[0].xpgoals.split(' ')[i];
+            
+                                    if (goal != 0)
+                                    {
+                                        const [requiredLevel, roleID] = goal.split('-');
+
+                                        if (currentLevel >= requiredLevel && !target.roles.cache.has(roleID))
+                                        {
+                                            target.roles.add(roleID);
+                                        };
+                                    };
+                                };
+                            });
+
+                            db.query('UPDATE xp SET xp = ?, level = ? WHERE guild = ? AND user = ?', [currentXP, currentLevel, guild.id, target.id]);
                         };
                     });
                 });
             };
 
-            // Remove subcommand script.
             function removeXP()
             {
+                // Command option.
                 const xpToRemove = interaction.options.getNumber('amount');
 
-                db.query('SELECT * FROM xp WHERE guild = ? AND user = ?', [interaction.guild.id, target.id], async (err, data) =>
+                db.query('SELECT * FROM xp WHERE guild = ? AND user = ?', [guild.id, target.id], async (err, data) =>
                 {
-                    // Some verifications.
                     if (data.length < 1) return interaction.reply(':warning: This user **doesn\'t have** any XP!');
                     if (xpToRemove > 1000 || xpToRemove < 1) return interaction.reply(':warning: You can\'t remove **more than 1000 XP points** and **less than 1 XP point** per sanction!');
 
-                    db.query('UPDATE xp SET xp = ? WHERE guild = ? AND user = ?', [parseInt(data[0].xp) - xpToRemove, interaction.guild.id, target.id], async () =>
+                    db.query('UPDATE xp SET xp = ? WHERE guild = ? AND user = ?', [parseInt(data[0].xp) - xpToRemove, guild.id, target.id], async () =>
                     {
-                        interaction.reply(`:white_check_mark: **${xpToRemove} XP points** were removed from <@${interaction.user.id}> @${interaction.user.username}!`);
+                        interaction.reply(`:white_check_mark: **${xpToRemove} XP points** were removed from <@${target.id}>!`);
 
-                        let currentXP = parseInt(parseInt(data[0].xp) - xpToRemove); // New amount of XP.
+                        // Some data.
+                        let currentXP = parseInt(parseInt(data[0].xp) - xpToRemove);
                         let currentLevel = parseInt(data[0].level);
-                        let previousLevel = 500 + ((currentLevel - 1) * 10); // Calculate the previous level goal.
+                        let previousLevel = 500 + ((currentLevel - 1) * 10);
 
-                        // Level-down the user while his amount of XP is negative.
-                        while (currentXP < 0)
+                        while (currentXP < 0) // Level down the user while his amount of XP is negative.
                         {
-                            currentXP += previousLevel; // New amount of XP.
+                            // Update the data.
+                            currentXP += previousLevel;
                             currentLevel -= 1;
-                            previousLevel = 500 + ((currentLevel - 1) * 10); // Calculate the new previous level goal.
+                            previousLevel = 500 + ((currentLevel - 1) * 10);
 
-                            db.query('UPDATE xp SET xp = ?, level = ? WHERE guild = ? AND user = ?', [currentXP, currentLevel, interaction.guild.id, target.id]);
+                            db.query('UPDATE xp SET xp = ?, level = ? WHERE guild = ? AND user = ?', [currentXP, currentLevel, guild.id, target.id]);
                         };
                     });
                 });
             };
 
-            // Clear subcommand script.
             function clearXP()
             {
-                db.query('SELECT * FROM xp WHERE guild = ? AND user = ?', [interaction.guild.id, target.id], async (err, data) =>
+                db.query('SELECT * FROM xp WHERE guild = ? AND user = ?', [guild.id, target.id], async (err, data) =>
                 {
                     if (data.length < 1) return interaction.reply(':warning: This user **doesn\'t have** any XP!');
 
-                    // Remove the user from the database for this server (faster than set everything to 0).
-                    db.query('DELETE FROM xp WHERE guild = ? AND user = ?', [interaction.guild.id, target.id], async () =>
+                    db.query('DELETE FROM xp WHERE guild = ? AND user = ?', [guild.id, target.id], async () =>
                     {
                         interaction.reply(`:white_check_mark: **${data[0].level} levels** and **${data[0].xp} XP points** of <@${target.id}> were deleted successfully!`);
                     });
@@ -123,6 +149,7 @@ module.exports =
 
             function dropXP()
             {
+                // Command option.
                 const amountXP = interaction.options.getNumber('amount');
                 if (amountXP > 1000 || amountXP < 1) return interaction.reply(':warning: You can\'t drop **more than 1000 XP points** and **less than 1 XP point**!');
 

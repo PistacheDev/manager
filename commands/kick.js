@@ -1,40 +1,47 @@
 const { PermissionsBitField, EmbedBuilder, SlashCommandBuilder } = require('discord.js');
+const Perms = PermissionsBitField.Flags;
 
 module.exports =
 {
     name: 'kick',
     type: 'moderation',
-    permission: PermissionsBitField.Flags.KickMembers,
+    permission: Perms.KickMembers,
     async run(client, db, interaction)
     {
         try
         {
+            // Command options.
             const target = interaction.guild.members.cache.get(interaction.options.getUser('user').id); // Fetch the user in the server list.
             const reason = interaction.options.getString('reason');
 
+            // Some shortcuts.
+            const guild = interaction.guild;
+            const mod = interaction.member;
+            const targetID = target.id;
+            const ownerID = guild.ownerId;
+
             // Some verifications.
-            if (target.id == interaction.user.id) return interaction.reply(':warning: You can\'t kick **yourself**!');
-            if (interaction.guild.ownerId == target.id) return interaction.reply(':warning: You can\'t kick the **server owner**.');
-            if (interaction.member.roles.highest.comparePositionTo(target.roles.highest) <= 0) return interaction.reply(':warning: You **can\'t kick** this member!');
-            if (target.id == client.user.id) return interaction.reply(':warning: You can\'t **kick the application** with this command!');
-            if (interaction.user.id != interaction.guild.ownerId && target.permissions.has(PermissionsBitField.Flags.Administrator)) return interaction.reply(`:warning: **Only the owner** can kick an administrator!`);
+            if (targetID == mod.id) return interaction.reply(':warning: You can\'t kick **yourself**!');
+            if (ownerID == targetID) return interaction.reply(':warning: You can\'t kick the **server owner**.');
+            if (mod.roles.highest.comparePositionTo(target.roles.highest) <= 0) return interaction.reply(':warning: You **can\'t kick** this member!');
+            if (targetID == client.user.id) return interaction.reply(':warning: You can\'t **kick the application** with this command!');
+            if (mod.id != ownerID && target.permissions.has(Perms.Administrator)) return interaction.reply(`:warning: **Only the owner** can kick an administrator!`);
             if (!target.kickable) return interaction.reply(':warning: **Impossible** to kick this member!');
 
-            target.kick({ reason: reason }).then(() =>
+            target.kick({ reason: `[${mod.id}] ${reason}` }).then(() =>
             {
-                interaction.channel.send(`:man_judge: ${interaction.user.username} (${interaction.user.id}) has been kicked by <@${interaction.user.id}>!\n**Reason**: **\`${reason}\`**`);
+                interaction.channel.send(`:man_judge: ${target.user.username} (${target.id}) has been kicked by <@${mod.id}>!\n**Reason**: **\`${reason}\`**`);
                 interaction.deferUpdate(); // To avoid an error.
 
                 const embed = new EmbedBuilder()
                 .setColor('Red')
-                .setThumbnail(interaction.guild.iconURL())
-                .setDescription(`:scales: You've been kicked from **${interaction.guild.name}**!`)
-                .addFields([{ name: ':man_judge:・Moderator:', value: `>>> **User**: <@${interaction.user.id}> @${interaction.user.username}.\n**ID**: ${interaction.user.id}.\n**Kick Date**: <t:${Math.floor(Date.now() / 1000)}:F>.` }])
+                .setThumbnail(guild.iconURL())
+                .setDescription(`:scales: You've been kicked from **${guild.name}**!`)
+                .addFields([{ name: ':man_judge:・Moderator:', value: `>>> **User**: <@${mod.id}> @${mod.user.username}.\n**ID**: ${mod.id}.\n**Kick Date**: <t:${Math.floor(Date.now() / 1000)}:F>.` }])
                 .addFields([{ name: ':grey_question:・Reason:', value: `\`\`\`${reason}\`\`\`` }])
                 .setTimestamp()
-                .setFooter({ text: interaction.guild.name, iconURL: interaction.guild.iconURL() })
+                .setFooter({ text: guild.name, iconURL: guild.iconURL() })
 
-                // Send a DM to alert the user for the kick.
                 target.user.createDM({ force: true }).send({ embeds: [embed] });
             });
         }

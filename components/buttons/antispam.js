@@ -8,77 +8,79 @@ module.exports =
     {
         try
         {
-            db.query(`SELECT * FROM config WHERE guild = ?`, [interaction.guild.id], async (err, data) =>
+            const guild = interaction.guild;
+
+            db.query(`SELECT * FROM config WHERE guild = ?`, [guild.id], async (err, data) =>
             {
                 if (data.length < 1) return interaction.reply(':warning: Your server isn\'t registered in the database!\n:grey_question: To fix this issue, run the \`/repair\` command.');
 
-                if (data[0].antispam == 'false')
+                if (data[0].antispam == 0)
                 {
                     const modal = new ModalBuilder()
                     .setCustomId('antispamModal')
                     .setTitle('Setup the anti spam:')
 
-                    const modalOptionFirst = new TextInputBuilder()
-                    .setCustomId('antispamModalOptionFirst')
+                    const modalOption = new TextInputBuilder()
+                    .setCustomId('antispamModalOption')
                     .setLabel('Ignore Bots:')
                     .setPlaceholder('Answer by "yes" or "no".')
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
 
-                    const modalInputFirst = new ActionRowBuilder()
-                    .addComponents(modalOptionFirst)
+                    const modalInput = new ActionRowBuilder()
+                    .addComponents(modalOption)
 
-                    const modalOptionSecond = new TextInputBuilder()
-                    .setCustomId('antispamModalOptionSecond')
+                    const modalOption2 = new TextInputBuilder()
+                    .setCustomId('antispamModalOption2')
                     .setLabel('Maximum messages:')
                     .setPlaceholder('Maximum number of messages during the interval.')
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
 
-                    const modalInputSecond = new ActionRowBuilder()
-                    .addComponents(modalOptionSecond)
+                    const modalInput2 = new ActionRowBuilder()
+                    .addComponents(modalOption2)
 
-                    const modalOptionThird = new TextInputBuilder()
-                    .setCustomId('antispamModalOptionThird')
+                    const modalOption3 = new TextInputBuilder()
+                    .setCustomId('antispamModalOption3')
                     .setLabel('Interval:')
                     .setPlaceholder('Interval of time in seconds.')
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
 
-                    const modalInputThird = new ActionRowBuilder()
-                    .addComponents(modalOptionThird)
+                    const modalInput3 = new ActionRowBuilder()
+                    .addComponents(modalOption3)
 
-                    const modalOptionFourth = new TextInputBuilder()
-                    .setCustomId('antispamModalOptionFourth')
+                    const modalOption4 = new TextInputBuilder()
+                    .setCustomId('antispamModalOption4')
                     .setLabel('Maximum warns:')
                     .setPlaceholder('Maximum of warns before the sanction.')
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
 
-                    const modalInputFourth = new ActionRowBuilder()
-                    .addComponents(modalOptionFourth)
+                    const modalInput4 = new ActionRowBuilder()
+                    .addComponents(modalOption4)
 
-                    const modalOptionFifth = new TextInputBuilder()
-                    .setCustomId('antispamModalOptionFifth')
+                    const modalOption5 = new TextInputBuilder()
+                    .setCustomId('antispamModalOption5')
                     .setLabel('Sanction:')
                     .setPlaceholder('Enter "ban" to ban or a number (in minutes) to mute.')
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
 
-                    const modalInputFifth = new ActionRowBuilder()
-                    .addComponents(modalOptionFifth)
+                    const modalInput5 = new ActionRowBuilder()
+                    .addComponents(modalOption5)
 
-                    modal.addComponents(modalInputFirst, modalInputSecond, modalInputThird, modalInputFourth, modalInputFifth);
+                    modal.addComponents(modalInput, modalInput2, modalInput3, modalInput4, modalInput5);
                     await interaction.showModal(modal);
                 }
                 else
                 {
-                    let statut = ':x: Inactive';
+                    let status = ':x: Inactive';
 
-                    if (data[0].warn != 'false')
+                    if (data[0].warn != 0) // Update the default data if the option is enabled.
                     {
-                        const [_, maxWarns, sanction] = data[0].warn.split(' ');
-                        statut = `:white_check_mark: Active.\n**Maximum Warns**: ${maxWarns} warns.\n**Sanction**: ${sanction == 'ban' ? 'Ban' : `Mute for ${sanction} hours`}`;
+                        const [maxWarns, sanction] = data[0].warn.split(' ');
+                        status = `:white_check_mark: Active.\n**Maximum Warns**: ${maxWarns} warns.\n**Sanction**: ${sanction == 'ban' ? 'Ban' : `Mute for ${sanction} hours`}`;
                     };
 
                     const embed = new EmbedBuilder()
@@ -86,16 +88,15 @@ module.exports =
                     .setAuthor({ name: 'Configuration Panel', iconURL: client.user.avatarURL() })
                     .setDescription('Press the button with the **emoji corresponding** to **the option** you want to modify.')
                     .addFields([{ name: ':hand_splayed:・Anti spam:', value: `>>> **Status**: :x: Inactive.\n**Function**: Prevent the members from **spamming messages**.` }])
-                    .addFields([{ name: ':warning:・Warns:', value: `>>> **Status**: ${statut}.\n**Function**: The member **is sanctionned** if its warns count reached the **maximum amount**.` }])
+                    .addFields([{ name: ':warning:・Warns:', value: `>>> **Status**: ${status}.\n**Function**: The member **is sanctionned** if its warns count reached the **maximum amount**.` }])
                     .setThumbnail(client.user.avatarURL())
                     .setTimestamp()
-                    .setFooter({ text: interaction.guild.name, iconURL: interaction.guild.iconURL() });
+                    .setFooter({ text: guild.name, iconURL: guild.iconURL() })
 
-                    // Update the data in the database.
-                    db.query('UPDATE config SET antispam = ? WHERE guild = ?', ['false', interaction.guild.id], async () =>
+                    db.query('UPDATE config SET antispam = ? WHERE guild = ?', [0, guild.id], async () =>
                     {
                         interaction.message.edit({ embeds: [embed] });
-                        interaction.deferUpdate(); // To avoid an error.
+                        interaction.deferUpdate();
                     });
                 };
             });

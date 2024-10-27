@@ -10,13 +10,12 @@ module.exports =
         {
             db.query('SELECT * FROM config WHERE guild = ?', [interaction.guild.id], async (err, data) =>
             {
-                if (data[0].youtubeNotification == null) return showFirstModal(); // The option is turned off for this server, so the user can't disable it.
-                const [channelID, roleID, youtubeID, latestVideoID] = data[0].youtubeNotification.split(' '); // Read the data.
+                if (data[0].youtubeNotifs == 0) return showFirstModal(); // The option is turned off for this server, so the user can't disable it.
+                const [channelID, roleID, youtubeID, latestVideoID] = data[0].youtubeNotifs.split(' ');
 
-                if (roleID == 'null' || youtubeID == 'null') showSecondModal(); // The configuration isn't finished, so the user isn't allowed to disable it for now.
+                if (roleID == 0 || youtubeID == 0) showSecondModal(); // The configuration isn't finished, so the user isn't allowed to disable it for now.
                 else showFirstModal(); // The option is turned on, so the user is now allowed to disable it.
 
-                // First modal (setup the channel).
                 async function showFirstModal()
                 {
                     const modal = new ModalBuilder()
@@ -37,34 +36,33 @@ module.exports =
                     await interaction.showModal(modal);
                 };
 
-                // Second modal (setup the role and the YouTube channel).
                 async function showSecondModal()
                 {
                     const modal = new ModalBuilder()
                     .setCustomId('youtubeSetupModal')
                     .setTitle('Setup the notifications:')
 
-                    const modalOptionFirst = new TextInputBuilder()
-                    .setCustomId('youtubeModalOptionFirst')
+                    const modalOption = new TextInputBuilder()
+                    .setCustomId('youtubeModalOption')
                     .setLabel('Role ID:')
                     .setPlaceholder('Enter a role ID or @everyone.')
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
 
-                    const modalOptionSecond = new TextInputBuilder()
-                    .setCustomId('youtubeModalOptionSecond')
+                    const modalInput = new ActionRowBuilder()
+                    .addComponents(modalOption);
+
+                    const modalOption2 = new TextInputBuilder()
+                    .setCustomId('youtubeModalOption2')
                     .setLabel('YouTube channel:')
                     .setPlaceholder('Enter the channel URL (https://www.youtube.com/@example).')
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
 
-                    const modalInputFirst = new ActionRowBuilder()
-                    .addComponents(modalOptionFirst);
+                    const modalInput2 = new ActionRowBuilder()
+                    .addComponents(modalOption2)
 
-                    const modalInputSecond = new ActionRowBuilder()
-                    .addComponents(modalOptionSecond)
-
-                    modal.addComponents(modalInputFirst, modalInputSecond);
+                    modal.addComponents(modalInput, modalInput2);
                     await interaction.showModal(modal);
                 };
             });

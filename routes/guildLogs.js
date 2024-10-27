@@ -2,7 +2,7 @@ const jsonwebtoken = require('jsonwebtoken');
 const { request } = require('../functions/discordRequest');
 const { client, db } = require('../main');
 const { PermissionsBitField } = require('discord.js');
-const Perms = PermissionsBitField.Flags; // Shortcut.
+const Perms = PermissionsBitField.Flags;
 
 module.exports =
 {
@@ -56,9 +56,9 @@ module.exports =
                     if (data.length < 1)
                     {
                         // Add this server to the database if not already done.
-                        db.query('INSERT INTO config (`guild`) VALUES (?)', [req.params.id], async () =>
+                        db.query('INSERT INTO config (`guild`) VALUES (?)', [guild.id], async () =>
                         {
-                            return res.status(200).redirect(`/dashboard/guilds/${req.params.id}/logs`); // Reload the page.
+                            return res.status(200).redirect(`/dashboard/guilds/${guild.id}/logs`); // Reload the page.
                         });
                     };
 
@@ -87,9 +87,9 @@ module.exports =
                 switch (req.query.value)
                 {
                     case 'messagesLogs':
-                        var statut = null;
+                        var statut = 0;
 
-                        if (data != 'null')
+                        if (data != 0)
                         {
                             if (!guild.channels.cache.get(data)) return res.status(403).send('This channel doesn\'t exist or the application can\'t access it!');
                             statut = data;
@@ -100,9 +100,9 @@ module.exports =
                         break;
 
                     case 'channelsLogs':
-                        var statut = null;
+                        var statut = 0;
 
-                        if (data != 'null')
+                        if (data != 0)
                         {
                             if (!guild.channels.cache.get(data)) return res.status(403).send('This channel doesn\'t exist or the application can\'t access it!');
                             statut = data;
@@ -113,9 +113,9 @@ module.exports =
                         break;
 
                     case 'bansLogs':
-                        var statut = null;
+                        var statut = 0;
 
-                        if (data != 'null')
+                        if (data != 0)
                         {
                             if (!guild.channels.cache.get(data)) return res.status(403).send('This channel doesn\'t exist or the application can\'t access it!');
                             statut = data;

@@ -9,23 +9,26 @@ module.exports =
     {
         try
         {
+            // Command options.
             var channel = interaction.options.getChannel('channel');
             if (!channel) channel = interaction.channel; // Select the current channel if nothing is specified.
 
+            // Some shortcuts.
+            const guild = interaction.guild;
+            const mod = interaction.member;
+
             // Some verifications.
-		    if (channel.permissionOverwrites.cache.get(interaction.guild.roles.everyone.id)?.allow.toArray(false).includes('SendMessages')) return interaction.reply(':warning: This channel **isn\'t locked**.');
+		    if (channel.permissionOverwrites.cache.get(guild.roles.everyone.id)?.allow.toArray(false).includes('SendMessages')) return interaction.reply(':warning: This channel **isn\'t locked**.');
 	        if (!channel.manageable) return interaction.reply(':warning: **Impossible** to unlock this channel.');
 
-	        channel.permissionOverwrites.edit(interaction.guild.roles.everyone.id,
+	        channel.permissionOverwrites.edit(guild.roles.everyone.id,
             {
     	        SendMessages: true // Add the SendMessages permission for @everyone.
 	        }).then(() =>
             {
-                if (channel.name.startsWith('[🔒]-')) channel.setName(`${channel.name.split('[🔒]-')[1]}`); // Remove the lock emoji from the channel name.
-
 	            const embed = new EmbedBuilder()
     	        .setColor('Gold')
-    	        .setDescription(`:unlock: **This channel** is now **unlocked**.\n:man_judge: **Moderator**: <@${interaction.user.id}> @${interaction.user.username}.`)
+    	        .setDescription(`:unlock: **This channel** is now **unlocked**.\n:man_judge: **Moderator**: <@${mod.id}> @${mod.user.username}.`)
 
                 if (channel.id != interaction.channel.id)
                 {

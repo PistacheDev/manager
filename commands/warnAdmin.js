@@ -7,6 +7,8 @@ module.exports =
     permission: PermissionsBitField.Flags.Administrator,
     async run(client, db, interaction)
     {
+        const guild = interaction.guild;
+
         // Check what subcommand has been executed.
         switch (interaction.options.getSubcommand())
         {
@@ -27,15 +29,15 @@ module.exports =
                 break;
         };
 
-        // List every warns of a member.
         function warnsList()
         {
-            const target = interaction.guild.members.cache.get(interaction.options.getUser('user').id); // Fetch the user in the server list.
+            // Command option.
+            const target = guild.members.cache.get(interaction.options.getUser('user').id); // Fetch the user in the server list.
 
-            db.query('SELECT * FROM warns WHERE guild = ? AND target = ?', [interaction.guild.id, target.user.id], async (err, data) =>
+            db.query('SELECT * FROM warns WHERE guild = ? AND target = ?', [guild.id, target.user.id], async (err, data) =>
             {
                 if (data.length < 1) return interaction.reply(':warning: This member **has never been warned** in this server!');
-                await data.sort((date1, date2) => parseInt(date2.date) - parseInt(date1.date)); // Sort by recent date.
+                await data.sort((a, b) => parseInt(b.date) - parseInt(a.date)); // Sort by recent date.
 
                 let embed = new EmbedBuilder()
                 .setColor('Yellow')
@@ -45,34 +47,37 @@ module.exports =
                 .setTimestamp()
 
                 // Add the fields to the embed.
-                for (let warnsCount = 0; warnsCount < data.length; warnsCount++) embed.addFields([{ name: `${warnsCount + 1}) Warn \`${data[warnsCount].warnID}\`:`, value: `**Moderator**: <@${await data[warnsCount].moderator}>.\n**Sanction Date**: <t:${Math.floor(parseInt(data[warnsCount].date / 1000))}>.\n**Reason**: \`${data[warnsCount].reason}\`.` }]); 
+                for (let warnsCount = 0; warnsCount < data.length; warnsCount++)
+                {
+                    embed.addFields([{ name: `${warnsCount + 1}) Warn \`${data[warnsCount].warnID}\`:`, value: `**Moderator**: <@${await data[warnsCount].moderator}>.\n**Sanction Date**: <t:${Math.floor(parseInt(data[warnsCount].date / 1000))}>.\n**Reason**: \`${data[warnsCount].reason}\`.` }]); 
+                };
+
                 await interaction.reply({ embeds: [embed] });
             });
         };
 
-        // Remove a warn.
         function warnRemove()
         {
+            // Command option.
             const warnID = interaction.options.getString('id');
 
-            db.query('SELECT * FROM warns WHERE guild = ? AND warnID = ?', [interaction.guild.id, warnID], async (err, data) =>
+            db.query('SELECT * FROM warns WHERE guild = ? AND warnID = ?', [guild.id, warnID], async (err, data) =>
             {
                 if (data.length < 1) return interaction.reply(':warning: This warn **doesn\'t exist**!');
 
-                // Delete the warn.
-                db.query('DELETE FROM warns WHERE guild = ? AND warnID = ?', [interaction.guild.id, warnID], async (err, data) =>
+                db.query('DELETE FROM warns WHERE guild = ? AND warnID = ?', [guild.id, warnID], async (err, data) =>
                 {
                     interaction.reply(`:white_check_mark: \`${warnID}\` has been **removed successfully**!`);
                 });
             });
         };
 
-        // Clear every warns of a member.
         function warnsClear()
         {
-            const target = interaction.guild.members.cache.get(interaction.options.getUser('user').id); // Fetch the user in the server list.
+            // Command option.
+            const target = guild.members.cache.get(interaction.options.getUser('user').id); // Fetch the user in the server list.
 
-            db.query('DELETE FROM warns WHERE guild = ? AND target = ?', [interaction.guild.id, target.user.id], async (err, data) =>
+            db.query('DELETE FROM warns WHERE guild = ? AND target = ?', [guild.id, target.user.id], async (err, data) =>
             {
                 const deletedCount = data.affectedRows; // Calculate the number of removed warns.
 

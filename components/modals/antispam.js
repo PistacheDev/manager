@@ -8,11 +8,15 @@ module.exports =
     {
         try
         {
-            const ignoreBots = interaction.fields.getTextInputValue('antispamModalOptionFirst');
-            const maxMessages = interaction.fields.getTextInputValue('antispamModalOptionSecond');
-            const interval = interaction.fields.getTextInputValue('antispamModalOptionThird');
-            const maxWarns = interaction.fields.getTextInputValue('antispamModalOptionFourth');
-            const sanction = interaction.fields.getTextInputValue('antispamModalOptionFifth');
+            // Modal options.
+            const ignoreBots = interaction.fields.getTextInputValue('antispamModalOption');
+            const maxMessages = interaction.fields.getTextInputValue('antispamModalOption2');
+            const interval = interaction.fields.getTextInputValue('antispamModalOption3');
+            const maxWarns = interaction.fields.getTextInputValue('antispamModalOption4');
+            const sanction = interaction.fields.getTextInputValue('antispamModalOption5');
+
+            // Some shortcuts.
+            const guild = interaction.guild;
 
             // Some verifications.
             if (ignoreBots != 'yes' && ignoreBots != 'no') return interaction.reply(':warning: Your answer for the **Ignore Bots** option is invalid!');
@@ -22,16 +26,16 @@ module.exports =
             if (maxWarns < 1 || maxWarns > 5) return interaction.reply(':warning: The maximum warns must be **between 1 and 5 warns**!');
             if (sanction != 'ban' && (sanction < 1 || sanction > 70560)) return interaction.reply(':warning: The mute can\'t last **less than 1 minute** or **longer than 7 days (70560)**!');
 
-            db.query('UPDATE config SET antispam = ? WHERE guild = ?', [`true ${ignoreBots == 'yes' ? true : false} ${maxMessages} ${interval} ${maxWarns} ${sanction}`, interaction.guild.id], async () =>
+            db.query('UPDATE config SET antispam = ? WHERE guild = ?', [`${ignoreBots == 'yes' ? 1 : 0} ${maxMessages} ${interval} ${maxWarns} ${sanction}`, guild.id], async () =>
             {
-                db.query('SELECT * FROM config WHERE guild = ?', [interaction.guild.id], async (err, data) =>
+                db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, data) =>
                 {
-                    let statut = ':x: Inactive';
+                    let status = ':x: Inactive';
 
-                    if (data[0].warn != 'false')
+                    if (data[0].warn != 0) // Update the data if the option is enabled.
                     {
-                        const [_, maxWarns, sanction] = data[0].warn.split(' ');
-                        statut = `:white_check_mark: Active.\n**Maximum Warns**: ${maxWarns} warns.\n**Sanction**: ${sanction == 'ban' ? 'Ban' : `Mute for ${sanction} hours`}`;
+                        const [maxWarns, sanction] = data[0].warn.split(' ');
+                        status = `:white_check_mark: Active.\n**Maximum Warns**: ${maxWarns} warns.\n**Sanction**: ${sanction == 'ban' ? 'Ban' : `Mute for ${sanction} hours`}`;
                     };
 
                     const embed = new EmbedBuilder()
@@ -39,13 +43,13 @@ module.exports =
                     .setAuthor({ name: 'Configuration Panel', iconURL: client.user.avatarURL() })
                     .setDescription('Press the button with the **emoji corresponding** to **the option** you want to modify.')
                     .addFields([{ name: ':hand_splayed:・Anti spam:', value: `>>> **Status**: :white_check_mark: Active.\n**Ignore Bots**: ${ignoreBots == 'yes' ? 'Yes' : 'No'}.\n**Spam Detection:** More than ${maxMessages} messages in ${interval} seconds.\n**Maximum Warns**: ${maxWarns} warns.\n**Sanction**: ${sanction == 'ban' ? 'Ban' : `Mute for ${sanction} minutes`}.\n**Function**: Prevent the members from **spamming messages**.` }])
-                    .addFields([{ name: ':warning:・Warns:', value: `>>> **Status**: ${statut}.\n**Function**: The member **is sanctionned** if its warns count reached the **maximum amount**.` }])
+                    .addFields([{ name: ':warning:・Warns:', value: `>>> **Status**: ${status}.\n**Function**: The member **is sanctionned** if its warns count reached the **maximum amount**.` }])
                     .setThumbnail(client.user.avatarURL())
                     .setTimestamp()
-                    .setFooter({ text: interaction.guild.name, iconURL: interaction.guild.iconURL() })
+                    .setFooter({ text: guild.name, iconURL: guild.iconURL() })
 
                     interaction.message.edit({ embeds: [embed] });
-                    interaction.deferUpdate(); // To avoid an error.
+                    interaction.deferUpdate();
                 });
             });
         }

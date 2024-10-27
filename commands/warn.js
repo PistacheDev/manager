@@ -1,41 +1,48 @@
 const { PermissionsBitField, SlashCommandBuilder } = require('discord.js');
+const Perms = PermissionsBitField.Flags; // Shortcut.
 const { generateString } = require('../functions/stringGenerator');
 
 module.exports =
 {
     name: 'warn',
     type: 'moderation',
-    permission: PermissionsBitField.Flags.ModerateMembers,
+    permission: Perms.ModerateMembers,
     async run(client, db, interaction)
     {
         try
         {
+            // Command options.
             const target = interaction.guild.members.cache.get(interaction.options.getUser('user').id); // Fetch the user in the server list.
             const reason = interaction.options.getString('reason');
             const warnID = `WARN-${generateString()}`; // Generate an ID.
 
+            // Some shortcuts.
+            const guild = interaction.guild;
+            const mod = interaction.member;
+            const targetID = target.id;
+            const ownerID = guild.ownerId;
+
             // Some verifications.
             if (target.user.bot) return interaction.reply(':warning: You can\'t warn **a bot**!');
-            if (target.id == interaction.user.id) return interaction.reply(':warning: You can\'t warn **yourself**!');
-            if (interaction.guild.ownerId == target.id) return interaction.reply(':warning: You can\'t warn the **server owner**!');
-            if (interaction.member.roles.highest.comparePositionTo(target.roles.highest) <= 0) return interaction.reply(':warning: You can\'t warn **this member**!');
-            if (interaction.user.id != interaction.guild.ownerId && target.permissions.has(PermissionsBitField.Flags.Administrator)) return interaction.reply(`:warning: **Only the owner** can warn an administrator!`);
-            if (target.id == client.user.id) return interaction.reply(':warning: You can\'t warn **the application** with this command!');
+            if (targetID == mod.id) return interaction.reply(':warning: You can\'t warn **yourself**!');
+            if (ownerID == targetID) return interaction.reply(':warning: You can\'t warn the **server owner**!');
+            if (mod.roles.highest.comparePositionTo(target.roles.highest) <= 0) return interaction.reply(':warning: You can\'t warn **this member**!');
+            if (mod.id != ownerID && target.permissions.has(Perms.Administrator)) return interaction.reply(`:warning: **Only the owner** can warn an administrator!`);
+            if (targetID == client.user.id) return interaction.reply(':warning: You can\'t warn **the application** with this command!');
 
-            // Add the warn to the database.
-            db.query('INSERT INTO warns (`guild`, `warnID`, `target`, `moderator`, `reason`, `date`) VALUES (?, ?, ?, ?, ?, ?)', [interaction.guild.id, warnID, target.id, interaction.user.id, reason.replace(/'/g, "\\'"), Date.now()], async () =>
+            db.query('INSERT INTO warns (`guild`, `warnID`, `target`, `moderator`, `reason`, `date`) VALUES (?, ?, ?, ?, ?, ?)', [guild.id, warnID, targetID, mod.id, reason.replace(/'/g, "\\'"), Date.now()], async () =>
             {
-                db.query('SELECT * FROM warns WHERE target = ? AND guild = ?', [target.id, interaction.guild.id], async (err, data) =>
+                db.query('SELECT * FROM warns WHERE target = ? AND guild = ?', [targetID, guild.id], async (err, data) =>
                 {
-                    db.query('SELECT * FROM config WHERE guild = ?', [interaction.guild.id], async (err, conf) =>
+                    db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, config) =>
                     {
-                        if (conf[0].warn == 'false')
+                        if (config[0].warn == 0)
                         {
-                            interaction.reply(`:warning: <@${target.id}> @${target.user.username}, you have been warned by <@${interaction.user.id}> @${interaction.user.username}!\n:man_judge: **Reason**: \`${reason}\`.\n:paperclip: **Warn ID**: \`${warnID}\`.`);
+                            interaction.reply(`:warning: <@${targetID}>, you've been warned by <@${mod.id}>!\n:man_judge: **Reason**: \`${reason}\`.\n:paperclip: **Warn ID**: \`${warnID}\`.`);
                         }
                         else
                         {
-                            const [_, maxWarns, sanction] = conf[0].warn.split(' ');
+                            const [maxWarns, sanction] = config[0].warn.split(' ');
 
                             if (data.length > maxWarns)
                             {
@@ -43,22 +50,22 @@ module.exports =
                                 {
                                     target.ban({ reason: `[Warns] Banned after ${data.length} warns.` }).then(() =>
                                     {
-                                        interaction.reply(`:man_judge: @${interaction.member.username} (${interaction.user.id}) has been **banned for too many warns**!`);
+                                        interaction.reply(`:man_judge: @${target.user.username} (${targetID}) has been **banned for too many warns**!`);
                                     });
                                 }
                                 else
                                 {
                                     target.timeout(sanction * 3600000).then(() =>
                                     {
-                                        message.reply(`:man_judge: <@${target.id}>, you've been **muted for ${sanction} hours** for too many warns!`);
-                                        db.query('DELETE FROM warns WHERE target = ? AND guild = ?', [target.id, interaction.guild.id]);
+                                        message.reply(`:man_judge: <@${targetID}>, you've been **muted for ${sanction} hours** for too many warns!`);
+                                        db.query('DELETE FROM warns WHERE target = ? AND guild = ?', [targetID, guild.id]);
                                     });
                                 };
                             }
                             else
                             {
-                                interaction.reply(`:warning: <@${target.id}> @${target.user.username}, you have been warned by <@${interaction.user.id}> @${interaction.user.username}!\n:man_judge: **Reason**: \`${reason}\`.\n:paperclip: **Warn ID**: \`${warnID}\`.`);
-                                if (data.length == maxWarns) interaction.channel.send(`:man_judge: Next time, you **will be ${sanction == 'ban' ? 'ban' : `muted for ${sanction} hours`}** for too many warns!`);
+                                interaction.reply(`:warning: <@${targetID}>, you have been warned by <@${mod.id}>!\n:man_judge: **Reason**: \`${reason}\`.\n:paperclip: **Warn ID**: \`${warnID}\`.`);
+                                if (data.length == maxWarns) interaction.channel.send(`:man_judge: Next time, you **will be ${sanction == 'ban' ? 'ban' : `mute for ${sanction} hours`}** for too many warns!`);
                             };
                         };
                     });

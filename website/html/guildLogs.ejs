@@ -27,6 +27,7 @@
             <p class="title"><%= guildName %></p> <br>
             <a href="/dashboard/guilds/<%= guildID %>/security">🛡️・Security</a> <br>
             <a href="/dashboard/guilds/<%= guildID %>/sanctions">🔨・Sanctions</a> <br>
+            <a href="/dashboard/guilds/<%= guildID %>/xp">📊・XP</a> <br>
             <a href="/dashboard/guilds/<%= guildID %>/connections">🖇️・Connections</a> <br>
             <a href="/dashboard/guilds/<%= guildID %>/members">🛬・Members</a> <br>
             <a class="display" href="/dashboard/guilds/<%= guildID %>/logs">📁・Logs</a> <br>
@@ -36,7 +37,7 @@
         <div class="config">
             <p class="title">Logs</p>
             <div>
-                <% if (messagesLogs != null) { %>
+                <% if (messagesLogs != 0) { %>
                     <p class="status">Message logs: Active (channel: <%= messagesLogs %>).</p>
                 <% } else { %>
                     <p class="status">Message logs: Inactive.</p>
@@ -45,13 +46,13 @@
                     <input class="input" type="text" name="value" value="messagesLogs" hidden/>
                     <input class="input" type="text" name="data" placeholder="Enter the channel ID here."/>
                     <input class="submit" type="submit" value="Submit"/>
-                    <% if (messagesLogs != null) { %>
-                        <a href="/dashboard/guilds/<%= guildID %>/logs?value=messagesLogs&data=null">Disable</a>
+                    <% if (messagesLogs != 0) { %>
+                        <a href="/dashboard/guilds/<%= guildID %>/logs?value=messagesLogs&data=0">Disable</a>
                     <% }; %>
                 </form>
             </div>
             <div>
-                <% if (channelsLogs != null) { %>
+                <% if (channelsLogs != 0) { %>
                     <p class="status">Channel logs: Active (channel: <%= channelsLogs %>).</p>
                 <% } else { %>
                     <p class="status">Channel logs: Inactive.</p>
@@ -60,13 +61,13 @@
                     <input class="input" type="text" name="value" value="channelsLogs" hidden/>
                     <input class="input" type="text" name="data" placeholder="Enter the channel ID here."/>
                     <input class="submit" type="submit" value="Submit"/>
-                    <% if (channelsLogs != null) { %>
-                        <a href="/dashboard/guilds/<%= guildID %>/logs?value=channelsLogs&data=null">Disable</a>
+                    <% if (channelsLogs != 0) { %>
+                        <a href="/dashboard/guilds/<%= guildID %>/logs?value=channelsLogs&data=0">Disable</a>
                     <% }; %>
                 </form>
             </div>
             <div>
-                <% if (bansLogs != null) { %>
+                <% if (bansLogs != 0) { %>
                     <p class="status">Ban logs: Active (channel: <%= bansLogs %>).</p>
                 <% } else { %>
                     <p class="status">Ban logs: Inactive.</p>
@@ -75,8 +76,8 @@
                     <input class="input" type="text" name="value" value="bansLogs" hidden/>
                     <input class="input" type="text" name="data" placeholder="Enter the channel ID here."/>
                     <input class="submit" type="submit" value="Submit"/>
-                    <% if (bansLogs != null) { %>
-                        <a href="/dashboard/guilds/<%= guildID %>/logs?value=bansLogs&data=null">Disable</a>
+                    <% if (bansLogs != 0) { %>
+                        <a href="/dashboard/guilds/<%= guildID %>/logs?value=bansLogs&data=0">Disable</a>
                     <% }; %>
                 </form>
             </div>

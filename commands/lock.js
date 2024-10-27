@@ -9,24 +9,27 @@ module.exports =
     {
         try
         {
+            // Command options.
             var channel = interaction.options.getChannel('channel');
             if (!channel) channel = interaction.channel; // Select the current channel if nothing is specified.
             const reason = interaction.options.getString('reason');
 
+            // Some shortcuts.
+            const guild = interaction.guild;
+            const mod = interaction.member;
+
             // Some verifications.
-            if (channel.permissionOverwrites.cache.get(interaction.guild.roles.everyone.id)?.deny.toArray(false).includes('SendMessages')) return interaction.reply(':warning: This channel is **already locked**!');
+            if (channel.permissionOverwrites.cache.get(guild.roles.everyone.id)?.deny.toArray(false).includes('SendMessages')) return interaction.reply(':warning: This channel is **already locked**!');
             if (!channel.manageable) return interaction.reply(':warning: **Impossible** to lock this channel!');
 
-	        channel.permissionOverwrites.edit(interaction.guild.roles.everyone.id,
+	        channel.permissionOverwrites.edit(guild.roles.everyone.id,
             {
                 SendMessages: false // Remove the SendMessages permission for @everyone.
     	    }).then(() =>
             {
-                if (!channel.name.startsWith('[🔒]')) channel.setName(`[🔒]-${channel.name}`); // Add a lock emoji to the channel name.
-
-	            const embed = new EmbedBuilder()
+                const embed = new EmbedBuilder()
     	        .setColor('Red')
-    	        .setDescription(`:lock: **This channel** is now **locked**.\n:man_judge: **Moderator**: <@${interaction.user.id}> @${interaction.user.username}.\n:grey_question: **Reason**: ${reason}.`)
+    	        .setDescription(`:lock: **This channel** is now **locked**.\n:man_judge: **Moderator**: <@${mod.id}>.\n:grey_question: **Reason**: ${reason}.`)
 
                 if (channel.id != interaction.channel.id)
                 {

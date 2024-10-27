@@ -27,6 +27,7 @@
             <p class="title"><%= guildName %></p> <br>
             <a href="/dashboard/guilds/<%= guildID %>/security">🛡️・Security</a> <br>
             <a href="/dashboard/guilds/<%= guildID %>/sanctions">🔨・Sanctions</a> <br>
+            <a href="/dashboard/guilds/<%= guildID %>/xp">📊・XP</a> <br>
             <a href="/dashboard/guilds/<%= guildID %>/connections">🖇️・Connections</a> <br>
             <a class="display" href="/dashboard/guilds/<%= guildID %>/members">🛬・Members</a> <br>
             <a href="/dashboard/guilds/<%= guildID %>/logs">📁・Logs</a> <br>
@@ -36,7 +37,7 @@
         <div class="config">
             <p class="title">Members</p>
             <div>
-                <% if (memberAdd != null) { %>
+                <% if (memberAdd != 0) { %>
                     <p class="status">Welcome messages: Active (channel: <%= memberAdd %>).</p>
                 <% } else { %>
                     <p class="status">Welcome messages: Inactive.</p>
@@ -45,13 +46,13 @@
                     <input class="input" type="text" name="value" value="memberAdd" hidden/>
                     <input class="input" type="text" name="data" placeholder="Enter the channel ID here."/>
                     <input class="submit" type="submit" value="Submit"/>
-                    <% if (memberAdd != null) { %>
-                        <a href="/dashboard/guilds/<%= guildID %>/members?value=memberAdd&data=null">Disable</a>
+                    <% if (memberAdd != 0) { %>
+                        <a href="/dashboard/guilds/<%= guildID %>/members?value=memberAdd&data=0">Disable</a>
                     <% }; %>
                 </form>
             </div>
             <div>
-                <% if (joinRole != null) { %>
+                <% if (joinRole != 0) { %>
                     <p class="status">Join role: Active (role: <%= joinRole %>).</p>
                 <% } else { %>
                     <p class="status">Join role: Inactive.</p>
@@ -60,13 +61,13 @@
                     <input class="input" type="text" name="value" value="joinRole" hidden/>
                     <input class="input" type="text" name="data" placeholder="Enter the role ID here." />
                     <input class="submit" type="submit" value="Submit"/>
-                    <% if (joinRole != null) { %>
-                        <a href="/dashboard/guilds/<%= guildID %>/members?value=joinRole&data=null">Disable</a>
+                    <% if (joinRole != 0) { %>
+                        <a href="/dashboard/guilds/<%= guildID %>/members?value=joinRole&data=0">Disable</a>
                     <% }; %>
                 </form>
             </div>
             <div>
-                <% if (memberRemove != null) { %>
+                <% if (memberRemove != 0) { %>
                     <p class="status">Leave messages: Active (channel: <%= memberRemove %>).</p>
                 <% } else { %>
                     <p class="status">Leave messages: Inactive.</p>
@@ -75,8 +76,8 @@
                     <input class="input" type="text" name="value" value="memberRemove" hidden/>
                     <input class="input" type="text" name="data" placeholder="Enter the channel ID here."/>
                     <input class="submit" type="submit" value="Submit"/>
-                    <% if (memberRemove != null) { %>
-                        <a href="/dashboard/guilds/<%= guildID %>/members?value=memberRemove&data=null">Disable</a>
+                    <% if (memberRemove != 0) { %>
+                        <a href="/dashboard/guilds/<%= guildID %>/members?value=memberRemove&data=0">Disable</a>
                     <% }; %>
                 </form>
             </div>

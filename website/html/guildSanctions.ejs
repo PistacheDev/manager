@@ -27,6 +27,7 @@
             <p class="title"><%= guildName %></p> <br>
             <a href="/dashboard/guilds/<%= guildID %>/security">🛡️・Security</a> <br>
             <a class="display" href="/dashboard/guilds/<%= guildID %>/sanctions">🔨・Sanctions</a> <br>
+            <a href="/dashboard/guilds/<%= guildID %>/xp">📊・XP</a> <br>
             <a href="/dashboard/guilds/<%= guildID %>/connections">🖇️・Connections</a> <br>
             <a href="/dashboard/guilds/<%= guildID %>/members">🛬・Members</a> <br>
             <a href="/dashboard/guilds/<%= guildID %>/logs">📁・Logs</a> <br>
@@ -36,12 +37,12 @@
         <div class="config">
             <p class="title">Sanctions</p>
             <div>
-                <% if (antispam == 'false') { %>
+                <% if (antispam == 0) { %>
                     <p class="status">Anti spam: Inactive.</p>
                 <% } else { %>
-                    <% const [_, ignoreBots, maxMessages, interval, maxWarns, sanction] = antispam.split(' ') %>
+                    <% const [ignoreBots, maxMessages, interval, maxWarns, sanction] = antispam.split(' ') %>
                     <p class="status">Anti spam: Active.</p>
-                    <% if (ignoreBots == 'true') { %>
+                    <% if (ignoreBots == 1) { %>
                         <p class="data">・Ignore Bots: Yes.</p>
                     <% } else { %>
                         <p class="data">・Ignore Bots: No.</p>
@@ -62,7 +63,7 @@
                     <input class="input" type="text" name="warns" placeholder="Maximum number of warns before the sanction."/> <br>
                     <input class="input" type="text" name="sanction" placeholder='Enter "ban" to ban or a number (in hours) to mute.'/> <br>
                     <input class="submit" type="submit" value="Submit"/>
-                    <% if (warn != 'false') { %>
+                    <% if (warn != 0) { %>
                         <style>
                             form {
                                 margin-top: 5px;
@@ -73,10 +74,10 @@
                 </form>
             </div>
             <div>
-                <% if (warn == 'false') { %>
+                <% if (warn == 0) { %>
                     <p class="status">Warn: Inactive.</p>
                 <% } else { %>
-                    <% const [_, maxWarns, sanction] = warn.split(' ') %>
+                    <% const [maxWarns, sanction] = warn.split(' ') %>
                     <p class="status">Warn: Active.</p>
                     <p class="data">・Maximum Warns: <%= maxWarns %> warns.</p>
                     <% if (sanction != 'ban') { %>
@@ -90,7 +91,7 @@
                     <input class="input" type="text" name="warns" placeholder="Maximum number of warns before the sanction."/> <br>
                     <input class="input" type="text" name="sanction" placeholder='Enter "ban" to ban or a number (in hours) to mute.'/> <br>
                     <input class="submit" type="submit" value="Submit"/>
-                    <% if (warn != 'false') { %>
+                    <% if (warn != 0) { %>
                         <style>
                             form {
                                 margin-top: 5px;

@@ -9,28 +9,30 @@ module.exports =
     {
         try
         {
-            interaction.guild.bans.fetch().then(async bans =>
+            const guild = interaction.guild;
+            const mod = interaction.member;
+
+            guild.bans.fetch().then(async bans =>
             {
-                const targetID = interaction.options.getString('id');
-                const bannedUser = bans.find(banned => banned.user.id == targetID); // Fetch the user in the server's ban list.
+                const targetID = interaction.options.getString('id'); // Command option.
+                const bannedUser = bans.find(banned => banned.user.id == targetID);
 
                 // Some verifications.
                 if (!client.users.cache.get(targetID)) return interaction.reply(':warning: This user **doesn\'t exist**!');
                 if (!bannedUser) return interaction.reply(':warning: This user **isn\'t banned** from this server!');
 
-                await interaction.guild.members.unban(bannedUser.user).then(() =>
+                await guild.members.unban(bannedUser.user).then(() =>
                 {
-                    interaction.reply(`:white_check_mark: <@${targetID}> has been **unbanned successfully**!`);
+                    interaction.reply(`:white_check_mark: @${client.users.cache.get(targetID).username} (\`${targetID}\`) has been **unbanned successfully**!`);
 
                     const embed = new EmbedBuilder()
                     .setColor('Green')
-                    .setThumbnail(interaction.guild.iconURL())
-                    .setDescription(`:scales: You've been unbanned from **${interaction.guild.name}**!`)
-                    .addFields([{ name: ':man_judge:・Moderator :', value: `>>> **User**: <@${interaction.user.id}> @${interaction.user.username}.\n**ID**: ${interaction.user.id}.\n**Unban Date**: <t:${Math.floor(Date.now() / 1000)}:F>.` }])
+                    .setThumbnail(guild.iconURL())
+                    .setDescription(`:scales: You've been unbanned from **${guild.name}**!`)
+                    .addFields([{ name: ':man_judge:・Moderator :', value: `>>> **User**: <@${mod.id}> @${mod.user.username}.\n**ID**: ${mod.id}.\n**Unban Date**: <t:${Math.floor(Date.now() / 1000)}:F>.` }])
                     .setTimestamp()
-                    .setFooter({ text: interaction.guild.name, iconURL: interaction.guild.iconURL() })
+                    .setFooter({ text: guild.name, iconURL: guild.iconURL() })
 
-                    // Send a DM to alert the user for the unban.
                     client.users.cache.get(targetID).createDM({ force: true }).send({ embeds: [embed] });
                 });
             });

@@ -8,7 +8,7 @@ module.exports =
     {
         try
         {
-            db.query('INSERT INTO config (`guild`) VALUES (?)', [guild.id]); // Insert the server in the database.
+            db.query('INSERT INTO config (`guild`) VALUES (?)', [guild.id]);
 
             // Check if the server has a main channel configured.
             if (guild.systemChannel)
