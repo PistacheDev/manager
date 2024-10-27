@@ -37,8 +37,8 @@ module.exports =
                     .setColor('Orange')
                     .setAuthor({ name: 'Configuration Panel', iconURL: client.user.avatarURL() })
                     .setThumbnail(client.user.avatarURL())
-                    .setDescription('Configure the application with **its configuration panel**. Through the different tabs, you will find all the **configurable options** of Manager.\n\n>>> __**Now, you can also configure the application with the online dashboard**__ available on the official website of the application (*link provided below*).')
-                    .addFields([{ name: ':video_camera:・YouTube Notifications:', value: `>>> **Status**: :white_check_mark: Active.\n**Configured Channel**: <#${channelID}>.\n**Notification Role**: <@&${roleID}>.\n**YouTube Channel**: ${youtubeID}.\n**Function**: **Sends a message** in the **configured channel** when the **configured YouTube channel** releases a **new video**.` }])
+                    .setDescription('Press the button with the **emoji corresponding** to **the option** you want to modify.')
+                    .addFields([{ name: ':video_camera:・YouTube Notifications:', value: `>>> **Status**: :white_check_mark: Active.\n**Configured Channel**: <#${channelID}>.\n**Notification Role**: ${roleID == '@everyone' ? '@everyone' : `<@&${roleID}>`}.\n**YouTube Channel**: ${youtubeID}.\n**Function**: **Sends a message** in the **configured channel** when the **configured YouTube channel** releases a **new video**.` }])
                     .setTimestamp()
                     .setFooter({ text: guild.name, iconURL: guild.iconURL() })
 

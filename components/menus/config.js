@@ -28,7 +28,7 @@ module.exports =
             )
 
             let embed = new EmbedBuilder()
-            .setColor('Gold')
+            .setColor('Orange')
             .setAuthor({ name: 'Configuration Panel', iconURL: client.user.avatarURL() })
             .setDescription('Press the button with the **emoji corresponding** to **the option** you want to modify.')
             .setThumbnail(client.user.avatarURL())
@@ -104,8 +104,17 @@ module.exports =
 
             async function securityMenu(data)
             {
-                embed.addFields([{ name: ':closed_lock_with_key:・Raidmode:', value: `>>> **Status**: ${data.raidmode == 1 ? ':white_check_mark: Active' : ':x: Inactive'}.\n**Function**: Blocks the arrival of **new members**.` }]);
-                embed.addFields([{ name: ':robot:・Anti bots:', value: `>>> **Status**: ${data.antibots == 1 ? ':white_check_mark: Active' : ':x: Inactive'}.\n**Function**: Blocks the **addition of applications**.` }]);
+                let status = ':x: Inactive';
+
+                if (data.autoraidmode != 0)
+                {
+                    const [maxMembers, interval] = data.autoraidmode.split(' ');
+                    status = `:white_check_mark: Active.\n**Detection**: More than ${maxMembers} new members in ${interval} seconds`;
+                };
+
+                embed.addFields([{ name: ':closed_lock_with_key:・Raidmode:', value: `>>> **Status**: ${data.raidmode == 1 ? ':white_check_mark: Active' : ':x: Inactive'}.\n**Function**: Blocks the arrival of **new members**.` }])
+                embed.addFields([{ name: ':crossed_swords:・Auto raidmode:', value: `>>> **Status**: ${status}.\n**Function**: Enable the **raidmode** when **too many users** join the server in a **short period** of time.` }])
+                embed.addFields([{ name: ':robot:・Anti bots:', value: `>>> **Status**: ${data.antibots == 1 ? ':white_check_mark: Active' : ':x: Inactive'}.\n**Function**: Blocks the **addition of applications**.` }])
                 embed.addFields([{ name: ':globe_with_meridians:・Anti links:', value: `>>> **Status**: ${data.antilinks == 0 ? ':x: Inactive' : data.antilinks == 1 ? ':white_check_mark: Active' : ':lock: Enforced (bots too)'}.\n**Function**: Delete messages **containing links**.` }])
 
                 var buttons = new ActionRowBuilder()
@@ -113,6 +122,11 @@ module.exports =
                     new ButtonBuilder()
                     .setCustomId('raidmodeButton')
                     .setEmoji('🔐')
+                    .setStyle(ButtonStyle.Primary)
+                ).addComponents(
+                    new ButtonBuilder()
+                    .setCustomId('autoraidmodeButton')
+                    .setEmoji('⚔️')
                     .setStyle(ButtonStyle.Primary)
                 ).addComponents(
                     new ButtonBuilder()
@@ -229,9 +243,9 @@ module.exports =
 
             async function membersMenu(data)
             {
-                embed.addFields([{ name: ':airplane_arriving:・Arrival Messages:', value: `>>> **Status**: ${data.memberAdd == 0 ? ':x: Inactive' : `:white_check_mark: Active.\n**Configured Channel**: <#${data[0].memberAdd}>`}.\n**Function**: **Sends a message** in the **configured channel** when a user **joins the server**.` }])
-                embed.addFields([{ name: ':envelope_with_arrow:・Arrival Role:', value: `>>> **Status**: ${data.joinRole == 0 ? ':x: Inactive' : `:white_check_mark: Active.\n**Configured Role**: <@&${data[0].joinRole}>`}.\n**Function**: **Assigns a role** to a user when they **join the server**.` }])
-                embed.addFields([{ name: ':airplane_departure:・Departure Messages:', value: `>>> **Status**: ${data.memberRemove == 0 ? ':x: Inactive' : `:white_check_mark: Active.\n**Configured Channel**: <#${data[0].memberRemove}>`}.\n**Function**: **Sends a message** in the **configured channel** when a user **leaves the server**.` }])
+                embed.addFields([{ name: ':airplane_arriving:・Arrival Messages:', value: `>>> **Status**: ${data.memberAdd == 0 ? ':x: Inactive' : `:white_check_mark: Active.\n**Configured Channel**: <#${data.memberAdd}>`}.\n**Function**: **Sends a message** in the **configured channel** when a user **joins the server**.` }])
+                embed.addFields([{ name: ':envelope_with_arrow:・Arrival Role:', value: `>>> **Status**: ${data.joinRole == 0 ? ':x: Inactive' : `:white_check_mark: Active.\n**Configured Role**: <@&${data.joinRole}>`}.\n**Function**: **Assigns a role** to a user when they **join the server**.` }])
+                embed.addFields([{ name: ':airplane_departure:・Departure Messages:', value: `>>> **Status**: ${data.memberRemove == 0 ? ':x: Inactive' : `:white_check_mark: Active.\n**Configured Channel**: <#${data.memberRemove}>`}.\n**Function**: **Sends a message** in the **configured channel** when a user **leaves the server**.` }])
 
                 var buttons = new ActionRowBuilder()
                 .addComponents(
@@ -256,9 +270,9 @@ module.exports =
 
             async function logsMenu(data)
             {
-                embed.addFields([{ name: ':speech_balloon:・Messages Logs:', value: `>>> **Status**: ${data.messagesLogs == 0 ? ':x: Inactive' : `:white_check_mark: Active.\n**Configured Channel**: <#${data[0].messagesLogs}>`}.\n**Function**: **Sends a log** in the **configured channel** when a message is **deleted** or **edited**.` }])
-                embed.addFields([{ name: ':keyboard:・Channels Logs:', value: `>>> **Status**: ${data.channelsLogs == 0 ? ':x: Inactive' : `:white_check_mark: Active.\n**Configured Channel**: <#${data[0].channelsLogs}>`}.\n**Function**: **Sends a log** in the **configured channel** when a channel is **created**, **deleted**, or **edited**.` }])
-                embed.addFields([{ name: ':scales:・Bans Logs:', value: `>>> **Status**: ${data.bansLogs == 0 ? ':x: Inactive' : `:white_check_mark: Active.\n**Configured Channel**: <#${data[0].bansLogs}>`}.\n**Function**: **Sends a log** in the **configured channel** when a ban is **issued** or **revoked**.` }])
+                embed.addFields([{ name: ':speech_balloon:・Messages Logs:', value: `>>> **Status**: ${data.messagesLogs == 0 ? ':x: Inactive' : `:white_check_mark: Active.\n**Configured Channel**: <#${data.messagesLogs}>`}.\n**Function**: **Sends a log** in the **configured channel** when a message is **deleted** or **edited**.` }])
+                embed.addFields([{ name: ':keyboard:・Channels Logs:', value: `>>> **Status**: ${data.channelsLogs == 0 ? ':x: Inactive' : `:white_check_mark: Active.\n**Configured Channel**: <#${data.channelsLogs}>`}.\n**Function**: **Sends a log** in the **configured channel** when a channel is **created**, **deleted**, or **edited**.` }])
+                embed.addFields([{ name: ':scales:・Bans Logs:', value: `>>> **Status**: ${data.bansLogs == 0 ? ':x: Inactive' : `:white_check_mark: Active.\n**Configured Channel**: <#${data.bansLogs}>`}.\n**Function**: **Sends a log** in the **configured channel** when a ban is **issued** or **revoked**.` }])
 
                 var buttons = new ActionRowBuilder()
                 .addComponents(

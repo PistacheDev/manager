@@ -25,7 +25,7 @@ module.exports =
                     .setColor('Orange')
                     .setAuthor({ name: 'Configuration Panel', iconURL: client.user.avatarURL() })
                     .setThumbnail(client.user.avatarURL())
-                    .setDescription('Configure the application with **its configuration panel**. Through the different tabs, you will find all the **configurable options** of Manager.\n\n>>> __**Now, you can also configure the application with the online dashboard**__ available on the official website of the application (*link provided below*).')
+                    .setDescription('Press the button with the **emoji corresponding** to **the option** you want to modify.')
                     .addFields([{ name: ':speech_balloon:・Messages Logs:', value: `>>> **Status**: ${!newChannel ? ':x: Inactive' : `:white_check_mark: Active.\n**Configured Channel**: <#${newChannel}>`}.\n**Function**: **Sends a log** in the **configured channel** when a message is **deleted** or **edited**.` }])
                     .addFields([{ name: ':keyboard:・Channels Logs:', value: `>>> **Status**: ${data[0].channelsLogs == 0 ? ':x: Inactive' : `:white_check_mark: Active.\n**Configured Channel**: <#${data[0].channelsLogs}>`}.\n**Function**: **Sends a log** in the **configured channel** when a channel is **created**, **deleted**, or **edited**.` }])
                     .addFields([{ name: ':scales:・Bans Logs:', value: `>>> **Status**: ${data[0].bansLogs == 0 ? ':x: Inactive' : `:white_check_mark: Active.\n**Configured Channel**: <#${data[0].bansLogs}>`}.\n**Function**: **Sends a log** in the **configured channel** when a ban is **issued** or **revoked**.` }])

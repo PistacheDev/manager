@@ -25,7 +25,7 @@ module.exports =
                     .setColor('Orange')
                     .setAuthor({ name: 'Configuration Panel', iconURL: client.user.avatarURL() })
                     .setThumbnail(client.user.avatarURL())
-                    .setDescription('Configure the application with **its configuration panel**. Through the different tabs, you will find all the **configurable options** of Manager.\n\n>>> __**Now, you can also configure the application with the online dashboard**__ available on the official website of the application (*link provided below*).')
+                    .setDescription('Press the button with the **emoji corresponding** to **the option** you want to modify.')
                     .addFields([{ name: ':airplane_arriving:・Arrival Messages:', value: `>>> **Status**: ${data[0].memberAdd == 0 ? ':x: Inactive' : `:white_check_mark: Active.\n**Configured Channel**: <#${data[0].memberAdd}>`}.\n**Function**: **Sends a message** in the **configured channel** when a user **joins the server**.` }])
                     .addFields([{ name: ':envelope_with_arrow:・Arrival Role:', value: `>>> **Status**: ${data[0].joinRole == 0 ? ':x: Inactive' : `:white_check_mark: Active.\n**Configured Role**: <@&${data[0].joinRole}>`}.\n**Function**: **Assigns a role** to a user when they **join the server**.` }])
                     .addFields([{ name: ':airplane_departure:・Departure Messages:', value: `>>> **Status**: ${!newChannel ? ':x: Inactive' : `:white_check_mark: Active.\n**Configured Channel**: <#${newChannel}>`}.\n**Function**: **Sends a message** in the **configured channel** when a user **leaves the server**.` }])
