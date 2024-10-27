@@ -17,8 +17,8 @@ module.exports =
                 if (data.length < 1) return interaction.reply(':warning: Your server isn\'t registered in the database!\n:grey_question: To fix this issue, run the \`/repair\` command.');
 
                 // Modal options.
-                const roleID = interaction.fields.getTextInputValue('youtubeModalOptionFirst');
-                const channelURL = interaction.fields.getTextInputValue('youtubeModalOptionSecond');
+                const roleID = interaction.fields.getTextInputValue('youtubeModalOption');
+                const channelURL = interaction.fields.getTextInputValue('youtubeModalOption2');
 
                 const channelID = data[0].youtubeNotifs.split(' ')[0];
                 if (roleID != '@everyone' && !interaction.guild.roles.cache.get(roleID)) return interaction.reply(':warning: This role doesn\'t exist!');
