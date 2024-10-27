@@ -3,7 +3,7 @@ const { request } = require('../functions/discordRequest');
 const axios = require('axios');
 const { client, db } = require('../main');
 const { PermissionsBitField } = require('discord.js');
-const Perms = PermissionsBitField.Flags; // Shortcut.
+const Perms = PermissionsBitField.Flags;
 const cheerio = require('cheerio');
 
 module.exports =
@@ -58,9 +58,9 @@ module.exports =
                     if (data.length < 1)
                     {
                         // Add this server to the database if not already done.
-                        db.query('INSERT INTO config (`guild`) VALUES (?)', [req.params.id], async () =>
+                        db.query('INSERT INTO config (`guild`) VALUES (?)', [guild.id], async () =>
                         {
-                            return res.status(200).redirect(`/dashboard/guilds/${req.params.id}/connections`); // Reload the page.
+                            return res.status(200).redirect(`/dashboard/guilds/${guild.id}/connections`); // Reload the page.
                         });
                     };
 
@@ -71,7 +71,7 @@ module.exports =
                         guildName: guild.name,
                         guildIcon: guild.iconURL(),
                         guildID: guild.id,
-                        youtubeNotification: data[0].youtubeNotification
+                        youtubeNotifs: data[0].youtubeNotifs
                     };
 
                     await res.status(200).render('../website/html/guildConnections.ejs', values); // Render the page.
@@ -86,7 +86,7 @@ module.exports =
                 switch (req.query.value)
                 {
                     case 'youtubeNotif':
-                        var statut = null;
+                        var status = 0;
 
                         if (!disable)
                         {
@@ -108,10 +108,10 @@ module.exports =
                             const youtubeID = html.match(/"channelUrl":"([^"]+)"/)[1].split('channel/')[1];
                             const latestVideoID = `${html.match(regex) ? html.match(regex)[1] : null}`; // Check if this YouTube channel has already uploaded a video.
 
-                            statut = `${channel} ${role} ${youtubeID} ${latestVideoID}`;
+                            status = `${channel} ${role} ${youtubeID} ${latestVideoID}`;
                         };
 
-                        db.query('UPDATE config SET youtubeNotification = ? WHERE guild = ?', [statut, guild.id]);
+                        db.query('UPDATE config SET youtubeNotifs = ? WHERE guild = ?', [status, guild.id]);
                         break;
 
                     default:
@@ -119,7 +119,7 @@ module.exports =
                         break;
                 };
 
-                res.status(200).redirect(`/dashboard/guilds/${req.params.id}/connections`); // Reload the page.
+                res.status(200).redirect(`/dashboard/guilds/${guild.id}/connections`); // Reload the page.
             };
         }
         catch (err)

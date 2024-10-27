@@ -2,7 +2,7 @@ const jsonwebtoken = require('jsonwebtoken');
 const { request } = require('../functions/discordRequest');
 const { client } = require('../main');
 const { PermissionsBitField } = require('discord.js');
-const Perms = PermissionsBitField.Flags; // Shortcut.
+const Perms = PermissionsBitField.Flags;
 
 module.exports =
 {

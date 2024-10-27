@@ -28,7 +28,6 @@ module.exports =
 					break;
 			};
 
-			// Clone channel script.
 			function cloneChannel()
 			{
 				channel.clone().then(async () =>
@@ -37,12 +36,12 @@ module.exports =
 				});
 			};
 
-			// Recreate channel script.
 			function recreateChannel()
 			{
-				channel.clone().then(newChannel => // Clone the original channel.
+				channel.clone().then(newChannel =>
 				{
 					channel.delete(); // Delete the original channel.
+					newChannel.send(`:repear: Channel **recreated**!`);
 					if (channel.id != interaction.channel.id) interaction.reply(`:white_check_mark: <#${channel.id}> has been **recreated** successfully!`);
 				});
 			};

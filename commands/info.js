@@ -46,6 +46,13 @@ module.exports =
             // Application information script.
             async function appInfos()
             {
+                const embed = new EmbedBuilder()
+                .setColor('Orange')
+                .setThumbnail(client.user.avatarURL())
+                .addFields([{ name: ':robot:・**Identity**:', value: `>>> **Name**: <@${client.user.id}> ${client.user.username}.\n**Tag**: ${client.user.tag}.\n**ID**: ${client.user.id}.\n**Version**: ${config.version}.\n**Server Count**: ${client.guilds.cache.size} servers.` }])
+                .addFields([{ name: ':gear:・**Settings**:', value: `>>> **Application Latency**: ${client.ws.ping}ms.\n**Nodejs**: ${process.version}.\n**Discord.js**: v${package.dependencies['discord.js'].split('^')[1]}.` }])
+                .addFields([{ name: ':desktop:・**Host:**', value: '>>> **Host**: OVHcloud (Canada).\n**OS**: Fedora 40.\n**CPU**: 4 vCores.\n**RAM**: 8 GB.\n**Internet Speed**: 250 MB/sec.' }])
+
                 var buttons = new ActionRowBuilder()
                 .addComponents(
                     new ButtonBuilder()
@@ -69,13 +76,6 @@ module.exports =
                     .setStyle(ButtonStyle.Link)
                 )
 
-                const embed = new EmbedBuilder()
-                .setColor('Orange')
-                .setThumbnail(client.user.avatarURL())
-                .addFields([{ name: ':robot:・**Identity**:', value: `>>> **Name**: <@${client.user.id}> ${client.user.username}.\n**Tag**: ${client.user.tag}.\n**ID**: ${client.user.id}.\n**Version**: ${config.version}.\n**Server Count**: ${client.guilds.cache.size} servers.` }])
-                .addFields([{ name: ':gear:・**Settings**:', value: `>>> **Application Ping**: ${client.ws.ping}ms.\n**Nodejs :** ${process.version}.\n**Discord.js**: v${package.dependencies['discord.js'].split('^')[1]}.` }])
-                .addFields([{ name: ':desktop:・**Host:**', value: '>>> **Host**: OVHcloud (Canada).\n**OS**: Fedora 40.\n**CPU**: 4 vCores.\n**RAM**: 8 GB.\n**Internet Speed**: 250MB/sec.' }])
-
                 await interaction.reply({ embeds: [embed], components: [buttons] });
             };
 
@@ -84,7 +84,12 @@ module.exports =
             {
                 const emojiID = interaction.options.getString('id');
                 const emoji = interaction.guild.emojis.cache.get(emojiID); // Get the emoji in the server list.
-                if (!emoji) return interaction.reply(':warning: This emoji doesn\'t exist!');
+                if (!emoji) return interaction.reply(':warning: This emoji **doesn\'t exist**!');
+
+                const embed = new EmbedBuilder()
+                .setColor('Orange')
+                .setThumbnail(emoji.imageURL())
+                .setDescription(`### Emoji information:\n >>> **Name**: ${emoji.name}.\n**ID**: ${emojiID}.\n**Animated**: ${emoji.animated ? 'Yes' : 'No'}.\n**Mention**: \`<:${emoji.name}:${emojiID}>\`.\n**Creation Date**: <t:${Math.floor(emoji.createdAt / 1000)}:F>.`)
 
                 var button = new ActionRowBuilder()
                 .addComponents(
@@ -93,11 +98,6 @@ module.exports =
                     .setLabel('Download')
                     .setStyle(ButtonStyle.Link)
                 )
-
-                const embed = new EmbedBuilder()
-                .setColor('Orange')
-                .setThumbnail(emoji.imageURL())
-                .setDescription(`### Emoji information:\n >>> **Name**: ${emoji.name}.\n**ID**: ${emojiID}.\n**Animated**: ${emoji.animated ? 'Yes' : 'No'}.\n**Mention**: \`<:${emoji.name}:${emojiID}>\`.\n**Creation Date**: <t:${Math.floor(emoji.createdAt / 1000)}:F>.`)
 
                 await interaction.reply({ embeds: [embed], components: [button] });
             };
@@ -110,7 +110,7 @@ module.exports =
                 const embed = new EmbedBuilder()
                 .setColor('Orange')
                 .setThumbnail(interaction.guild.iconURL())
-                .setDescription(`### Role information:\n >>> **Name**: <@&${role.id}> \`${role.name}\`.\n**ID**: ${role.id}.\n**Administrator** : ${role.permissions.has(PermissionsBitField.Flags.Administrator) ? 'Yes' : 'No'}.\n**Mentionable**: ${role.mentionable ? 'Yes' : 'No'}.\n**Color**: ${role.hexColor}.\n**Position**: ${role.guild.roles.cache.size - role.position}/${role.guild.roles.cache.size}.\n**Creation Date** : <t:${Math.floor(role.createdAt / 1000)}:F>`)
+                .setDescription(`### Role information:\n >>> **Name**: <@&${role.id}> \`${role.name}\`.\n**ID**: ${role.id}.\n**Administrator**: ${role.permissions.has(PermissionsBitField.Flags.Administrator) ? 'Yes' : 'No'}.\n**Mentionable**: ${role.mentionable ? 'Yes' : 'No'}.\n**Color**: ${role.hexColor}.\n**Position**: ${role.guild.roles.cache.size - role.position}/${role.guild.roles.cache.size}.\n**Creation Date**: <t:${Math.floor(role.createdAt / 1000)}:F>`)
 
                 await interaction.reply({ embeds: [embed] });
             };
@@ -124,7 +124,7 @@ module.exports =
                 const embed = new EmbedBuilder()
                 .setColor('Orange')
                 .setThumbnail(interaction.guild.iconURL())
-                .setDescription(`### Channel information:\n >>> **Name**: <#${channel.id}> \`${channel.name}\`.\n**Type**: ${channelTypes[channel.type.toString()]}.\n**Public**: ${channel.permissionOverwrites.cache.get(channel.guild.roles.everyone.id)?.deny.toArray(false).includes('ViewChannel') ? 'No' : 'Yes'}.\n**ID**: ${channel.id}.\n**Category** : ${channel.parent ? channel.parent.name : 'None'}.\n**Position**: ${channel.position + 1}.\n**Creation Date**: <t:${Math.floor(channel.createdAt / 1000)}:F>.`)
+                .setDescription(`### Channel information:\n >>> **Name**: <#${channel.id}> \`${channel.name}\`.\n**Type**: ${channelTypes[channel.type.toString()]}.\n**Public**: ${channel.permissionOverwrites.cache.get(channel.guild.roles.everyone.id)?.deny.toArray(false).includes('ViewChannel') ? 'No' : 'Yes'}.\n**ID**: ${channel.id}.\n**Category**: ${channel.parent ? channel.parent.name : 'None'}.\n**Position**: ${channel.position + 1}.\n**Creation Date**: <t:${Math.floor(channel.createdAt / 1000)}:F>.`)
 
                 await interaction.reply({ embeds: [embed] });
             };
@@ -132,21 +132,23 @@ module.exports =
             // Server information script.
             async function guildInfos()
             {
-                var button = new ActionRowBuilder()
-                .addComponents(
-                    new ButtonBuilder()
-                    .setURL(interaction.guild.iconURL())
-                    .setLabel('Server icon')
-                    .setStyle(ButtonStyle.Link)
-                );
+                const guild = interaction.guild;
 
                 const embed = new EmbedBuilder()
                 .setColor('Orange')
                 .setThumbnail(interaction.guild.iconURL())
-                .setAuthor({ name: 'Server information', iconURL: interaction.guild.iconURL() })
-                .setTitle(interaction.guild.name)
-                .addFields([{ name: ':identification_card:・**Basic information:**', value: `>>> **Name**: ${interaction.guild.name}.\n**ID**: ${interaction.guild.id}.\n**Creation Date**: <t:${Math.floor(interaction.guild.createdAt / 1000)}:F>.\n**Owner**: <@${interaction.guild.ownerId}>.` }])
-                .addFields([{ name: ':bar_chart:・**Stats**:', value: `>>> **Members Count** : ${interaction.guild.memberCount} members.\n**Channels and categories**: ${interaction.guild.channels.cache.size} channels and categories.\n**Roles**: ${interaction.guild.roles.cache.size - 1} roles.\n**Boost**: ${interaction.guild.premiumSubscriptionCount} boost (**level ${interaction.guild.premiumTier}/3**).` }])
+                .setAuthor({ name: 'Server information', iconURL: guild.iconURL() })
+                .setTitle(guild.name)
+                .addFields([{ name: ':identification_card:・**Basic information:**', value: `>>> **Name**: ${guild.name}.\n**ID**: ${guild.id}.\n**Creation Date**: <t:${Math.floor(guild.createdAt / 1000)}:F>.\n**Owner**: <@${guild.ownerId}>.` }])
+                .addFields([{ name: ':bar_chart:・**Stats**:', value: `>>> **Members Count**: ${guild.memberCount} members.\n**Channels and categories**: ${guild.channels.cache.size} channels and categories.\n**Roles**: ${guild.roles.cache.size - 1} roles.\n**Boost**: ${guild.premiumSubscriptionCount} boost (**level ${guild.premiumTier}/3**).` }])
+
+                var button = new ActionRowBuilder()
+                .addComponents(
+                    new ButtonBuilder()
+                    .setURL(guild.iconURL())
+                    .setLabel('Server icon')
+                    .setStyle(ButtonStyle.Link)
+                )
 
                 await interaction.reply({ embeds: [embed], components: [button] });
             };
@@ -169,21 +171,21 @@ module.exports =
                     userRoles = `${userRoles}, <@&${role.id}>`;
                 });
 
+                const embed = new EmbedBuilder()
+                .setColor('Gold')
+                .setTitle('Member information:')
+                .setThumbnail(target.user.avatarURL())
+                .setImage(target.user.bannerURL())
+                .addFields([{ name: ':identification_card:・**User**:', value: `>>> **Username**: ${target.user.username}.\n**Pseudo**: ${target.user.globalName}.\n**ID**: ${target.user.id}.\n**Account Creation**: <t:${Math.floor(target.user.createdAt / 1000)}:F>.\n**Bot**: ${target.user.bot ? 'Yes' : 'No'}.` }])
+                .addFields([{ name: ':globe_with_meridians:・**Server profile**:', value: `>>> **Pseudo**: ${target.displayName}.\n**Join Date**: <t:${Math.floor(target.joinedAt / 1000) }:F>.\n**Roles**: ${userRoles == '' ? 'None' : userRoles}.` }])
+
                 var button = new ActionRowBuilder()
                 .addComponents(
                     new ButtonBuilder()
                     .setURL(target.user.avatarURL())
                     .setLabel('Profile picture')
                     .setStyle(ButtonStyle.Link)
-                );
-
-                const embed = new EmbedBuilder()
-                .setColor('Gold')
-                .setTitle('Member information:')
-                .setThumbnail(target.user.avatarURL())
-                .setImage(target.user.bannerURL())
-                .addFields([{ name: ':identification_card:・**User :**', value: `>>> **Username**: ${target.user.username}.\n**Pseudo**: ${target.user.globalName}.\n**ID**: ${target.user.id}.\n**Account Creation**: <t:${Math.floor(target.user.createdAt / 1000)}:F>.\n**Bot**: ${target.user.bot ? 'Yes' : 'No'}.` }])
-                .addFields([{ name: ':globe_with_meridians:・**Server profile**:', value: `>>> **Pseudo**: ${target.displayName}.\n**Join Date**: <t:${Math.floor(target.joinedAt / 1000) }:F>.\n**Roles**: ${userRoles == '' ? 'None' : userRoles}.` }])
+                )
 
                 await interaction.reply({ embeds: [embed], components: [button] });
             };

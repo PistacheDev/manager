@@ -8,16 +8,17 @@ module.exports = {
     {
         try
         {
-            db.query('SELECT * FROM config WHERE guild = ?', [interaction.guild.id], async (err, data) =>
+            const guild = interaction.guild;
+
+            db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, data) =>
             {
                 if (data.length > 0) return interaction.reply(':warning: Your server is **already registered** in the database!');
 
-                // Insert the server in the database.
-                db.query('INSERT INTO config (`guild`) VALUES (?)', [interaction.guild.id], async (err) =>
+                db.query('INSERT INTO config (`guild`) VALUES (?)', [guild.id], async (err) =>
                 {
                     await interaction.reply(':white_check_mark: Your server has been **successfully registered** in the database!');
                 });
-            }); 
+            });
         }
         catch (err)
         {

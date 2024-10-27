@@ -2,7 +2,7 @@ const jsonwebtoken = require('jsonwebtoken');
 const { request } = require('../functions/discordRequest');
 const { client, db } = require('../main');
 const { PermissionsBitField } = require('discord.js');
-const Perms = PermissionsBitField.Flags; // Shortcut.
+const Perms = PermissionsBitField.Flags;
 
 module.exports =
 {
@@ -56,9 +56,9 @@ module.exports =
                     if (data.length < 1)
                     {
                         // Add this server to the database if not already done.
-                        db.query('INSERT INTO config (`guild`) VALUES (?)', [req.params.id], async () =>
+                        db.query('INSERT INTO config (`guild`) VALUES (?)', [guild.id], async () =>
                         {
-                            return res.status(200).redirect(`/dashboard/guilds/${req.params.id}/logs`); // Reload the page.
+                            return res.status(200).redirect(`/dashboard/guilds/${guild.id}/security`); // Reload the page.
                         });
                     };
 
@@ -70,7 +70,8 @@ module.exports =
                         guildIcon: guild.iconURL(),
                         guildID: guild.id,
                         raidmodeStatut: data[0].raidmode,
-                        antibotStatut: data[0].antibot
+                        antibotStatut: data[0].antibots,
+                        antilinksStatut: data[0].antilinks
                     };
 
                     await res.status(200).render('../website/html/guildSecurity.ejs', values); // Render the page.
@@ -81,22 +82,29 @@ module.exports =
             function editData()
             {
                 const data = req.query.data; // Shortcut.
-                if (!data) return res.status(403).send('Some information in your request are missing!')
+                if (!data) return res.status(403).send('Some information in your request are missing!');
 
                 switch (req.query.value)
                 {
                     case 'raidmode':
                         if (guild.ownerId != userIdentity.data.id) return res.status(403).send('Only the server\'s owner can edit this setting!');
-                        if (data != 'true' && data != 'false') return res.status(403).send('The new data provided is invalid!');
+                        if (data != 1 && data != 0) return res.status(403).send('The new data provided is invalid!');
 
                         db.query('UPDATE config SET raidmode = ? WHERE guild = ?', [data, guild.id]);
                         break;
 
-                    case 'antibot':
+                    case 'antibots':
                         if (guild.ownerId != userIdentity.data.id) return res.status(403).send('Only the server\'s owner can edit this setting!');
-                        if (data != 'true' && data != 'false') return res.status(403).send('The new data provided is invalid!');
+                        if (data != 1 && data != 0) return res.status(403).send('The new data provided is invalid!');
 
-                        db.query('UPDATE config SET antibot = ? WHERE guild = ?', [data, guild.id]);
+                        db.query('UPDATE config SET antibots = ? WHERE guild = ?', [data, guild.id]);
+                        break;
+
+                    case 'antilinks':
+                        if (guild.ownerId != userIdentity.data.id) return res.status(403).send('Only the server\'s owner can edit this setting!');
+                        if (data != 0 && data != 1 && data != 2) return res.status(403).send('The new data providedd is invalid!');
+
+                        db.query('UPDATE config SET antilinks = ? WHERE guild = ?', [data, guild.id]);
                         break;
 
                     default:

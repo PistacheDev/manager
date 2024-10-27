@@ -2,7 +2,7 @@ const jsonwebtoken = require('jsonwebtoken');
 const { request } = require('../functions/discordRequest');
 const { client, db } = require('../main');
 const { PermissionsBitField } = require('discord.js');
-const Perms = PermissionsBitField.Flags; // Shortcut.
+const Perms = PermissionsBitField.Flags;
 
 module.exports =
 {
@@ -56,9 +56,9 @@ module.exports =
                     if (data.length < 1)
                     {
                         // Add this server to the database if not already done.
-                        db.query('INSERT INTO config (`guild`) VALUES (?)', [req.params.id], async () =>
+                        db.query('INSERT INTO config (`guild`) VALUES (?)', [guild.id], async () =>
                         {
-                            return res.status(200).redirect(`/dashboard/guilds/${req.params.id}/connections`); // Reload the page.
+                            return res.status(200).redirect(`/dashboard/guilds/${guild.id}/sanctions`); // Reload the page.
                         });
                     };
 
@@ -85,7 +85,7 @@ module.exports =
                 switch (req.query.value)
                 {
                     case 'antispam':
-                        var statut = 'false'; // Disable the option.
+                        var statut = 0; // Disable the option.
 
                         if (!disable)
                         {
@@ -113,7 +113,7 @@ module.exports =
                         break;
 
                     case 'warn':
-                        var statut = 'false'; // Disable the option.
+                        var statut = 0; // Disable the option.
 
                         if (!disable)
                         {

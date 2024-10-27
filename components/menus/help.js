@@ -24,9 +24,6 @@ module.exports =
                     break;
             };
 
-            interaction.deferUpdate(); // To avoid an error.
-
-            // Render the home page.
             function homePage()
             {
                 const embed = new EmbedBuilder()
@@ -38,9 +35,9 @@ module.exports =
                 .setFooter({ text: `Executed by @${interaction.user.username}`, iconURL: interaction.user.avatarURL() })
 
                 interaction.message.edit({ embeds: [embed] });
+                interaction.deferUpdate();
             };
 
-            // Render the commands page.
             async function displayPage(type)
             {
                 const commandsScripts = fs.readdirSync('./commands').filter(scripts => scripts.endsWith('.js'));
@@ -55,9 +52,9 @@ module.exports =
                 for (const script of commandsScripts)
                 {
                     const command = require(`../../commands/${script}`);
-                    if (command.type != type) continue;
+                    if (command.type != type) continue; // Check if the command type correspond.
 
-                    if (!command.data.options.length)
+                    if (!command.data.options[0] || command.data.options[0].type) // Commands doesn't have any ptions with a type.
                     {
                         embed.addFields([{ name: `/${command.name}`, value: `**Description**: ${command.data.description}\n**Required permission**: ${command.ownerOnly ? 'Owner only' : command.permission ? discordPermissions[command.permission] : 'None'}.` }])
                         continue;
@@ -66,12 +63,14 @@ module.exports =
                     {
                         for (var i = 0; i < command.data.options.length; i++)
                         {
+                            // Avoid to take the sub commands options.
                             if (!command.data.options[i].type) embed.addFields([{ name: `/${command.name} ${command.data.options[i].name}`, value: `**Description**: ${command.data.options[i].description}\n**Required permission**: ${command.ownerOnly ? 'Owner only' : command.permission ? discordPermissions[command.permission] : 'None'}.` }])
                         };
                     };
                 };
 
                 await interaction.message.edit({ embeds: [embed] });
+                interaction.deferUpdate();
             };
         }
         catch (err)

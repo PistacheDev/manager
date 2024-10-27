@@ -9,7 +9,12 @@ module.exports =
     {
         try
         {
+            // Command option.
             const target = interaction.guild.members.cache.get(interaction.options.getUser('user').id); // Fetch the user in the server list.
+
+            // Some shortcuts.
+            const guild = interaction.guild;
+            const mod = interaction.member;
 
             // Some verifications.
             if (!target.isCommunicationDisabled()) return interaction.reply(':warning: This member **isn\'t muted**!');
@@ -17,18 +22,17 @@ module.exports =
 
             target.timeout(null).then(() =>
             {
-                interaction.channel.send(`:man_judge: ${interaction.user.username} (${interaction.user.id}) has been unmuted by <@${interaction.user.id}>!`);
-                interaction.deferUpdate(); // To avoid an error.
+                interaction.channel.send(`:man_judge: <@${target.id}> has been unmuted by <@${mod.id}>!`);
+                interaction.deferUpdate();
 
                 const embed = new EmbedBuilder()
                 .setColor('Green')
-                .setThumbnail(interaction.guild.iconURL())
-                .setDescription(`:scales: You've been unmuted in **${interaction.guild.name}**!`)
-                .addFields([{ name: ':man_judge:・Moderator:', value: `>>> **User**: <@${interaction.user.id}> @${interaction.user.username}.\n**ID**: ${interaction.user.id}.\n**Date de votre désexclusion**: <t:${Math.floor(Date.now() / 1000)}:F>.` }])
+                .setThumbnail(guild.iconURL())
+                .setDescription(`:scales: You've been unmuted in **${guild.name}**!`)
+                .addFields([{ name: ':man_judge:・Moderator:', value: `>>> **User**: <@${mod.id}> @${mod.user.username}.\n**ID**: ${mod.id}.\n**Date de votre désexclusion**: <t:${Math.floor(Date.now() / 1000)}:F>.` }])
                 .setTimestamp()
-                .setFooter({ text: interaction.guild.name, iconURL: interaction.guild.iconURL() })
+                .setFooter({ text: guild.name, iconURL: guild.iconURL() })
 
-                // Send a DM to alert the user for the unmute.
                 target.user.createDM({ force: true }).send({ embeds: [embed] });
             });
         }

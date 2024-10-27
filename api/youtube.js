@@ -7,13 +7,15 @@ async function youtubeNotifications()
 {
     db.query('SELECT * FROM config', async (err, data) =>
     {
+        if (err) throw err;
+
         for (var i = 0; i < data.length; i++)
         {
             try
             {
-                if (data[i].youtubeNotification == null) continue; // The option is turned off for this server.
-                const [channelID, roleID, youtubeID, videoID] = data[i].youtubeNotification.split(' ');
-                if (roleID == 'null' || youtubeID == 'null') continue; // The configuration isn't finished for this server.
+                if (data[i].youtubeNotifs == 0) continue; // The option is turned off for this server.
+                const [channelID, roleID, youtubeID, videoID] = data[i].youtubeNotifs.split(' ');
+                if (roleID == 0 || youtubeID == 0) continue; // The configuration isn't finished for this server.
 
                 await new Promise(resolve => setTimeout(resolve, 250)); // Wait to avoid to create too many requests.
                 const videos = await axios.get(`https://www.youtube.com/channel/${youtubeID}/videos`);
@@ -21,12 +23,12 @@ async function youtubeNotifications()
 
                 // Check if the channel has already uploaded a video.
                 const regex = /"webCommandMetadata":{"url":"\/watch\?v=([^"]+)"/;
-                const latestVideoID = `${html.match(regex) ? html.match(regex)[1] : null}`;
+                const latestVideoID = `${html.match(regex) ? html.match(regex)[1] : 0}`;
 
                 if (latestVideoID != videoID)
                 {
-                    db.query('UPDATE config SET youtubeNotification = ? WHERE guild = ?', [`${channelID} ${roleID} ${youtubeID} ${latestVideoID}`, data[0].guild]);
-                    if (latestVideoID == 'null') continue;
+                    db.query('UPDATE config SET youtubeNotifs = ? WHERE guild = ?', [`${channelID} ${roleID} ${youtubeID} ${latestVideoID}`, data[0].guild]);
+                    if (latestVideoID == 0) continue;
 
                     await new Promise(resolve => setTimeout(resolve, 250)); // Wait to avoid to create too many requests.
                     const video = await axios.get(`https://www.youtube.com/watch?v=${latestVideoID}`);

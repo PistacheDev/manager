@@ -27,6 +27,7 @@
             <p class="title"><%= guildName %></p> <br>
             <a class="display" href="/dashboard/guilds/<%= guildID %>/security">🛡️・Security</a> <br>
             <a href="/dashboard/guilds/<%= guildID %>/sanctions">🔨・Sanctions</a> <br>
+            <a href="/dashboard/guilds/<%= guildID %>/xp">📊・XP</a> <br>
             <a href="/dashboard/guilds/<%= guildID %>/connections">🖇️・Connections</a> <br>
             <a href="/dashboard/guilds/<%= guildID %>/members">🛬・Members</a> <br>
             <a href="/dashboard/guilds/<%= guildID %>/logs">📁・Logs</a> <br>
@@ -36,21 +37,33 @@
         <div class="config">
             <p class="title">Security</p>
             <div>
-                <% if (raidmodeStatut === 'true') { %>
-                    <p class="status">Raidmode: Active</p>
-                    <a href="/dashboard/guilds/<%= guildID %>/security?value=raidmode&data=false">Disable</a> <br>
+                <% if (raidmodeStatut == 1) { %>
+                    <p class="status">Raidmode: Active.</p>
+                    <a href="/dashboard/guilds/<%= guildID %>/security?value=raidmode&data=0">Disable</a> <br>
                 <% } else { %>
-                    <p class="status">Raidmode: Inactive</p>
-                    <a href="/dashboard/guilds/<%= guildID %>/security?value=raidmode&data=true">Enable</a> <br>
+                    <p class="status">Raidmode: Inactive.</p>
+                    <a href="/dashboard/guilds/<%= guildID %>/security?value=raidmode&data=1">Enable</a> <br>
                 <% }; %>
             </div>
             <div>
-                <% if (antibotStatut === 'true') { %>
-                    <p class="status">Anti-bot: Active</p>
-                    <a href="/dashboard/guilds/<%= guildID %>/security?value=antibot&data=false">Disable</a> <br>
+                <% if (antibotStatut == 1) { %>
+                    <p class="status">Anti bots: Active.</p>
+                    <a href="/dashboard/guilds/<%= guildID %>/security?value=antibots&data=0">Disable</a> <br>
                 <% } else { %>
-                    <p class="status">Anti-bot: Inactive</p>
-                    <a href="/dashboard/guilds/<%= guildID %>/security?value=antibot&data=true">Enable</a> <br>
+                    <p class="status">Anti bots: Inactive.</p>
+                    <a href="/dashboard/guilds/<%= guildID %>/security?value=antibots&data=1">Enable</a> <br>
+                <% }; %>
+            </div>
+            <div>
+                <% if (antilinksStatut == 0) { %>
+                    <p class="status">Anti links: Inactive.</p>
+                    <a href="/dashboard/guilds/<%= guildID %>/security?value=antilinks&data=1">Enable</a>
+                <% } else if (antilinksStatut == 1) { %>
+                    <p class="status">Anti links: Active.</p>
+                    <a href="/dashboard/guilds/<%= guildID %>/security?value=antilinks&data=2">Enforce</a>
+                <% } else { %>
+                    <p class="status">Anti links: Enforced.</p>
+                    <a href="/dashboard/guilds/<%= guildID %>/security?value=antilinks&data=0">Disable</a>
                 <% }; %>
             </div>
         </div>

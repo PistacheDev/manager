@@ -19,11 +19,10 @@ module.exports =
     	    if (amount < 1 || amount > 100) return interaction.reply(':warning: Please! Enter a number **between 1** and **100**!');
     	    if (messages.length <= 0) return interaction.reply(':warning: **No message available** in this channel!');
 
-            // Delete the messages.
 	        channel.bulkDelete(amount).then(async () =>
             {
     	        const deletedCount = Math.min(amount, messages.size); // Calculate the number of deleted messages.
-                let messageToDelete; // Message ID to delete.
+                let messageToDelete;
 
                 if (channel.id != interaction.channel.id)
                 {

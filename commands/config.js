@@ -18,6 +18,7 @@ module.exports =
                     { emoji: '🏡', label: 'Home', description: 'Return to home.', value: 'home' },
                     { emoji: '🛡️', label: 'Security', description: 'Configure security options.', value: 'security' },
                     { emoji: '🔨', label: 'Sanctions', description: 'Configure automatic sanctions.', value: 'sanctions' },
+                    { emoji: '📊', label: 'XP', description: 'Configure the XP system.', value: 'XP' },
                     { emoji: '🖇️', label: 'Connections', description: 'Configure external connections.', value: 'API' },
                     { emoji: '🛬', label: 'Members', description: 'Configure arrivals/departures.', value: 'members' },
                     { emoji: '📁', label: 'Logs', description: 'Configure logs.', value: 'logs' },

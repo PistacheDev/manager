@@ -27,6 +27,7 @@
             <p class="title"><%= guildName %></p> <br>
             <a href="/dashboard/guilds/<%= guildID %>/security">🛡️・Security</a> <br>
             <a href="/dashboard/guilds/<%= guildID %>/sanctions">🔨・Sanctions</a> <br>
+            <a href="/dashboard/guilds/<%= guildID %>/xp">📊・XP</a> <br>
             <a class="display" href="/dashboard/guilds/<%= guildID %>/connections">🖇️・Connections</a> <br>
             <a href="/dashboard/guilds/<%= guildID %>/members">🛬・Members</a> <br>
             <a href="/dashboard/guilds/<%= guildID %>/logs">📁・Logs</a> <br>
@@ -36,16 +37,16 @@
         <div class="config">
             <p class="title">Connections</p>
             <div>
-                <% if (youtubeNotification != null) { %>
-                    <% const [channelID, roleID, youtubeID, latestVideoID] = youtubeNotification.split(' ') %>
+                <% if (youtubeNotifs != 0) { %>
+                    <% const [channelID, roleID, youtubeID, latestVideoID] = youtubeNotifs.split(' ') %>
                     <p class="status">YouTube Notifications: Active.</p>
                     <p class="data">・Channel: <%= channelID %></p>
-                    <% if (roleID != 'null') { %>
+                    <% if (roleID != 0) { %>
                         <p class="data">・Role: <%= roleID %></p>
                     <% } else { %>
                         <p class="data">・Role: Awaiting configuration.</p>
                     <% }; %>
-                    <% if (youtubeID != 'null') { %>
+                    <% if (youtubeID != 0) { %>
                         <p class="data">・YouTube Channel: <%= youtubeID %></p>
                     <% } else { %>
                         <p class="data">・YouTube Channel: Awaiting configuration.</p>
@@ -54,18 +55,18 @@
                     <p class="status">YouTube Notifications: Inactive.</p>
                 <% }; %>
                 <form action="/dashboard/guilds/<%= guildID %>/connections" method="get">
-                    <input class="input" type="text" name="value" value="youtubeNotif" hidden/>
+                    <input class="input" type="text" name="value" value="youtubeNotifs" hidden/>
                     <input class="input" type="text" name="channel" placeholder="Enter the channel ID here."/> <br>
                     <input class="input" type="text" name="role" placeholder="Enter the role ID or @everyone here."/> <br>
                     <input class="input" type="text" name="target" placeholder="Enter the YouTube channel URL here."/> <br>
                     <input class="submit" type="submit" value="Submit"/>
-                    <% if (youtubeNotification != null) { %>
+                    <% if (youtubeNotifs != 0) { %>
                         <style>
                             form {
                                 margin-top: 5px;
                             }
                         </style>
-                        <a href="/dashboard/guilds/<%= guildID %>/connections?value=youtubeNotif&disable=hi">Disable</a>
+                        <a href="/dashboard/guilds/<%= guildID %>/connections?value=youtubeNotifs&disable=hi">Disable</a>
                     <% }; %>
                 </form>
             </div>
