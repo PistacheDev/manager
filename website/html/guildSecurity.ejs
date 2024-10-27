@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="/css/guildsBar.css">
     <link rel="stylesheet" href="/css/guildOptions.css">
     <link rel="stylesheet" href="/css/guildText.css">
+    <link rel="stylesheet" href="/css/guildInput.css">
 </head>
 <body>
     <nav class="guilds">
@@ -36,7 +37,7 @@
         </div>
         <div class="config">
             <p class="title">Security</p>
-            <div>
+            <div class="noinput">
                 <% if (raidmodeStatut == 1) { %>
                     <p class="status">Raidmode: Active.</p>
                     <a href="/dashboard/guilds/<%= guildID %>/security?value=raidmode&data=0">Disable</a> <br>
@@ -46,15 +47,38 @@
                 <% }; %>
             </div>
             <div>
+                <% if (autoraidmode != 0) { %>
+                    <p class="status">Auto raidmode: Active.</p>
+                    <% const [maxMembers, interval] = autoraidmode.split(' '); %>
+                    <p class="data">・Detection: More than <%= maxMembers %> members in <%= interval %> seconds.</p>
+                <% } else { %>
+                    <p class="status">Auto raidmode: Inactive.</p>
+                <% }; %>
+                <form action="/dashboard/guilds/<%= guildID %>/security" method="get">
+                    <input class="input" type="text" name="value" value="autoraidmode" hidden/>
+                    <input class="input" type="text" name="members" placeholder="Maximum of new members during the interval (3 ~ 10)."/> <br>
+                    <input class="input" type="text" name="interval" placeholder="Interval of time in second (3 ~ 10)."/> <br>
+                    <input class="submit" type="submit" value="Submit"/>
+                    <% if (autoraidmode != 0) { %>
+                        <style>
+                            form {
+                                margin-top: 5px;
+                            }
+                        </style>
+                        <a href="/dashboard/guilds/<%= guildID %>/security?value=autoraidmode&disable=hi">Disable</a>
+                    <% }; %>
+                </form>
+            </div>
+            <div class="noinput">
                 <% if (antibotStatut == 1) { %>
                     <p class="status">Anti bots: Active.</p>
-                    <a href="/dashboard/guilds/<%= guildID %>/security?value=antibots&data=0">Disable</a> <br>
+                    <a href="/dashboard/guilds/<%= guildID %>/security?value=antibots&data=0">Disable</a>
                 <% } else { %>
                     <p class="status">Anti bots: Inactive.</p>
-                    <a href="/dashboard/guilds/<%= guildID %>/security?value=antibots&data=1">Enable</a> <br>
+                    <a href="/dashboard/guilds/<%= guildID %>/security?value=antibots&data=1">Enable</a>
                 <% }; %>
             </div>
-            <div>
+            <div class="noinput">
                 <% if (antilinksStatut == 0) { %>
                     <p class="status">Anti links: Inactive.</p>
                     <a href="/dashboard/guilds/<%= guildID %>/security?value=antilinks&data=1">Enable</a>

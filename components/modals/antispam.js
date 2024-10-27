@@ -39,7 +39,7 @@ module.exports =
                     };
 
                     const embed = new EmbedBuilder()
-                    .setColor('Gold')
+                    .setColor('Orange')
                     .setAuthor({ name: 'Configuration Panel', iconURL: client.user.avatarURL() })
                     .setDescription('Press the button with the **emoji corresponding** to **the option** you want to modify.')
                     .addFields([{ name: ':hand_splayed:・Anti spam:', value: `>>> **Status**: :white_check_mark: Active.\n**Ignore Bots**: ${ignoreBots == 'yes' ? 'Yes' : 'No'}.\n**Spam Detection:** More than ${maxMessages} messages in ${interval} seconds.\n**Maximum Warns**: ${maxWarns} warns.\n**Sanction**: ${sanction == 'ban' ? 'Ban' : `Mute for ${sanction} minutes`}.\n**Function**: Prevent the members from **spamming messages**.` }])

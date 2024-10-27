@@ -52,11 +52,12 @@ CREATE TABLE warns (
 +---------------+--------------+------+-----+------------+-------+
 | guild         | varchar(255) | NO   | PRI | NULL       |       |
 | raidmode      | varchar(255) | YES  |     | 0          |       |
+| autoraidmode  | varchar(255) | YES  |     | 5 5        |       |
 | antibots      | varchar(255) | YES  |     | 1          |       |
 | antilinks     | varchar(255) | YES  |     | 2          |       |
-| antispam      | varchar(255) | YES  |     | 0 3 3 2 10 |       |
+| antispam      | varchar(255) | YES  |     | 0 5 5 2 10 |       |
 | warn          | varchar(255) | YES  |     | 3 1        |       |
-| xp            | varchar(255) | YES  |     | 1 15 100   |       |
+| xp            | varchar(255) | YES  |     | 0          |       |
 | xpgoals       | varchar(255) | YES  |     | 0 0 0 0    |       |
 | youtubeNotifs | varchar(255) | YES  |     | 0          |       |
 | memberAdd     | varchar(255) | YES  |     | 0          |       |
@@ -71,11 +72,12 @@ CREATE TABLE warns (
 CREATE TABLE config (
     guild VARCHAR(255) PRIMARY KEY,
     raidmode VARCHAR(255) DEFAULT '0',
+    autoraidmode VARCHAR(255) DEFAULT '5 5',
     antibots VARCHAR(255) DEFAULT '1',
     antilinks VARCHAR(255) DEFAULT '2',
-    antispam VARCHAR(255) DEFAULT '0 3 3 2 10',
+    antispam VARCHAR(255) DEFAULT '0 5 5 2 10',
     warn VARCHAR(255) DEFAULT '3 1',
-    xp VARCHAR(255) DEFAULT '1 15 100',
+    xp VARCHAR(255) DEFAULT '0',
     xpgoals VARCHAR(255) DEFAULT '0 0 0 0',
     youtubeNotifs VARCHAR(255) DEFAULT '0',
     memberAdd VARCHAR(255) DEFAULT '0',

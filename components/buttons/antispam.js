@@ -84,7 +84,7 @@ module.exports =
                     };
 
                     const embed = new EmbedBuilder()
-                    .setColor('Gold')
+                    .setColor('Orange')
                     .setAuthor({ name: 'Configuration Panel', iconURL: client.user.avatarURL() })
                     .setDescription('Press the button with the **emoji corresponding** to **the option** you want to modify.')
                     .addFields([{ name: ':hand_splayed:・Anti spam:', value: `>>> **Status**: :x: Inactive.\n**Function**: Prevent the members from **spamming messages**.` }])

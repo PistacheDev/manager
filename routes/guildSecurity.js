@@ -70,6 +70,7 @@ module.exports =
                         guildIcon: guild.iconURL(),
                         guildID: guild.id,
                         raidmodeStatut: data[0].raidmode,
+                        autoraidmode: data[0].autoraidmode,
                         antibotStatut: data[0].antibots,
                         antilinksStatut: data[0].antilinks
                     };
@@ -81,8 +82,8 @@ module.exports =
             // Configuration edition.
             function editData()
             {
-                const data = req.query.data; // Shortcut.
-                if (!data) return res.status(403).send('Some information in your request are missing!');
+                const data = req.query.data;
+                if (req.query.value != 'autoraidmode' && !data) return res.status(403).send('Some information in your request are missing!');
 
                 switch (req.query.value)
                 {
@@ -91,6 +92,28 @@ module.exports =
                         if (data != 1 && data != 0) return res.status(403).send('The new data provided is invalid!');
 
                         db.query('UPDATE config SET raidmode = ? WHERE guild = ?', [data, guild.id]);
+                        break;
+
+                    case 'autoraidmode':
+                        const disable = req.query.disable;
+                        var status = 0;
+
+                        if (!disable)
+                        {
+                            // Some data.
+                            const maxMembers = req.query.members;
+                            const interval = req.query.interval;
+
+                            // Some verifications.
+                            if (!maxMembers || !interval) return res.status(403).send('Some information in your request are missing!');
+                            if (isNaN(maxMembers) || isNaN(interval)) return res.status(403).send('Please, enter a number!');
+                            if (maxMembers < 3 || maxMembers > 10) return res.status(403).send('The maximum members must be between 3 and 10!');
+                            if (interval < 3 || interval > 10) return res.status(403).send('The interval must be between 3 and 10!');
+
+                            status = `${maxMembers} ${interval}`;
+                        };
+
+                        db.query('UPDATE config SET autoraidmode = ? WHERE guild = ?', [status, guild.id]);
                         break;
 
                     case 'antibots':

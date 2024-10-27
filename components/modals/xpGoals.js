@@ -54,7 +54,7 @@ module.exports =
                     };
 
                     const embed = new EmbedBuilder()
-                    .setColor('Gold')
+                    .setColor('Orange')
                     .setAuthor({ name: 'Configuration Panel', iconURL: client.user.avatarURL() })
                     .setDescription('Press the button with the **emoji corresponding** to **the option** you want to modify.')
                     .addFields([{ name: ':gear:・XP system:', value: `>>> **Status**: ${status}.\n**Function**: Set the **application behavior** in the XP system.` }])

@@ -1,5 +1,8 @@
 const { EmbedBuilder } = require('discord.js');
 
+// Map for the auto raidmode.
+const newMembers = new Map();
+
 module.exports =
 {
     name: 'guildMemberAdd',
@@ -23,6 +26,24 @@ module.exports =
                 if (data[0].joinRole != 0) member.roles.add(data[0].joinRole);
                 if (data[0].raidmode == 1) member.kick();
                 if (data[0].antibots == 1 && member.user.bot) member.kick();
+
+                if (data[0].raidmode == 0 && data[0].autoraidmode != 0)
+                {
+                    // Some data.
+                    const [maxMembers, interval] = data[0].autoraidmode.split(' ');
+                    const now = Date.now();
+                    const timestamps = newMembers.get(guild.id) || [];
+                    const filter = timestamps.filter(timestamp => now - timestamp < interval * 1000);
+
+                    // Add the member to the Map.
+                    filter.push(now);
+                    newMembers.set(guild.id, filter);
+
+                    if (filter.length >= maxMembers) // Limit exceeded.
+                    {
+                        db.query('UPDATE config SET raidmode = ? WHERE guild = ?', [1, guild.id]);
+                    };
+                };
             });
         }
         catch (err)
