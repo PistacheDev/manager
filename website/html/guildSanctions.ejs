@@ -101,6 +101,38 @@
                     <% }; %>
                 </form>
             </div>
+            <div>
+                <% if (antipings == 0) { %>
+                    <p class="status">Anti pings: Inactive.</p>
+                <% } else { %>
+                    <% const [ignoreBots, sanction] = antipings.split(' ') %>
+                    <p class="status">Anti pings: Active.</p>
+                    <% if (ignoreBots == 1) { %>
+                        <p class="data">・Ignore Bots: Yes.</p>
+                    <% } else { %>
+                        <p class="data">・Ignore Bots: No.</p>
+                    <% }; %>
+                    <% if (sanction != 'ban') { %>
+                        <p class="data">・Sanction: Mute for <%= sanction %> hours.</p>
+                    <% } else { %>
+                        <p class="data">・Sanction: Ban.</p>
+                    <% }; %>
+                <% }; %>
+                <form action="/dashboard/guilds/<%= guildID %>/sanctions" method="get">
+                    <input class="input" type="text" name="value" value="antipings" hidden/>
+                    <input class="input" type="text" name="bots" placeholder='Answer by "yes" or "no".'/> <br>
+                    <input class="input" type="text" name="sanction" placeholder='Enter "ban" to ban or a number (in minutes) to mute.'/> <br>
+                    <input class="submit" type="submit" value="Submit"/>
+                    <% if (antipings != 0) { %>
+                        <style>
+                            form {
+                                margin-top: 5px;
+                            }
+                        </style>
+                        <a href="/dashboard/guilds/<%= guildID %>/sanctions?value=antipings&disable=hi">Disable</a>
+                    <% }; %>
+                </form>
+            </div>
         </div>
     </main>
     <nav class="navbar">

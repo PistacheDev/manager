@@ -57,6 +57,7 @@ CREATE TABLE warns (
 | antilinks     | varchar(255) | YES  |     | 2          |       |
 | antispam      | varchar(255) | YES  |     | 0 5 5 2 10 |       |
 | warn          | varchar(255) | YES  |     | 3 1        |       |
+| antipings     | varchar(255) | YES  |     | 0 20       |       |
 | xp            | varchar(255) | YES  |     | 0          |       |
 | xpgoals       | varchar(255) | YES  |     | 0 0 0 0    |       |
 | youtubeNotifs | varchar(255) | YES  |     | 0          |       |
@@ -77,6 +78,7 @@ CREATE TABLE config (
     antilinks VARCHAR(255) DEFAULT '2',
     antispam VARCHAR(255) DEFAULT '0 5 5 2 10',
     warn VARCHAR(255) DEFAULT '3 1',
+    antipings VARCHAR(255) DEFAULT '0 20',
     xp VARCHAR(255) DEFAULT '0',
     xpgoals VARCHAR(255) DEFAULT '0 0 0 0',
     youtubeNotifs VARCHAR(255) DEFAULT '0',
