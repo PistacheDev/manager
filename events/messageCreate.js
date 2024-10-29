@@ -21,6 +21,8 @@ module.exports =
             if (isSpamming) return;
             const containLink = antiLinks();
             if (containLink) return;
+            const usedForbiddenPing = pingCheck();
+            if (usedForbiddenPing) return;
 
             if (message.content == `<@${client.user.id}>`) message.reply(`:wave: Hey <@${message.author.id}>! I\'m online and functionnal!`);
             xp(); // XP system.
@@ -78,6 +80,8 @@ module.exports =
 
                         return true;
                     };
+
+                    return false;
                 });
             };
 
@@ -102,6 +106,46 @@ module.exports =
                             return true;
                         });
                     };
+
+                    return false;
+                });
+            };
+
+            function pingCheck()
+            {
+                db.query('SELECT * FROM config WHERE guild = ?', [message.guild.id], async (err, data) =>
+                {
+                    if (data[0].length < 1 || data[0].antipings == 0) return false;
+                    const [ignoreBots, sanction] = data[0].antipings;
+
+                    if (ignoreBots == 1 && message.author.bot) return false;
+                    if (message.author.id == client.user.id) return false;
+                    if (message.author.id == message.guild.ownerId || message.member.permissions.has(Perms.Administrator)) return false;
+
+                    if (message.content.includes('@everyone' || '@here'))
+                    {
+                        message.delete();
+                        const mention = message.content.includes('@everyone') ? 'everyone' : 'here';
+
+                        if (sanction == 'ban')
+                        {
+                            message.member.ban({ reason: `Anti pings enabled!` }).then(() =>
+                            {
+                                message.channel.send(`:man_judge: @${message.member.username} (${message.author.id}) has been **banned for using the ${mention} mention**!`);
+                            });
+                        }
+                        else
+                        {
+                            message.member.timeout(sanction * 60000).then(() =>
+                            {
+                                message.channel.send(`:man_judge: <@${message.author.id}>, you've been **muted for ${sanction} minutes** for using the ${mention} mention!`);
+                            });
+                        };
+
+                        return true;
+                    };
+
+                    return false;
                 });
             };
 

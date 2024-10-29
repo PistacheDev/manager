@@ -30,12 +30,19 @@ module.exports =
             {
                 db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, data) =>
                 {
-                    let status = ':x: Inactive';
+                    let warnStatus = ':x: Inactive';
+                    let pingStatus = ':x: Inactive';
 
                     if (data[0].warn != 0) // Update the data if the option is enabled.
                     {
                         const [maxWarns, sanction] = data[0].warn.split(' ');
-                        status = `:white_check_mark: Active.\n**Maximum Warns**: ${maxWarns} warns.\n**Sanction**: ${sanction == 'ban' ? 'Ban' : `Mute for ${sanction} hours`}`;
+                        warnStatus = `:white_check_mark: Active.\n**Maximum Warns**: ${maxWarns} warns.\n**Sanction**: ${sanction == 'ban' ? 'Ban' : `Mute for ${sanction} hours`}`;
+                    };
+
+                    if (data[0].antipings != 0) // Update the default data if the option is enabled.
+                    {
+                        const [ignoreBots, sanction] = data[0].antipings.split(' ');
+                        pingStatus = `:white_check_mark: Active.\n**Ignore Bots**: ${ignoreBots == 1 ? 'Yes' : 'No'}.\n**Sanction**: ${sanction == 'ban' ? 'Ban' : `Mute for ${sanction} minutes`}`;
                     };
 
                     const embed = new EmbedBuilder()
@@ -43,7 +50,8 @@ module.exports =
                     .setAuthor({ name: 'Configuration Panel', iconURL: client.user.avatarURL() })
                     .setDescription('Press the button with the **emoji corresponding** to **the option** you want to modify.')
                     .addFields([{ name: ':hand_splayed:・Anti spam:', value: `>>> **Status**: :white_check_mark: Active.\n**Ignore Bots**: ${ignoreBots == 'yes' ? 'Yes' : 'No'}.\n**Spam Detection:** More than ${maxMessages} messages in ${interval} seconds.\n**Maximum Warns**: ${maxWarns} warns.\n**Sanction**: ${sanction == 'ban' ? 'Ban' : `Mute for ${sanction} minutes`}.\n**Function**: Prevent the members from **spamming messages**.` }])
-                    .addFields([{ name: ':warning:・Warns:', value: `>>> **Status**: ${status}.\n**Function**: The member **is sanctionned** if its warns count reached the **maximum amount**.` }])
+                    .addFields([{ name: ':warning:・Warns:', value: `>>> **Status**: ${warnStatus}.\n**Function**: The member **is sanctionned** if its warns count reached the **maximum amount**.` }])
+                    .addFields([{ name: ':loud_sound:・Anti pings:', value: `>>> **Status**: ${pingStatus}.\n**Function**: Prevent the members from using **@everyone and @here**.` }])
                     .setThumbnail(client.user.avatarURL())
                     .setTimestamp()
                     .setFooter({ text: guild.name, iconURL: guild.iconURL() })

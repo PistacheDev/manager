@@ -70,7 +70,8 @@ module.exports =
                         guildIcon: guild.iconURL(),
                         guildID: guild.id,
                         antispam: data[0].antispam,
-                        warn: data[0].warn
+                        warn: data[0].warn,
+                        antipings: data[0].antipings
                     };
 
                     await res.status(200).render('../website/html/guildSanctions.ejs', values); // Render the page.
@@ -85,7 +86,7 @@ module.exports =
                 switch (req.query.value)
                 {
                     case 'antispam':
-                        var statut = 0; // Disable the option.
+                        var status = 0; // Disable the option.
 
                         if (!disable)
                         {
@@ -105,15 +106,15 @@ module.exports =
                             if (maxWarns < 1 || maxWarns > 5) return interaction.reply('The maximum warns must be between 1 and 5 warns!');
                             if (sanction != 'ban' && (sanction < 1 || sanction > 70560)) return interaction.reply('The mute can\'t last less than 1 minute or longer than 7 days (70560)!');
 
-                            statut = `true ${ignoreBots == 'yes' ? 'true' : 'false'} ${maxMessages} ${interval} ${maxWarns} ${sanction}`;
+                            status = `true ${ignoreBots == 'yes' ? 1 : 0} ${maxMessages} ${interval} ${maxWarns} ${sanction}`;
                         };
 
                         // Update the configuration.
-                        db.query('UPDATE config SET antispam = ? WHERE guild = ?', [statut, guild.id]);
+                        db.query('UPDATE config SET antispam = ? WHERE guild = ?', [status, guild.id]);
                         break;
 
                     case 'warn':
-                        var statut = 0; // Disable the option.
+                        var status = 0; // Disable the option.
 
                         if (!disable)
                         {
@@ -127,11 +128,33 @@ module.exports =
                             if (maxWarns < 1 || maxWarns > 10) return interaction.reply('The maximum warns must be between 1 and 10 warns!');
                             if (sanction != 'ban' && (sanction < 1 || sanction > 168)) return interaction.reply('The mute can\'t last less than 1 minute or longer than 7 days (168)!');
 
-                            statut = `true ${maxWarns} ${sanction}`;
+                            status = `true ${maxWarns} ${sanction}`;
                         };
 
                         // Update the configuration.
-                        db.query('UPDATE config SET warn = ? WHERE guild = ?', [statut, guild.id]);
+                        db.query('UPDATE config SET warn = ? WHERE guild = ?', [status, guild.id]);
+                        break;
+
+                    case 'antipings':
+                        var status = 0; // Disable the option.
+
+                        if (!disable)
+                        {
+                            // Some shortcuts.
+                            const ignoreBots = req.query.bots;
+                            const sanction = req.query.sanction;
+
+                            // Some verifications
+                            if (!ignoreBots || !sanction) return res.status(403).send('Some information in your request are missing!');
+                            if (ignoreBots != 'yes' && ignoreBots != 'no') return res.status(403).send('Your answer for the Ignore Bots option is invalid!');
+                            if (sanction != 'ban' && isNaN(sanction)) return interaction.reply('Please! Enter a number or "ban" for the sanction!');
+                            if (sanction != 'ban' && (sanction < 1 || sanction > 70560)) return interaction.reply('The mute can\'t last less than 1 minute or longer than 7 days (70560)!');
+
+                            status = `true ${ignoreBots == 'yes' ? 1 : 0} ${sanction}`;
+                        };
+
+                        // Update the configuration.
+                        db.query('UPDATE config SET antipings = ? WHERE guild = ?', [status, guild.id]);
                         break;
 
                     default:

@@ -149,8 +149,8 @@ module.exports =
 
                 if (data.antispam != 0) // Update the data if the option is enabled.
                 {
-                    const [ignoreBot, maxMessages, interval, maxWarns, sanction] = data.antispam.split(' ');
-                    status = `:white_check_mark: Active.\n**Ignore Bots**: ${ignoreBot == 1 ? 'Yes' : 'No'}.\n**Spam Detection:** More than ${maxMessages} messages in ${interval} seconds.\n**Maximum Warns**: ${maxWarns} warns.\n**Sanction**: ${sanction == 'ban' ? 'Ban' : `Mute for ${sanction} minutes`}`;
+                    const [ignoreBots, maxMessages, interval, maxWarns, sanction] = data.antispam.split(' ');
+                    status = `:white_check_mark: Active.\n**Ignore Bots**: ${ignoreBots == 1 ? 'Yes' : 'No'}.\n**Spam Detection:** More than ${maxMessages} messages in ${interval} seconds.\n**Maximum Warns**: ${maxWarns} warns.\n**Sanction**: ${sanction == 'ban' ? 'Ban' : `Mute for ${sanction} minutes`}`;
                 };
 
                 embed.addFields([{ name: ':hand_splayed:・Anti spam:', value: `>>> **Status**: ${status}.\n**Function**: Prevent the members from **spamming messages**.` }])
@@ -163,6 +163,15 @@ module.exports =
                 };
 
                 embed.addFields([{ name: ':warning:・Warns:', value: `>>> **Status**: ${status}.\n**Function**: The member **is sanctionned** if its warns count reached the **maximum amount**.` }])
+                status = ':x: Inactive';
+
+                if (data.antipings != 0)
+                {
+                    const [ignoreBots, sanction] = data.antipings.split(' ');
+                    status = `:white_check_mark: Active.\n**Ignore Bots**: ${ignoreBots == 1 ? 'Yes' : 'No'}.\n**Sanction**: ${sanction == 'ban' ? 'Ban' : `Mute for ${sanction} minutes`}`;
+                };
+
+                embed.addFields([{ name: ':loud_sound:・Anti pings:', value: `>>> **Status**: ${status}.\n**Function**: Prevent the members from using **@everyone and @here**.` }])
 
                 var buttons = new ActionRowBuilder()
                 .addComponents(
@@ -174,6 +183,11 @@ module.exports =
                     new ButtonBuilder()
                     .setCustomId('warnButton')
                     .setEmoji('⚠️')
+                    .setStyle(ButtonStyle.Primary)
+                ).addComponents(
+                    new ButtonBuilder()
+                    .setCustomId('antipingsButton')
+                    .setEmoji('🔊')
                     .setStyle(ButtonStyle.Primary)
                 )
 
