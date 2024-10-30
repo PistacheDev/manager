@@ -55,7 +55,7 @@ module.exports =
                         const currentLevel = parseInt(data[0].level);
                         const nextLevel = 500 + (currentLevel * 10);
                         const userRank = all.findIndex(users => users.user == target.id) + 1;
-                        const [alert, maxLevel] = config.xp.split(' ');
+                        const [alert, maxXP, maxLevel] = config.xp.split(' ');
 
                         const embed = new EmbedBuilder()
                         .setColor('Gold')
@@ -76,7 +76,7 @@ module.exports =
 
                     // Calculate the leaderboard.
                     let leaderboard = await data.sort(async (a, b) => (await calculXP(parseInt(b.xp), parseInt(b.level)) - (await calculXP(parseInt(a.xp), parseInt(a.level)))));
-                    const [alert, maxLevel] = config.xp.split(' ');
+                    const [alert, maxXP, maxLevel] = config.xp.split(' ');
 
                     let embed = new EmbedBuilder()
                     .setColor('Gold')

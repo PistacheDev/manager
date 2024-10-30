@@ -18,7 +18,7 @@ async function requestToken(url, requestData)
                 {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 }
-            }); 
+            });
 
             return response;
         }
