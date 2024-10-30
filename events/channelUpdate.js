@@ -16,9 +16,10 @@ module.exports =
             {
                 if (data.length < 1 || data[0].channelsLogs == 0) return; // Some database verifications.
 
-                // Request the latest server log for the ChannelUpdate event.
-                const auditLog = await guild.fetchAuditLogs({ type: AuditLogEvent.ChannelUpdate, limit: 1 });
-                const log = auditLog.entries.first();
+                const auditLogs = await guild.fetchAuditLogs({ type: AuditLogEvent.ChannelUpdate, limit: 10 }); // Fetch server logs.
+                const results = auditLogs.entries;
+                const log = results.find(entry => entry.targetId == channel.id); // Fetch for the latest log with the channel ID.
+                if (!log) return;
 
                 // Detect every modifications made on the channel and create a report.
                 let modifications = '';

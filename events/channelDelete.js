@@ -9,16 +9,16 @@ module.exports =
         try
         {
             if (!channel.guild) return; // If the channel isn't in a guild (like a DM).
-            setTimeout(() => {}, 100); // Wait for the new audit log.
             const guild = channel.guild;
 
             db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, data) =>
             {
                 if (data.length < 1 || data[0].channelsLogs == 0) return; // Some database verifications.
 
-                // Request the latest server log for the ChannelDelete event.
-                const auditLog = await guild.fetchAuditLogs({ type: AuditLogEvent.ChannelDelete, limit: 1 });
-                const log = auditLog.entries.first();
+                const auditLogs = await guild.fetchAuditLogs({ type: AuditLogEvent.ChannelDelete, limit: 10 }); // Fetch server logs.
+                const results = auditLogs.entries;
+                const log = results.find(entry => entry.targetId == channel.id); // Fetch for the latest log with the channel ID.
+                if (!log) return;
 
                 const embed = new EmbedBuilder()
                 .setColor('Red')
