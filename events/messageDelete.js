@@ -1,4 +1,4 @@
-const { AuditLogEvent, EmbedBuilder } = require('discord.js');
+const { EmbedBuilder, AuditLogEvent } = require('discord.js');
 
 module.exports =
 {
@@ -8,7 +8,6 @@ module.exports =
         try
         {
             if (!message.guild) return; // If the message wasn't in server.
-            setTimeout(() => {}, 100); // Wait for the new audit log.
             const guild = message.guild;
 
             db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, data) =>
@@ -16,9 +15,10 @@ module.exports =
                 // Some verifications.
                 if (data.length < 1 || data[0].messagesLogs == 0 || message.author == null || message.author.bot) return;
 
-                // Request the latest server log for the MessageDelete event.
-                const auditLog = await guild.fetchAuditLogs({ type: AuditLogEvent.MessageDelete, limit: 1 });
-                const log = auditLog.entries.first();
+                const auditLogs = await guild.fetchAuditLogs({ type: AuditLogEvent.MessageDelete, limit: 10 }); // Fetch server logs.
+                const results = auditLogs.entries;
+                const log = results.find(entry => entry.targetId == message.author.id); // Fetch for the latest log with the member ID.
+                if (!log) return;
 
                 const embed = new EmbedBuilder()
                 .setColor('Red')

@@ -1,6 +1,7 @@
 const { AuditLogEvent, EmbedBuilder } = require('discord.js');
 
-module.exports = {
+module.exports =
+{
     name: 'guildBanRemove',
     async run(client, db, ban)
     {
@@ -13,9 +14,10 @@ module.exports = {
             {
                 if (data.length < 1 || data[0].bansLogs == 0) return; // Some database verifications.
 
-                // Request the latest server log for the MemberBanRemove event.
-                const auditLogs = await guild.fetchAuditLogs({ type: AuditLogEvent.MemberBanRemove, limit: 1 });
-                const log = auditLogs.entries.first();
+                const auditLogs = await guild.fetchAuditLogs({ type: AuditLogEvent.MemberBanRemove, limit: 10 }); // Fetch server logs.
+                const results = auditLogs.entries;
+                const log = results.find(entry => entry.targetId == ban.user.id); // Fetch for the latest log with the banned user ID.
+                if (!log) return;
 
                 const embed = new EmbedBuilder()
                 .setColor('Orange')
