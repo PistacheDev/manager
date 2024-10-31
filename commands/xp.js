@@ -48,7 +48,7 @@ module.exports =
                     db.query('SELECT * FROM xp WHERE guild = ?', [guild.id], async (err, all) =>
                     {
                         // Calculate the user's position in the server XP.
-                        all = await all.sort(async (a, b) => (await calculXP(parseInt(b.xp), parseInt(b.level)) - (await calculXP(parseInt(a.xp), parseInt(a.level)))));
+                        all = await all.sort((a, b) => (calculXP(parseInt(b.xp), parseInt(b.level)) - calculXP(parseInt(a.xp), parseInt(a.level))));
 
                         // Some data.
                         const currentXP = parseInt(data[0].xp);
@@ -75,12 +75,12 @@ module.exports =
                     if (data.length < 1) return interaction.reply(':warning: No members have XP on this server!');
 
                     // Calculate the leaderboard.
-                    let leaderboard = await data.sort(async (a, b) => (await calculXP(parseInt(b.xp), parseInt(b.level)) - (await calculXP(parseInt(a.xp), parseInt(a.level)))));
+                    let leaderboard = data.sort((a, b) => (calculXP(parseInt(b.xp), parseInt(b.level)) - calculXP(parseInt(a.xp), parseInt(a.level))));
                     const [alert, maxXP, maxLevel] = config.xp.split(' ');
 
                     let embed = new EmbedBuilder()
                     .setColor('Gold')
-                    .setTitle(`Server Leaderboard:`)
+                    .setTitle('Server\'s XP Leaderboard:')
                     .setThumbnail(guild.iconURL())
                     .setTimestamp()
                     .setFooter({ text: guild.name, iconURL: guild.iconURL() })
@@ -89,7 +89,7 @@ module.exports =
                     {
                         // Calculate and get some data.
                         const data = leaderboard[i];
-                        const rank = leaderboard.findIndex(users => users.user == data.user) + 1;
+                        const rank = i + 1;
                         const emojis = ['first', 'second', 'third']; // To handle the three medals emoji.
                         const nextLevel = 500 + (data.level * 10);
 
