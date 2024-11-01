@@ -31,7 +31,7 @@ Your database must handle MySQL.
 ## config.json configuration
 The config.json file contains the official debug configuration.
 For debugging, you can change these settings but you've to revert to the official ones before submitting a pull request.
-If you've edited the config.json, your pull request will be rejected.
+If you've edited the config.json, your pull request will be rejected (except if you changed the version setting).
 
 ## .env configuration
 Create a new file called ".env" in the main folder.

@@ -68,13 +68,15 @@ module.exports =
                         let currentXP = parseInt(xpToGive + parseInt(data[0].xp));
                         let currentLevel = parseInt(data[0].level);
                         let nextLevel = 500 + (currentLevel * 10);
+                        let loop = 0; // To avoid to create an infinite loop.
 
-                        while (currentXP >= nextLevel) // Level up while the user has enough XP.
+                        while (currentXP >= nextLevel && loop < 10) // Level up while the user has enough XP.
                         {
                             // Update the data.
                             currentXP -= nextLevel;
                             currentLevel += 1;
                             nextLevel = 500 + (currentLevel * 10);
+                            loop += 1;
 
                             db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, config) =>
                             {
@@ -120,13 +122,15 @@ module.exports =
                         let currentXP = parseInt(parseInt(data[0].xp) - xpToRemove);
                         let currentLevel = parseInt(data[0].level);
                         let previousLevel = 500 + ((currentLevel - 1) * 10);
+                        let loop = 0; // To avoid to create an infinite loop.
 
-                        while (currentXP < 0) // Level down the user while his amount of XP is negative.
+                        while (currentXP < 0 && loop < 10) // Level down the user while his amount of XP is negative.
                         {
                             // Update the data.
                             currentXP += previousLevel;
                             currentLevel -= 1;
                             previousLevel = 500 + ((currentLevel - 1) * 10);
+                            loop += 1;
 
                             db.query('UPDATE xp SET xp = ?, level = ? WHERE guild = ? AND user = ?', [currentXP, currentLevel, guild.id, target.id]);
                         };
