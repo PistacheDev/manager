@@ -1,4 +1,6 @@
-require('dotenv').config(); // Import the .env file.
+const dotenv = require('dotenv');
+dotenv.config(); // Import the environnement variables.
+
 const { Client, IntentsBitField, Partials, ActivityType } = require('discord.js');
 const config = require('./config.json');
 const mysql = require('mysql2');
@@ -18,6 +20,17 @@ const client = new Client
         status: 'online'
     },
 });
+
+if (process.env.DB_USER == 'root' && !config.express.debug)
+{
+    console.error('[error] You can\'t use the database\'s root user in release mode.\nThe process has been killed (security reason).');
+    return process.exit(); // Kill the process (root user used in release mode).
+}
+else if (process.env.DB_PASSWORD.length < 12 && !config.express.debug)
+{
+    console.error('[error] Your database\'s password is too weak for the release mode.\nThe process has been killed (security reason).');
+    return process.exit(); // Kill the process (password too weak in release mode).
+};
 
 // Create a pool connection to the database.
 const db = mysql.createPool

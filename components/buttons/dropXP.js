@@ -32,13 +32,15 @@ module.exports =
 
                 // Amount of XP required to level up.
                 let nextLevel = 500 + (currentLevel * 10);
+                let loop = 0;
 
-                while (newXP >= nextLevel) // Level up while the user has enough XP.
+                while (newXP >= nextLevel && loop < 10) // Level up while the user has enough XP.
                 {
                     // Update the data.
                     newXP -= nextLevel;
                     currentLevel += 1;
                     nextLevel = 500 + (currentLevel * 10);
+                    loop += 1;
 
                     db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, config) =>
                     {

@@ -7,7 +7,6 @@ module.exports =
     {
         try
         {
-            setTimeout(() => {}, 100); // Wait for the new audit log.
             const guild = ban.guild; // Shortcut.
 
             db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, data) =>

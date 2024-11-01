@@ -9,7 +9,6 @@ module.exports =
         try
         {
             if (!oldChannel.guild) return; // If the channel isn't in a guild (like a DM).
-            setTimeout(() =>  {}, 100); // Wait for the new audit log.
             const guild = oldChannel.guild;
 
             db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, data) =>
