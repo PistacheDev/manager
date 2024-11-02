@@ -12,7 +12,7 @@ module.exports =
         {
             const guild = interaction.guild;
 
-            db.query('SELECT * FROM config WHERE guild = ?', [interaction.guild.id], async (err, data) =>
+            db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, data) =>
             {
                 if (data.length < 1) return interaction.reply(':warning: Your server isn\'t registered in the database!\n:grey_question: To fix this issue, run the \`/repair\` command.');
 
@@ -21,7 +21,7 @@ module.exports =
                 const channelURL = interaction.fields.getTextInputValue('youtubeModalOption2');
 
                 const channelID = data[0].youtubeNotifs.split(' ')[0];
-                if (roleID != '@everyone' && !interaction.guild.roles.cache.get(roleID)) return interaction.reply(':warning: This role doesn\'t exist!');
+                if (roleID != '@everyone' && !guild.roles.cache.get(roleID)) return interaction.reply(':warning: This role doesn\'t exist!');
 
                 const request = await axios.get(`${channelURL}/videos`);
                 const html = cheerio.load(request.data).html(); // Convert the data in HTML.
@@ -31,7 +31,7 @@ module.exports =
                 const latestVideoID = `${html.match(regex) ? html.match(regex)[1] : null}`;
                 const youtubeID = html.match(/"channelUrl":"([^"]+)"/)[1].split('channel/')[1];
 
-                await db.query('UPDATE config SET youtubeNotifs = ? WHERE guild = ?', [`${channelID} ${roleID} ${youtubeID} ${latestVideoID}`, interaction.guild.id], async () =>
+                await db.query('UPDATE config SET youtubeNotifs = ? WHERE guild = ?', [`${channelID} ${roleID} ${youtubeID} ${latestVideoID}`, guild.id], async () =>
                 {
                     const embed = new EmbedBuilder()
                     .setColor('Orange')

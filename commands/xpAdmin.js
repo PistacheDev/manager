@@ -14,7 +14,7 @@ module.exports =
             // Command option.
             var target = interaction.options.getUser('user');
             if (!target) target = interaction.member; // Select the current user if nothing is specified.
-            target = interaction.guild.members.cache.get(target.id); // Fetch the user in the server list.
+            target = guild.members.cache.get(target.id); // Fetch the user in the server list.
 
             db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, config) =>
             {
