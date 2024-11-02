@@ -11,6 +11,8 @@ module.exports =
     {
         try
         {
+            const guild = interaction.guild;
+
             // Check what command has been executed.
             switch (interaction.options.getSubcommand())
             {
@@ -83,7 +85,7 @@ module.exports =
             async function emojiInfos()
             {
                 const emojiID = interaction.options.getString('id');
-                const emoji = interaction.guild.emojis.cache.get(emojiID); // Get the emoji in the server list.
+                const emoji = guild.emojis.cache.get(emojiID); // Get the emoji in the server list.
                 if (!emoji) return interaction.reply(':warning: This emoji **doesn\'t exist**!');
 
                 const embed = new EmbedBuilder()
@@ -109,7 +111,7 @@ module.exports =
 
                 const embed = new EmbedBuilder()
                 .setColor('Orange')
-                .setThumbnail(interaction.guild.iconURL())
+                .setThumbnail(guild.iconURL())
                 .setDescription(`### Role information:\n >>> **Name**: <@&${role.id}> \`${role.name}\`.\n**ID**: ${role.id}.\n**Administrator**: ${role.permissions.has(PermissionsBitField.Flags.Administrator) ? 'Yes' : 'No'}.\n**Mentionable**: ${role.mentionable ? 'Yes' : 'No'}.\n**Color**: ${role.hexColor}.\n**Position**: ${role.guild.roles.cache.size - role.position}/${role.guild.roles.cache.size}.\n**Creation Date**: <t:${Math.floor(role.createdAt / 1000)}:F>`)
 
                 await interaction.reply({ embeds: [embed] });
@@ -123,7 +125,7 @@ module.exports =
 
                 const embed = new EmbedBuilder()
                 .setColor('Orange')
-                .setThumbnail(interaction.guild.iconURL())
+                .setThumbnail(guild.iconURL())
                 .setDescription(`### Channel information:\n >>> **Name**: <#${channel.id}> \`${channel.name}\`.\n**Type**: ${channelTypes[channel.type.toString()]}.\n**Public**: ${channel.permissionOverwrites.cache.get(channel.guild.roles.everyone.id)?.deny.toArray(false).includes('ViewChannel') ? 'No' : 'Yes'}.\n**ID**: ${channel.id}.\n**Category**: ${channel.parent ? channel.parent.name : 'None'}.\n**Position**: ${channel.position + 1}.\n**Creation Date**: <t:${Math.floor(channel.createdAt / 1000)}:F>.`)
 
                 await interaction.reply({ embeds: [embed] });
@@ -132,11 +134,9 @@ module.exports =
             // Server information script.
             async function guildInfos()
             {
-                const guild = interaction.guild;
-
                 const embed = new EmbedBuilder()
                 .setColor('Orange')
-                .setThumbnail(interaction.guild.iconURL())
+                .setThumbnail(guild.iconURL())
                 .setAuthor({ name: 'Server information', iconURL: guild.iconURL() })
                 .setTitle(guild.name)
                 .addFields([{ name: ':identification_card:・**Basic information:**', value: `>>> **Name**: ${guild.name}.\n**ID**: ${guild.id}.\n**Creation Date**: <t:${Math.floor(guild.createdAt / 1000)}:F>.\n**Owner**: <@${guild.ownerId}>.` }])
@@ -159,8 +159,8 @@ module.exports =
                 var target = interaction.options.getUser('user');
                 if (!target) target = interaction.member; // Select the current user if nothing is specified.
 
-                target = interaction.guild.members.cache.get(target.id); // Get the user in the server list.
-                var userRoles = '';
+                target = guild.members.cache.get(target.id); // Get the user in the server list.
+                let userRoles = '';
 
                 target.roles.cache.forEach(role =>
                 {

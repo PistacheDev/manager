@@ -10,7 +10,7 @@ module.exports =
         {
             const guild = interaction.guild;
 
-            db.query('SELECT * FROM config WHERE guild = ?', [interaction.guild.id], async (err, data) =>
+            db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, data) =>
             {
                 // Modal option.
                 var newChannel = interaction.fields.getTextInputValue('bansLogsModalOption');

@@ -41,6 +41,7 @@ module.exports =
         try
         {
             if (!interaction.guild) return; // If this interaction isn't in a guild.
+            const guild = interaction.guild;
 
             let script = this.scripts.list.get(interaction.commandName); // Search a corresponding script in the scripts list with the command name.
             if (!script) script = this.scripts.list.get(interaction.customId); // If nothing correspond, try again with the interaction customId.
@@ -48,9 +49,9 @@ module.exports =
 
             // Some permissions verifications.
             if (script.permission && !interaction.member.permissions.has(script.permission) && !interaction.member.permissions.has(Perms.Administrator) && interaction.user.id != interaction.guild.ownerId) return interaction.reply(':warning: Vous n\'avez pas les permissions requises pour faire cette interaction.');
-            if (script.ownerOnly && interaction.user.id != interaction.guild.ownerId) return interaction.reply(`:warning: Cette interaction est **réservée au propriétaire** du serveur.`);
+            if (script.ownerOnly && interaction.user.id != guild.ownerId) return interaction.reply(`:warning: Cette interaction est **réservée au propriétaire** du serveur.`);
 
-            console.log(`[debug] interactionCreate, ${script.name}, ${interaction.guild.id}, ${interaction.user.id}, ${Date.now()}`);
+            console.log(`[debug] interactionCreate, ${script.name}, ${guild.id}, ${interaction.user.id}, ${Date.now()}`);
             await script.run(client, db, interaction); // Run the script.
         }
         catch (err)
