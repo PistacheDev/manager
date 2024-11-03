@@ -33,28 +33,36 @@ async function youtubeNotifications()
                     });
 
                     if (latestVideoID == 0) continue;
-
                     await new Promise(resolve => setTimeout(resolve, 250)); // Wait to avoid to create too many requests.
+
                     const video = await axios.get(`https://www.youtube.com/watch?v=${latestVideoID}`);
                     const html = cheerio.load(video.data).html(); // Convert the data in HTML.
 
                     // Fetch required information.
-                    const videoTitle = html.match(/><title>([^<]+)<\/title>/)[1];
+                    let videoTitle = html.match(/"title":{"simpleText":"([^"]+)"}/)[1];
                     const channelName = html.match(/"channel":{"simpleText":"([^"]+)"}/)[1];
                     const channelIcon = html.match(/"thumbnails":\[\{"url":"https:\/\/yt3.ggpht.com\/([^"]+)"\}\]/)[1];
-                    if (videoTitle.length > 256) videoTitle = `${videoTitle.slice(0, 253)}...`; // If the video's title is longer than 256 characters, we reduce it.
+
+                    // Description stuff.
+                    const descriptionMatch = html.match(/"description":{"simpleText":"([^"]+)"}/);
+                    const fullVideoDescription = descriptionMatch ? descriptionMatch[1] : 'No description available for this video!';
+                    let videoDescription = fullVideoDescription.replace(/\\n/g, ' ');
+
+                    // Reduce some data if they are too long for the embed.
+                    if (videoTitle.length > 50) videoTitle = `${videoTitle.slice(0, 47)}...`;
+                    if (videoDescription.length > 245) videoDescription = `${videoDescription.slice(0, 242)}...`;
 
                     const embed = new EmbedBuilder()
                     .setColor('Red')
                     .setURL(`https://www.youtube.com/watch?v=${latestVideoID}`)
                     .setTitle(videoTitle)
                     .setThumbnail(`https://yt3.ggpht.com/${channelIcon}`)
-                    .setDescription(`**Video**: https://www.youtube.com/watch?v=${latestVideoID}.`)
+                    .setDescription(videoDescription)
                     .setImage(`https://i.ytimg.com/vi/${latestVideoID}/maxresdefault.jpg`)
                     .setTimestamp()
                     .setFooter({ text: channelName, iconURL: `https://yt3.ggpht.com/${channelIcon}` })
 
-                    client.channels.cache.get(channelID).send({ content: `${roleID == '@everyone' ? '@everyone' : `<@&${roleID}>`}`, embeds: [embed] });
+                    client.channels.cache.get(channelID).send({ content: `A **new video** is **available**! ||${roleID == '@everyone' ? '@everyone' : `<@&${roleID}>`}||`, embeds: [embed] });
                 };
             }
             catch (err)

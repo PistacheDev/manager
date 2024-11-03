@@ -24,6 +24,8 @@ module.exports =
             console.log(`[debug] ${clientCommands.length} commands were successfully deployed!`);
             rest.put( Routes.applicationCommands(client.user.id), { body: clientCommands } ).catch(console.error); // Deploy the commands.
             console.log(`[debug] Logged to Discord as ${client.user.username} (${client.user.id})!`);
+
+            youtubeNotifications();
             setInterval(youtubeNotifications, 300000); // Run the YouTube notifications system every 5 minutes.
         }
         catch (err)
