@@ -32,7 +32,7 @@ module.exports =
                 const latestVideoID = `${html.match(regex) ? html.match(regex)[1] : null}`;
                 const youtubeID = html.match(/"channelUrl":"([^"]+)"/)[1].split('channel/')[1];
 
-                await db.query('UPDATE config SET youtubeNotifs = ? WHERE guild = ?', [`${channelID} ${roleID} ${youtubeID} ${latestVideoID}`, guild.id], async (err) =>
+                db.query('UPDATE config SET youtubeNotifs = ? WHERE guild = ?', [`${channelID} ${roleID} ${youtubeID} ${latestVideoID}`, guild.id], async (err) =>
                 {
                     if (err) throw err;
 
