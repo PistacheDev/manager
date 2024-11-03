@@ -39,18 +39,18 @@ async function youtubeNotifications()
                     const html = cheerio.load(video.data).html(); // Convert the data in HTML.
 
                     // Fetch required information.
-                    let videoTitle = html.match(/"title":{"simpleText":"([^"]+)"}/)[1];
+                    let videoTitle = html.match(/"title":{"runs":\[\{"text":"([^"]+)"\}\]/)[1];
                     const channelName = html.match(/"channel":{"simpleText":"([^"]+)"}/)[1];
                     const channelIcon = html.match(/"thumbnails":\[\{"url":"https:\/\/yt3.ggpht.com\/([^"]+)"\}\]/)[1];
 
                     // Description stuff.
-                    const descriptionMatch = html.match(/"description":{"simpleText":"([^"]+)"}/);
+                    const descriptionMatch = html.match(/"attributedDescription":{"content":"([^"]+)"/);
                     const fullVideoDescription = descriptionMatch ? descriptionMatch[1] : 'No description available for this video!';
                     let videoDescription = fullVideoDescription.replace(/\\n/g, ' ');
 
                     // Reduce some data if they are too long for the embed.
-                    if (videoTitle.length > 50) videoTitle = `${videoTitle.slice(0, 47)}...`;
-                    if (videoDescription.length > 245) videoDescription = `${videoDescription.slice(0, 242)}...`;
+                    if (videoTitle.length > 43) videoTitle = `${videoTitle.slice(0, 40)}...`;
+                    if (videoDescription.length > 260) videoDescription = `${videoDescription.slice(0, 257)}...`;
 
                     const embed = new EmbedBuilder()
                     .setColor('Red')
