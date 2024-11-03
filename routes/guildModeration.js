@@ -6,7 +6,7 @@ const Perms = PermissionsBitField.Flags;
 
 module.exports =
 {
-    name: '/dashboard/guilds/:id/sanctions',
+    name: '/dashboard/guilds/:id/moderation',
     async run(req, res)
     {
         try
@@ -53,12 +53,14 @@ module.exports =
                 if (availableGuilds.length < 1) return res.status(200).send('You don\'t have any server to manage!');
                 db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, data) =>
                 {
+                    if (err) throw err;
                     if (data.length < 1)
                     {
                         // Add this server to the database if not already done.
-                        db.query('INSERT INTO config (`guild`) VALUES (?)', [guild.id], async () =>
+                        db.query('INSERT INTO config (`guild`) VALUES (?)', [guild.id], async (err) =>
                         {
-                            return res.status(200).redirect(`/dashboard/guilds/${guild.id}/sanctions`); // Reload the page.
+                            if (err) throw err;
+                            return res.status(200).redirect(`/dashboard/guilds/${guild.id}/moderation`); // Reload the page.
                         });
                     };
 
@@ -110,7 +112,10 @@ module.exports =
                         };
 
                         // Update the configuration.
-                        db.query('UPDATE config SET antispam = ? WHERE guild = ?', [status, guild.id]);
+                        db.query('UPDATE config SET antispam = ? WHERE guild = ?', [status, guild.id], async (err) =>
+                        {
+                            if (err) throw err;
+                        });
                         break;
 
                     case 'warn':
@@ -132,7 +137,10 @@ module.exports =
                         };
 
                         // Update the configuration.
-                        db.query('UPDATE config SET warn = ? WHERE guild = ?', [status, guild.id]);
+                        db.query('UPDATE config SET warn = ? WHERE guild = ?', [status, guild.id], async (err) =>
+                        {
+                            if (err) throw err;
+                        });
                         break;
 
                     case 'antipings':
@@ -154,7 +162,23 @@ module.exports =
                         };
 
                         // Update the configuration.
-                        db.query('UPDATE config SET antipings = ? WHERE guild = ?', [status, guild.id]);
+                        db.query('UPDATE config SET antipings = ? WHERE guild = ?', [status, guild.id], async (err) =>
+                        {
+                            if (err) throw err;
+                        });
+                        break;
+
+                    case 'antilinks':
+                        const data = req.query.data;
+                        if (!data) return res.status(403).send('Some information in your request are missing!');
+
+                        if (guild.ownerId != userIdentity.data.id) return res.status(403).send('Only the server\'s owner can edit this setting!');
+                        if (data != 0 && data != 1 && data != 2) return res.status(403).send('The new data provided is invalid!');
+
+                        db.query('UPDATE config SET antilinks = ? WHERE guild = ?', [data, guild.id], async (err) =>
+                        {
+                            if (err) throw err;
+                        });
                         break;
 
                     default:

@@ -14,6 +14,7 @@ module.exports =
 
             db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, data) =>
             {
+                if (err) throw err;
                 if (data.length < 1) return; // Some database verifications.
 
                 const embed = new EmbedBuilder()
@@ -49,7 +50,10 @@ module.exports =
 
                     if (filter.length >= maxMembers) // Limit exceeded.
                     {
-                        db.query('UPDATE config SET raidmode = ? WHERE guild = ?', [1, guild.id]);
+                        db.query('UPDATE config SET raidmode = ? WHERE guild = ?', [1, guild.id], async (err) =>
+                        {
+                            if (err) throw err;
+                        });
                     };
                 };
             });

@@ -18,6 +18,7 @@ module.exports =
 
             db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, config) =>
             {
+                if (err) throw err;
                 if (config.length < 1) return interaction.reply(':warning: Your server isn\'t registered in the database!\n:grey_question: To fix this issue, run the \`/repair\` command.');
                 if (config[0].xp == 0) return interaction.reply(':warning: The XP system is **disabled** in this server!');
 
@@ -42,11 +43,13 @@ module.exports =
             {
                 db.query('SELECT * FROM xp WHERE guild = ? AND user = ?', [guild.id, target.user.id], async (err, data) =>
                 {
+                    if (err) throw err;
                     if (data.length < 1) return interaction.reply(':warning: This user **doesn\'t have any XP**!');
                     if (target.user.bot) return interaction.reply(':warning: The application doesn\'t **give XP** to **bots**!');
 
                     db.query('SELECT * FROM xp WHERE guild = ?', [guild.id], async (err, all) =>
                     {
+                        if (err) throw err;
                         // Calculate the user's position in the server XP.
                         all = await all.sort((a, b) => (calculXP(parseInt(b.xp), parseInt(b.level)) - calculXP(parseInt(a.xp), parseInt(a.level))));
 
@@ -72,6 +75,7 @@ module.exports =
             {
                 db.query('SELECT * FROM xp WHERE guild = ?', [guild.id], async (err, data) =>
                 {
+                    if (err) throw err;
                     if (data.length < 1) return interaction.reply(':warning: No members have XP on this server!');
 
                     // Calculate the leaderboard.

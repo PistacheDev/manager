@@ -10,6 +10,7 @@ module.exports =
         {
             db.query('SELECT * FROM config WHERE guild = ?', [interaction.guild.id], async (err, data) =>
             {
+                if (err) throw err;
                 if (data[0].youtubeNotifs == 0) return showFirstModal(); // The option is turned off for this server, so the user can't disable it.
                 const [channelID, roleID, youtubeID, latestVideoID] = data[0].youtubeNotifs.split(' ');
 

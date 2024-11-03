@@ -8,8 +8,6 @@ module.exports =
     {
         try
         {
-            db.query('INSERT INTO config (`guild`) VALUES (?)', [guild.id]);
-
             // Check if the server has a main channel configured.
             if (guild.systemChannel)
             {
@@ -47,6 +45,11 @@ module.exports =
 
                 guild.systemChannel.send({ content: `<@${guild.ownerId}>`, embeds: [embed], components: [buttons] });
             };
+
+            db.query('INSERT INTO config (`guild`) VALUES (?)', [guild.id], async (err) =>
+            {
+                if (err) throw err;
+            });
         }
         catch(err)
         {

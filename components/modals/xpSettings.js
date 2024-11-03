@@ -22,10 +22,13 @@ module.exports =
             if (maxLevel > 100 || maxLevel < 10) return interaction.reply(':warning: The maximum level must be **between 10 and 100**!');
             if (maxXP > 50 || maxXP < 1) return interaction.reply(':warning: The maximum amount of XP must be **between 1 and 50**!');
 
-            db.query('UPDATE config SET xp = ? WHERE guild = ?', [`${alert == 'yes' ? 1 : 0} ${maxXP} ${maxLevel}`, guild.id], async () =>
+            db.query('UPDATE config SET xp = ? WHERE guild = ?', [`${alert == 'yes' ? 1 : 0} ${maxXP} ${maxLevel}`, guild.id], async (err) =>
             {
+                if (err) throw err;
+
                 db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, data) =>
                 {
+                    if (err) throw err;
                     let goals = '';
 
                     for (let i = 0; i < 4; i++) // Fetch and load every goals.

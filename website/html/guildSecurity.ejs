@@ -27,7 +27,7 @@
             <img src="<%= guildIcon %>">
             <p class="title"><%= guildName %></p> <br>
             <a class="display" href="/dashboard/guilds/<%= guildID %>/security">🛡️・Security</a> <br>
-            <a href="/dashboard/guilds/<%= guildID %>/sanctions">🔨・Sanctions</a> <br>
+            <a href="/dashboard/guilds/<%= guildID %>/moderation">🔨・Moderation</a> <br>
             <a href="/dashboard/guilds/<%= guildID %>/xp">📊・XP</a> <br>
             <a href="/dashboard/guilds/<%= guildID %>/connections">🖇️・Connections</a> <br>
             <a href="/dashboard/guilds/<%= guildID %>/members">🛬・Members</a> <br>
@@ -76,18 +76,6 @@
                 <% } else { %>
                     <p class="status">Anti bots: Inactive.</p>
                     <a href="/dashboard/guilds/<%= guildID %>/security?value=antibots&data=1">Enable</a>
-                <% }; %>
-            </div>
-            <div class="noinput">
-                <% if (antilinksStatut == 0) { %>
-                    <p class="status">Anti links: Inactive.</p>
-                    <a href="/dashboard/guilds/<%= guildID %>/security?value=antilinks&data=1">Enable</a>
-                <% } else if (antilinksStatut == 1) { %>
-                    <p class="status">Anti links: Active.</p>
-                    <a href="/dashboard/guilds/<%= guildID %>/security?value=antilinks&data=2">Enforce</a>
-                <% } else { %>
-                    <p class="status">Anti links: Enforced.</p>
-                    <a href="/dashboard/guilds/<%= guildID %>/security?value=antilinks&data=0">Disable</a>
                 <% }; %>
             </div>
         </div>

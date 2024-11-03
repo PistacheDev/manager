@@ -12,10 +12,12 @@ module.exports = {
 
             db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, data) =>
             {
+                if (err) throw err;
                 if (data.length > 0) return interaction.reply(':warning: Your server is **already registered** in the database!');
 
                 db.query('INSERT INTO config (`guild`) VALUES (?)', [guild.id], async (err) =>
                 {
+                    if (err) throw err;
                     await interaction.reply(':white_check_mark: Your server has been **successfully registered** in the database!');
                 });
             });

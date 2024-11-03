@@ -1,6 +1,7 @@
+const querystring = require('querystring');
 const axios = require('axios');
 const { client } = require('../main');
-const querystring = require('querystring');
+const config = require('../config.json');
 const jsonwebtoken = require('jsonwebtoken');
 
 // Request the access token to Discord.
@@ -46,7 +47,7 @@ module.exports =
                 client_secret: process.env.APP_SECRET,
                 grant_type: 'authorization_code',
                 code: req.query.code,
-                redirect_uri: 'http://localhost:8080/callback',
+                redirect_uri: config.express.callback,
                 scope: ['identify', 'guilds']
             };
 

@@ -27,7 +27,11 @@ async function youtubeNotifications()
 
                 if (latestVideoID != videoID)
                 {
-                    db.query('UPDATE config SET youtubeNotifs = ? WHERE guild = ?', [`${channelID} ${roleID} ${youtubeID} ${latestVideoID}`, data[i].guild]);
+                    db.query('UPDATE config SET youtubeNotifs = ? WHERE guild = ?', [`${channelID} ${roleID} ${youtubeID} ${latestVideoID}`, data[i].guild], async (err) =>
+                    {
+                        if (err) throw err;
+                    });
+
                     if (latestVideoID == 0) continue;
 
                     await new Promise(resolve => setTimeout(resolve, 250)); // Wait to avoid to create too many requests.

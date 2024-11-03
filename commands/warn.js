@@ -30,12 +30,18 @@ module.exports =
             if (mod.id != ownerID && target.permissions.has(Perms.Administrator)) return interaction.reply(`:warning: **Only the owner** can warn an administrator!`);
             if (targetID == client.user.id) return interaction.reply(':warning: You can\'t warn **the application** with this command!');
 
-            db.query('INSERT INTO warns (`guild`, `warnID`, `target`, `moderator`, `reason`, `date`) VALUES (?, ?, ?, ?, ?, ?)', [guild.id, warnID, targetID, mod.id, reason.replace(/'/g, "\\'"), Date.now()], async () =>
+            db.query('INSERT INTO warns (`guild`, `warnID`, `target`, `moderator`, `reason`, `date`) VALUES (?, ?, ?, ?, ?, ?)', [guild.id, warnID, targetID, mod.id, reason.replace(/'/g, "\\'"), Date.now()], async (err) =>
             {
+                if (err) throw err;
+
                 db.query('SELECT * FROM warns WHERE target = ? AND guild = ?', [targetID, guild.id], async (err, data) =>
                 {
+                    if (err) throw err;
+
                     db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, config) =>
                     {
+                        if (err) throw err;
+
                         if (config[0].warn == 0)
                         {
                             interaction.reply(`:warning: <@${targetID}>, you've been warned by <@${mod.id}>!\n:man_judge: **Reason**: \`${reason}\`.\n:paperclip: **Warn ID**: \`${warnID}\`.`);
@@ -58,7 +64,10 @@ module.exports =
                                     target.timeout(sanction * 3600000).then(() =>
                                     {
                                         message.reply(`:man_judge: <@${targetID}>, you've been **muted for ${sanction} hours** for too many warns!`);
-                                        db.query('DELETE FROM warns WHERE target = ? AND guild = ?', [targetID, guild.id]);
+                                        db.query('DELETE FROM warns WHERE target = ? AND guild = ?', [targetID, guild.id], async (err) =>
+                                        {
+                                            if (err) throw err;
+                                        });
                                     });
                                 };
                             }

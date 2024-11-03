@@ -9,7 +9,11 @@ module.exports =
 
             for (let i = 0; i < tables.length; i++)
             {
-                db.query('DELETE FROM ? WHERE guild = ?', [tables[i], guild.id]); // Save some space on the server.
+                // Save some space on the server.
+                db.query('DELETE FROM ? WHERE guild = ?', [tables[i], guild.id], async (err) =>
+                {
+                    if (err) throw err;
+                });
             };
         }
         catch (err)

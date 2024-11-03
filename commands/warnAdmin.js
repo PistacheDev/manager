@@ -36,6 +36,7 @@ module.exports =
 
             db.query('SELECT * FROM warns WHERE guild = ? AND target = ?', [guild.id, target.user.id], async (err, data) =>
             {
+                if (err) throw err;
                 if (data.length < 1) return interaction.reply(':warning: This member **has never been warned** in this server!');
                 await data.sort((a, b) => parseInt(b.date) - parseInt(a.date)); // Sort by recent date.
 
@@ -63,10 +64,12 @@ module.exports =
 
             db.query('SELECT * FROM warns WHERE guild = ? AND warnID = ?', [guild.id, warnID], async (err, data) =>
             {
+                if (err) throw err;
                 if (data.length < 1) return interaction.reply(':warning: This warn **doesn\'t exist**!');
 
                 db.query('DELETE FROM warns WHERE guild = ? AND warnID = ?', [guild.id, warnID], async (err, data) =>
                 {
+                    if (err) throw err;
                     interaction.reply(`:white_check_mark: \`${warnID}\` has been **removed successfully**!`);
                 });
             });
@@ -79,6 +82,7 @@ module.exports =
 
             db.query('DELETE FROM warns WHERE guild = ? AND target = ?', [guild.id, target.user.id], async (err, data) =>
             {
+                if (err) throw err;
                 const deletedCount = data.affectedRows; // Calculate the number of removed warns.
 
                 if (deletedCount < 1) return interaction.reply(':warning: This member **has never been warned** in this server!');
