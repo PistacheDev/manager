@@ -26,10 +26,14 @@ module.exports =
             if (maxWarns < 1 || maxWarns > 5) return interaction.reply(':warning: The maximum warns must be **between 1 and 5 warns**!');
             if (sanction != 'ban' && (sanction < 1 || sanction > 70560)) return interaction.reply(':warning: The mute can\'t last **less than 1 minute** or **longer than 7 days (70560)**!');
 
-            db.query('UPDATE config SET antispam = ? WHERE guild = ?', [`${ignoreBots == 'yes' ? 1 : 0} ${maxMessages} ${interval} ${maxWarns} ${sanction}`, guild.id], async () =>
+            db.query('UPDATE config SET antispam = ? WHERE guild = ?', [`${ignoreBots == 'yes' ? 1 : 0} ${maxMessages} ${interval} ${maxWarns} ${sanction}`, guild.id], async (err) =>
             {
+                if (err) throw err;
+
                 db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, data) =>
                 {
+                    if (err) throw err;
+
                     let warnStatus = ':x: Inactive';
                     let pingStatus = ':x: Inactive';
 
@@ -52,6 +56,7 @@ module.exports =
                     .addFields([{ name: ':hand_splayed:・Anti spam:', value: `>>> **Status**: :white_check_mark: Active.\n**Ignore Bots**: ${ignoreBots == 'yes' ? 'Yes' : 'No'}.\n**Spam Detection:** More than ${maxMessages} messages in ${interval} seconds.\n**Maximum Warns**: ${maxWarns} warns.\n**Sanction**: ${sanction == 'ban' ? 'Ban' : `Mute for ${sanction} minutes`}.\n**Function**: Prevent the members from **spamming messages**.` }])
                     .addFields([{ name: ':warning:・Warns:', value: `>>> **Status**: ${warnStatus}.\n**Function**: The member **is sanctionned** if its warns count reached the **maximum amount**.` }])
                     .addFields([{ name: ':loud_sound:・Anti pings:', value: `>>> **Status**: ${pingStatus}.\n**Function**: Prevent the members from using **@everyone and @here**.` }])
+                    .addFields([{ name: ':globe_with_meridians:・Anti links:', value: `>>> **Status**: ${data[0].antilinks == 0 ? ':x: Inactive' : data[0].antilinks == 1 ? ':white_check_mark: Active' : ':lock: Enforced (bots too)'}.\n**Function**: Delete messages **containing links**.` }])
                     .setThumbnail(client.user.avatarURL())
                     .setTimestamp()
                     .setFooter({ text: guild.name, iconURL: guild.iconURL() })

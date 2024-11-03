@@ -1,10 +1,11 @@
 {
-    "version": "3.4.4",
+    "version": "3.4.6",
+    "debug": true,
     "express":
     {
         "host": "localhost",
         "port": 8080,
-        "debug": true,
+        "callback": "http://localhost:8080/callback",
         "login": "https://discord.com/oauth2/authorize?client_id=1211390696334958654&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fcallback&scope=identify+guilds"
     }
 }

@@ -16,18 +16,29 @@ module.exports =
 
             db.query('SELECT * FROM xp WHERE user = ? AND guild = ?', [user.id, guild.id], async (err, data) =>
             {
+                if (err) throw err;
+
                 // Some data.
                 let newXP = parseInt(amountXP);
                 let currentLevel = 0;
 
-                if (data.length < 1) db.query('INSERT INTO xp (`user`, `guild`, `xp`) VALUES (?, ?, ?)', [user.id, guild.id, amountXP]);
+                if (data.length < 1)
+                {
+                    db.query('INSERT INTO xp (`user`, `guild`, `xp`) VALUES (?, ?, ?)', [user.id, guild.id, amountXP], async (err) =>
+                    {
+                        if (err) throw err;
+                    });
+                }
                 else
                 {
                     // Update the data if the user is already in the database.
                     newXP = parseInt(data[0].xp) + parseInt(amountXP);
                     currentLevel = parseInt(data[0].level);
 
-                    db.query('UPDATE xp SET xp = ?, level = ? WHERE guild = ? AND user = ?', [newXP, currentLevel, guild.id, user.id]);
+                    db.query('UPDATE xp SET xp = ?, level = ? WHERE guild = ? AND user = ?', [newXP, currentLevel, guild.id, user.id], async (err) =>
+                    {
+                        if (err) throw err;
+                    });
                 };
 
                 // Amount of XP required to level up.
@@ -44,6 +55,8 @@ module.exports =
 
                     db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, config) =>
                     {
+                        if (err) throw err;
+
                         for (let i = 0; i < 4; i++)
                         {
                             const goal = config[0].xpgoals.split(' ')[i];
@@ -60,7 +73,10 @@ module.exports =
                         };
                     });
 
-                    db.query('UPDATE xp SET xp = ?, level = ? WHERE guild = ? AND user = ?', [newXP, currentLevel, guild.id, user.id]);
+                    db.query('UPDATE xp SET xp = ?, level = ? WHERE guild = ? AND user = ?', [newXP, currentLevel, guild.id, user.id], async (err) =>
+                    {
+                        if (err) throw err;
+                    });
                 };
             });
 

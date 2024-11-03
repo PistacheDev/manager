@@ -14,6 +14,7 @@ module.exports =
 
             db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, data) =>
             {
+                if (err) throw err;
                 if (data.length < 1) return interaction.reply(':warning: Your server isn\'t registered in the database!\n:grey_question: To fix this issue, run the \`/repair\` command.');
 
                 // Modal options.
@@ -31,8 +32,10 @@ module.exports =
                 const latestVideoID = `${html.match(regex) ? html.match(regex)[1] : null}`;
                 const youtubeID = html.match(/"channelUrl":"([^"]+)"/)[1].split('channel/')[1];
 
-                await db.query('UPDATE config SET youtubeNotifs = ? WHERE guild = ?', [`${channelID} ${roleID} ${youtubeID} ${latestVideoID}`, guild.id], async () =>
+                await db.query('UPDATE config SET youtubeNotifs = ? WHERE guild = ?', [`${channelID} ${roleID} ${youtubeID} ${latestVideoID}`, guild.id], async (err) =>
                 {
+                    if (err) throw err;
+
                     const embed = new EmbedBuilder()
                     .setColor('Orange')
                     .setAuthor({ name: 'Configuration Panel', iconURL: client.user.avatarURL() })

@@ -12,6 +12,8 @@ module.exports =
 
             db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, data) =>
             {
+                if (err) throw err;
+
                 // Modal option.
                 var newChannel = interaction.fields.getTextInputValue('youtubeModalOption');
 
@@ -19,8 +21,10 @@ module.exports =
                 if (data.length < 1) return interaction.reply(':warning: Your server isn\'t registered in the database!\n:grey_question: To fix this issue, run the \`/repair\` command.');
                 if (newChannel && !guild.channels.cache.get(newChannel)) return interaction.reply(':warning: This channel doesn\'t exist or the application can\'t access it!');
 
-                await db.query('UPDATE config SET youtubeNotifs = ? WHERE guild = ?', [!newChannel ? 0 : `${newChannel} 0 0 0`, guild.id], async () =>
+                await db.query('UPDATE config SET youtubeNotifs = ? WHERE guild = ?', [!newChannel ? 0 : `${newChannel} 0 0 0`, guild.id], async (err) =>
                 {
+                    if (err) throw err;
+
                     const embed = new EmbedBuilder()
                     .setColor('Orange')
                     .setAuthor({ name: 'Configuration Panel', iconURL: client.user.avatarURL() })

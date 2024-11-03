@@ -55,11 +55,13 @@ module.exports =
                 if (availableGuilds.length < 1) return res.status(200).send('You don\'t have any server to manage!');
                 db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, data) =>
                 {
+                    if (err) throw err;
                     if (data.length < 1)
                     {
                         // Add this server to the database if not already done.
-                        db.query('INSERT INTO config (`guild`) VALUES (?)', [guild.id], async () =>
+                        db.query('INSERT INTO config (`guild`) VALUES (?)', [guild.id], async (err) =>
                         {
+                            if (err) throw err;
                             return res.status(200).redirect(`/dashboard/guilds/${guild.id}/connections`); // Reload the page.
                         });
                     };
@@ -111,7 +113,10 @@ module.exports =
                             status = `${channel} ${role} ${youtubeID} ${latestVideoID}`;
                         };
 
-                        db.query('UPDATE config SET youtubeNotifs = ? WHERE guild = ?', [status, guild.id]);
+                        db.query('UPDATE config SET youtubeNotifs = ? WHERE guild = ?', [status, guild.id], async (err) =>
+                        {
+                            if (err) throw err;
+                        });
                         break;
 
                     default:

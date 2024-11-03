@@ -3,6 +3,7 @@ dotenv.config(); // Import the environnement variables.
 
 const { Client, IntentsBitField, Partials, ActivityType } = require('discord.js');
 const config = require('./config.json');
+console.log(`[debug] Currently running in ${config.debug ? 'debug' : 'release'} mode!`);
 const mysql = require('mysql2');
 const express = require('express');
 const path = require('path');
@@ -21,15 +22,24 @@ const client = new Client
     },
 });
 
-if (process.env.DB_USER == 'root' && !config.express.debug)
+if (process.env.DB_USER == 'root')
 {
-    console.error('[error] You can\'t use the database\'s root user in release mode.\nThe process has been killed (security reason).');
-    return process.exit(); // Kill the process (root user used in release mode).
-}
-else if (process.env.DB_PASSWORD.length < 12 && !config.express.debug)
+    if (!config.debug)
+    {
+        console.error('[error] You can\'t use the database\'s root user in release mode.\nThe process has been killed (security reason).');
+        return process.exit(); // Kill the process (root user used in release mode).
+    }
+    else console.warn('[warn] You are currently using the database\'s root user! Be careful!');
+};
+
+if (process.env.DB_PASSWORD.length < 12)
 {
-    console.error('[error] Your database\'s password is too weak for the release mode.\nThe process has been killed (security reason).');
-    return process.exit(); // Kill the process (password too weak in release mode).
+    if (!config.debug)
+    {
+        console.error('[error] Your database\'s password is too weak for the release mode.\nThe process has been killed (security reason).');
+        return process.exit(); // Kill the process (password too weak in release mode).
+    }
+    else console.warn('[warn] You are currently using a weak password for the database! Be careful!');
 };
 
 // Create a pool connection to the database.
@@ -82,9 +92,8 @@ try
     // Middleware.
     app.get('*', async (req, res, next) =>
     {
-        // If config.express.debug = true, the request always continue (ONLY use for localhost debugging).
-        // If config.express.debug = false, the user is forced to visit the site by the domain name.
-        if (req.get('host').startsWith(config.express.host) && !config.express.debug) return res.redirect(`https://manager.pistachedev.fr${req.url}`);
+        // Enforce the domain name if we are in release mode.
+        if (req.get('host').startsWith(config.express.host) && !config.debug) return res.redirect(`https://manager.pistachedev.fr${req.url}`);
 
         // We create a log only if the request isn't an another file or a sensitive page.
         if (!['.css', '.png', '.js', '.ico'].includes(path.extname(req.url)) && !req.url.startsWith('/callback')) console.log(`[debug] website, ${req.url}, ${req.method}, ${res.statusCode}, ${req.ip}, ${Date.now()}`);

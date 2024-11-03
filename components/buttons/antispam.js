@@ -12,6 +12,7 @@ module.exports =
 
             db.query(`SELECT * FROM config WHERE guild = ?`, [guild.id], async (err, data) =>
             {
+                if (err) throw err;
                 if (data.length < 1) return interaction.reply(':warning: Your server isn\'t registered in the database!\n:grey_question: To fix this issue, run the \`/repair\` command.');
 
                 if (data[0].antispam == 0)
@@ -97,12 +98,14 @@ module.exports =
                     .addFields([{ name: ':hand_splayed:・Anti spam:', value: `>>> **Status**: :x: Inactive.\n**Function**: Prevent the members from **spamming messages**.` }])
                     .addFields([{ name: ':warning:・Warns:', value: `>>> **Status**: ${warnsStatus}.\n**Function**: The member **is sanctionned** if its warns count reached the **maximum amount**.` }])
                     .addFields([{ name: ':loud_sound:・Anti pings:', value: `>>> **Status**: ${pingStatus}.\n**Function**: Prevent the members from using **@everyone and @here**.` }])
+                    .addFields([{ name: ':globe_with_meridians:・Anti links:', value: `>>> **Status**: ${data[0].antilinks == 0 ? ':x: Inactive' : data[0].antilinks == 1 ? ':white_check_mark: Active' : ':lock: Enforced (bots too)'}.\n**Function**: Delete messages **containing links**.` }])
                     .setThumbnail(client.user.avatarURL())
                     .setTimestamp()
                     .setFooter({ text: guild.name, iconURL: guild.iconURL() })
 
-                    db.query('UPDATE config SET antispam = ? WHERE guild = ?', [0, guild.id], async () =>
+                    db.query('UPDATE config SET antispam = ? WHERE guild = ?', [0, guild.id], async (err) =>
                     {
+                        if (err) throw err;
                         interaction.message.edit({ embeds: [embed] });
                         interaction.deferUpdate();
                     });

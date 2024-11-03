@@ -13,6 +13,7 @@ module.exports =
             db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, data) =>
             {
                 // Some verifications.
+                if (err) throw err;
                 if (data.length < 1 || data[0].messagesLogs == 0 || oldMessage.author == null || oldMessage.author.bot || oldMessage.content == newMessage.content) return;
 
                 const embed = new EmbedBuilder()

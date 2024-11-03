@@ -12,6 +12,8 @@ module.exports =
 
             db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, data) =>
             {
+                if (err) throw err;
+
                 // Modal option.
                 var newRole = interaction.fields.getTextInputValue('joinRoleModalOption');
 
@@ -19,8 +21,10 @@ module.exports =
                 if (data.length < 1) return interaction.reply(':warning: Your server isn\'t registered in the database!\n:grey_question: To fix this issue, run the \`/repair\` command.');
                 if (newRole && !guild.roles.cache.get(newRole)) return interaction.reply(':warning: This role doesn\'t exist!');
 
-                db.query('UPDATE config SET joinRole = ? WHERE guild = ?', [newRole ? newRole : 0, guild.id], async () =>
+                db.query('UPDATE config SET joinRole = ? WHERE guild = ?', [newRole ? newRole : 0, guild.id], async (err) =>
                 {
+                    if (err) throw err;
+
                     const embed = new EmbedBuilder()
                     .setColor('Orange')
                     .setAuthor({ name: 'Configuration Panel', iconURL: client.user.avatarURL() })

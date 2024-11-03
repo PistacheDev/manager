@@ -12,6 +12,7 @@ module.exports =
 
             db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, data) =>
             {
+                if (err) throw err;
                 if (data.length < 1) return interaction.reply(':warning: Your server isn\'t registered in the database!\n:grey_question: To fix this issue, run the \`/repair\` command.');
 
                 if (data[0].xp == 0)
@@ -74,8 +75,9 @@ module.exports =
                     .setTimestamp()
                     .setFooter({ text: guild.name, iconURL: guild.iconURL() })
 
-                    db.query('UPDATE config SET xp = ? WHERE guild = ?', [0, guild.id], async () =>
+                    db.query('UPDATE config SET xp = ? WHERE guild = ?', [0, guild.id], async (err) =>
                     {
+                        if (err) throw err;
                         interaction.message.edit({ embeds: [embed] });
                         interaction.deferUpdate();
                     });

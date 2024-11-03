@@ -23,8 +23,10 @@ module.exports =
                 if (maxMembers < 3 || maxMembers > 10) return interaction.reply(':warning: The maximum members must be **between 3 and 10**!');
                 if (interval < 3 || interval > 10) return interaction.reply(':warning: The interval must be **between 1 and 10 seconds**');
 
-                db.query('UPDATE config SET autoraidmode = ? WHERE guild = ?', [`${maxMembers} ${interval}`, guild.id], async () =>
+                db.query('UPDATE config SET autoraidmode = ? WHERE guild = ?', [`${maxMembers} ${interval}`, guild.id], async (err) =>
                 {
+                    if (err) throw err;
+
                     const embed = new EmbedBuilder()
                     .setColor('Orange')
                     .setAuthor({ name: 'Configuration Panel', iconURL: client.user.avatarURL() })

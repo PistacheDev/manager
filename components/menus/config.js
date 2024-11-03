@@ -18,7 +18,7 @@ module.exports =
                 .setOptions([
                     { emoji: '🏡', label: 'Home', description: 'Return to home.', value: 'home' },
                     { emoji: '🛡️', label: 'Security', description: 'Configure security options.', value: 'security' },
-                    { emoji: '🔨', label: 'Sanctions', description: 'Configure automatic sanctions.', value: 'sanctions' },
+                    { emoji: '🔨', label: 'Moderation', description: 'Configure moderation options.', value: 'moderation' },
                     { emoji: '📊', label: 'XP', description: 'Configure the XP system.', value: 'XP' },
                     { emoji: '🖇️', label: 'Connections', description: 'Configure external connections.', value: 'API' },
                     { emoji: '🛬', label: 'Members', description: 'Configure arrivals/departures.', value: 'members' },
@@ -37,6 +37,7 @@ module.exports =
 
             db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, data) =>
             {
+                if (err) throw err;
                 if (data.length < 1) return interaction.reply(':warning: Your server isn\'t registered in the database!\n:grey_question: To fix this issue, run the \`/repair\` command.');
 
                 switch (interaction.values.toString())
@@ -49,8 +50,8 @@ module.exports =
                         securityMenu(data[0]);
                         break;
 
-                    case 'sanctions':
-                        sanctionsMenu(data[0]);
+                    case 'moderation':
+                        moderationMenu(data[0]);
                         break;
 
                     case 'XP':
@@ -115,7 +116,6 @@ module.exports =
                 embed.addFields([{ name: ':closed_lock_with_key:・Raidmode:', value: `>>> **Status**: ${data.raidmode == 1 ? ':white_check_mark: Active' : ':x: Inactive'}.\n**Function**: Blocks the arrival of **new members**.` }])
                 embed.addFields([{ name: ':crossed_swords:・Auto raidmode:', value: `>>> **Status**: ${status}.\n**Function**: Enable the **raidmode** when **too many users** join the server in a **short period** of time.` }])
                 embed.addFields([{ name: ':robot:・Anti bots:', value: `>>> **Status**: ${data.antibots == 1 ? ':white_check_mark: Active' : ':x: Inactive'}.\n**Function**: Blocks the **addition of applications**.` }])
-                embed.addFields([{ name: ':globe_with_meridians:・Anti links:', value: `>>> **Status**: ${data.antilinks == 0 ? ':x: Inactive' : data.antilinks == 1 ? ':white_check_mark: Active' : ':lock: Enforced (bots too)'}.\n**Function**: Delete messages **containing links**.` }])
 
                 var buttons = new ActionRowBuilder()
                 .addComponents(
@@ -133,17 +133,12 @@ module.exports =
                     .setCustomId('antibotButton')
                     .setEmoji('🤖')
                     .setStyle(ButtonStyle.Primary)
-                ).addComponents(
-                    new ButtonBuilder()
-                    .setCustomId('antilinksButton')
-                    .setEmoji('🌐')
-                    .setStyle(ButtonStyle.Primary)
                 )
 
                 await interaction.message.edit({ embeds: [embed], components: [buttons, menu] });
             };
 
-            async function sanctionsMenu(data)
+            async function moderationMenu(data)
             {
                 let status = ':x: Inactive';
 
@@ -172,6 +167,7 @@ module.exports =
                 };
 
                 embed.addFields([{ name: ':loud_sound:・Anti pings:', value: `>>> **Status**: ${status}.\n**Function**: Prevent the members from using **@everyone and @here**.` }])
+                embed.addFields([{ name: ':globe_with_meridians:・Anti links:', value: `>>> **Status**: ${data.antilinks == 0 ? ':x: Inactive' : data.antilinks == 1 ? ':white_check_mark: Active' : ':lock: Enforced (bots too)'}.\n**Function**: Delete messages **containing links**.` }])
 
                 var buttons = new ActionRowBuilder()
                 .addComponents(
@@ -188,6 +184,11 @@ module.exports =
                     new ButtonBuilder()
                     .setCustomId('antipingsButton')
                     .setEmoji('🔊')
+                    .setStyle(ButtonStyle.Primary)
+                ).addComponents(
+                    new ButtonBuilder()
+                    .setCustomId('antilinksButton')
+                    .setEmoji('🌐')
                     .setStyle(ButtonStyle.Primary)
                 )
 

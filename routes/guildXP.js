@@ -53,11 +53,13 @@ module.exports =
                 if (availableGuilds.length < 1) return res.status(200).send('You don\'t have any server to manage!');
                 db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, data) =>
                 {
+                    if (err) throw err;
                     if (data.length < 1)
                     {
                         // Add this server to the database if not already done.
-                        db.query('INSERT INTO config (`guild`) VALUES (?)', [guild.id], async () =>
+                        db.query('INSERT INTO config (`guild`) VALUES (?)', [guild.id], async (err) =>
                         {
+                            if (err) throw err;
                             return res.status(200).redirect(`/dashboard/guilds/${guild.id}/xp`); // Reload the page.
                         });
                     };
@@ -103,7 +105,10 @@ module.exports =
                             status = `${alert == 'yes' ? 1 : 0} ${xp} ${level}`;
                         };
 
-                        db.query('UPDATE config SET xp = ? WHERE guild = ?', [status, guild.id]);
+                        db.query('UPDATE config SET xp = ? WHERE guild = ?', [status, guild.id], async (err) =>
+                        {
+                            if (err) throw err;
+                        });
                         break;
 
                     case 'goals':
@@ -129,7 +134,10 @@ module.exports =
                             if (roleID) xpGoals[goal - 1] = `${level}-${roleID}`;
                             else xpGoals[goal - 1] = 0;
 
-                            db.query('UPDATE config SET xpgoals = ? WHERE guild = ?', [`${xpGoals[0]} ${xpGoals[1]} ${xpGoals[2]} ${xpGoals[3]}`, guild.id]);
+                            db.query('UPDATE config SET xpgoals = ? WHERE guild = ?', [`${xpGoals[0]} ${xpGoals[1]} ${xpGoals[2]} ${xpGoals[3]}`, guild.id], async (err) =>
+                            {
+                                if (err) throw err;
+                            });
                         });
                         break;
 

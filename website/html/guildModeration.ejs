@@ -15,7 +15,7 @@
         <ul>
             <% for (var i = 0; i < availableGuilds.length; i++) { %>
                 <li>
-                    <a href="/dashboard/guilds/<%= availableGuilds[i].id %>/sanctions"><img src="https://cdn.discordapp.com/icons/<%= availableGuilds[i].id %>/<%= availableGuilds[i].icon %>"></a>
+                    <a href="/dashboard/guilds/<%= availableGuilds[i].id %>/moderation"><img src="https://cdn.discordapp.com/icons/<%= availableGuilds[i].id %>/<%= availableGuilds[i].icon %>"></a>
                 </li>
             <% }; %>
             <br>
@@ -26,7 +26,7 @@
             <img src="<%= guildIcon %>">
             <p class="title"><%= guildName %></p> <br>
             <a href="/dashboard/guilds/<%= guildID %>/security">🛡️・Security</a> <br>
-            <a class="display" href="/dashboard/guilds/<%= guildID %>/sanctions">🔨・Sanctions</a> <br>
+            <a class="display" href="/dashboard/guilds/<%= guildID %>/moderation">🔨・Moderation</a> <br>
             <a href="/dashboard/guilds/<%= guildID %>/xp">📊・XP</a> <br>
             <a href="/dashboard/guilds/<%= guildID %>/connections">🖇️・Connections</a> <br>
             <a href="/dashboard/guilds/<%= guildID %>/members">🛬・Members</a> <br>
@@ -35,7 +35,7 @@
             <a href="/dashboard/guilds">↩️・Back</a>
         </div>
         <div class="config">
-            <p class="title">Sanctions</p>
+            <p class="title">Moderation</p>
             <div>
                 <% if (antispam == 0) { %>
                     <p class="status">Anti spam: Inactive.</p>
@@ -55,7 +55,7 @@
                         <p class="data">・Sanction: Ban.</p>
                     <% }; %>
                 <% }; %>
-                <form action="/dashboard/guilds/<%= guildID %>/sanctions" method="get">
+                <form action="/dashboard/guilds/<%= guildID %>/moderation" method="get">
                     <input class="input" type="text" name="value" value="antispam" hidden/>
                     <input class="input" type="text" name="bots" placeholder='Answer by "yes" or "no".'/> <br>
                     <input class="input" type="text" name="messages" placeholder="Maximum number of warns before the sanction."/> <br>
@@ -69,7 +69,7 @@
                                 margin-top: 5px;
                             }
                         </style>
-                        <a href="/dashboard/guilds/<%= guildID %>/sanctions?value=antispam&disable=hi">Disable</a>
+                        <a href="/dashboard/guilds/<%= guildID %>/moderation?value=antispam&disable=hi">Disable</a>
                     <% }; %>
                 </form>
             </div>
@@ -86,7 +86,7 @@
                         <p class="data">・Sanction: Ban.</p>
                     <% }; %>
                 <% }; %>
-                <form action="/dashboard/guilds/<%= guildID %>/sanctions" method="get">
+                <form action="/dashboard/guilds/<%= guildID %>/moderation" method="get">
                     <input class="input" type="text" name="value" value="warn" hidden/>
                     <input class="input" type="text" name="warns" placeholder="Maximum number of warns before the sanction."/> <br>
                     <input class="input" type="text" name="sanction" placeholder='Enter "ban" to ban or a number (in hours) to mute.'/> <br>
@@ -97,7 +97,7 @@
                                 margin-top: 5px;
                             }
                         </style>
-                        <a href="/dashboard/guilds/<%= guildID %>/sanctions?value=warn&disable=hi">Disable</a>
+                        <a href="/dashboard/guilds/<%= guildID %>/moderation?value=warn&disable=hi">Disable</a>
                     <% }; %>
                 </form>
             </div>
@@ -118,7 +118,7 @@
                         <p class="data">・Sanction: Ban.</p>
                     <% }; %>
                 <% }; %>
-                <form action="/dashboard/guilds/<%= guildID %>/sanctions" method="get">
+                <form action="/dashboard/guilds/<%= guildID %>/moderation" method="get">
                     <input class="input" type="text" name="value" value="antipings" hidden/>
                     <input class="input" type="text" name="bots" placeholder='Answer by "yes" or "no".'/> <br>
                     <input class="input" type="text" name="sanction" placeholder='Enter "ban" to ban or a number (in minutes) to mute.'/> <br>
@@ -129,9 +129,21 @@
                                 margin-top: 5px;
                             }
                         </style>
-                        <a href="/dashboard/guilds/<%= guildID %>/sanctions?value=antipings&disable=hi">Disable</a>
+                        <a href="/dashboard/guilds/<%= guildID %>/moderation?value=antipings&disable=hi">Disable</a>
                     <% }; %>
                 </form>
+            </div>
+            <div>
+                <% if (antilinksStatut == 0) { %>
+                    <p class="status">Anti links: Inactive.</p>
+                    <a href="/dashboard/guilds/<%= guildID %>/security?value=antilinks&data=1">Enable</a>
+                <% } else if (antilinksStatut == 1) { %>
+                    <p class="status">Anti links: Active.</p>
+                    <a href="/dashboard/guilds/<%= guildID %>/security?value=antilinks&data=2">Enforce</a>
+                <% } else { %>
+                    <p class="status">Anti links: Enforced.</p>
+                    <a href="/dashboard/guilds/<%= guildID %>/security?value=antilinks&data=0">Disable</a>
+                <% }; %>
             </div>
         </div>
     </main>
