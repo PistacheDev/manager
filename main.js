@@ -1,6 +1,4 @@
-const dotenv = require('dotenv');
-dotenv.config(); // Import the environnement variables.
-
+require('dotenv').config();
 const { Client, IntentsBitField, Partials, ActivityType } = require('discord.js');
 const config = require('./config.json');
 console.log(`[debug] Currently running in ${config.debug ? 'debug' : 'release'} mode!`);
@@ -8,7 +6,6 @@ const mysql = require('mysql2');
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
-const cookieParser = require('cookie-parser');
 
 // Create a Discord client.
 const client = new Client
@@ -68,8 +65,7 @@ db.getConnection((err, connection) =>
 });
 
 const app = express(); // Create a web server.
-app.use(cookieParser());
-app.set('etag', false); // Disable etags.
+app.set('etag', false);
 app.use(express.static(`${__dirname}/website`)); // Force express to use the "website" folder only.
 app.use(express.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');

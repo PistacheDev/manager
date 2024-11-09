@@ -1,5 +1,4 @@
 import json
-import platform
 import os
 
 with open('package.json', 'r') as file:
@@ -12,12 +11,12 @@ with open('package.json', 'r') as file:
     for package, version in dependencies.items(): # Create a loop for update every depencies.
         print(f'Checking for an update for {package} ({version.split('^')[1]})..')
         os.system(f'npm install {package}')
-        os.system('cls' if platform.system() == 'Windows' else 'clear')
+        print()
 
-    for package, version in devDependencies.items(): # Same but with the dev depencies.
+    for package, version in devDependencies.items():
         print(f'Checking for an update for {package} ({version.split('^')[1]})..')
         os.system(f'npm install {package} --save-dev')
-        os.system('cls' if platform.system() == 'Windows' else 'clear')
+        print()
 
 print('Update finished!')
 input('Press [Enter] to close the program.')

@@ -17,23 +17,17 @@ async function youtubeNotifications()
                 const [channelID, roleID, youtubeID, videoID] = data[i].youtubeNotifs.split(' ');
                 if (roleID == 0 || youtubeID == 0) continue; // The configuration isn't finished for this server.
 
-                await new Promise(resolve => setTimeout(resolve, 250)); // Wait to avoid to create too many requests.
+                setTimeout(() => {}, 300); // Wait to avoid to create too many requests.
                 const videos = await axios.get(`https://www.youtube.com/channel/${youtubeID}/videos`);
                 const html = cheerio.load(videos.data).html(); // Convert the data in HTML.
 
-                // Check if the channel has already uploaded a video.
                 const regex = /"webCommandMetadata":{"url":"\/watch\?v=([^"]+)"/;
                 const latestVideoID = `${html.match(regex) ? html.match(regex)[1] : 0}`;
 
                 if (latestVideoID != videoID)
                 {
-                    db.query('UPDATE config SET youtubeNotifs = ? WHERE guild = ?', [`${channelID} ${roleID} ${youtubeID} ${latestVideoID}`, data[i].guild], async (err) =>
-                    {
-                        if (err) throw err;
-                    });
-
                     if (latestVideoID == 0) continue;
-                    await new Promise(resolve => setTimeout(resolve, 250)); // Wait to avoid to create too many requests.
+                    setTimeout(() => {}, 300);
 
                     const video = await axios.get(`https://www.youtube.com/watch?v=${latestVideoID}`);
                     const html = cheerio.load(video.data).html(); // Convert the data in HTML.
@@ -42,8 +36,6 @@ async function youtubeNotifications()
                     let videoTitle = html.match(/"title":{"runs":\[\{"text":"([^"]+)"\}\]/)[1];
                     const channelName = html.match(/"channel":{"simpleText":"([^"]+)"}/)[1];
                     const channelIcon = html.match(/"thumbnails":\[\{"url":"https:\/\/yt3.ggpht.com\/([^"]+)"\}\]/)[1];
-
-                    // Description stuff.
                     const descriptionMatch = html.match(/"attributedDescription":{"content":"([^"]+)"/);
                     const fullVideoDescription = descriptionMatch ? descriptionMatch[1] : 'No description available for this video!';
                     let videoDescription = fullVideoDescription.replace(/\\n/g, ' ');
@@ -62,7 +54,11 @@ async function youtubeNotifications()
                     .setTimestamp()
                     .setFooter({ text: channelName, iconURL: `https://yt3.ggpht.com/${channelIcon}` })
 
-                    client.channels.cache.get(channelID).send({ content: `A **new video** is **available**! ||${roleID == '@everyone' ? '@everyone' : `<@&${roleID}>`}||`, embeds: [embed] });
+                    db.query('UPDATE config SET youtubeNotifs = ? WHERE guild = ?', [`${channelID} ${roleID} ${youtubeID} ${latestVideoID}`, data[i].guild], async (err) =>
+                    {
+                        if (err) throw err;
+                        client.channels.cache.get(channelID).send({ content: `A **new video** is **available**! ||${roleID == '@everyone' ? '@everyone' : `<@&${roleID}>`}||`, embeds: [embed] });
+                    });
                 };
             }
             catch (err)
