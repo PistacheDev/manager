@@ -65,7 +65,7 @@ module.exports =
                         .setColor('Gold')
                         .setTitle(`@${target.user.username}'s experience:`)
                         .setThumbnail(target.user.avatarURL())
-                        .setDescription(`>>> **XP**: ${currentXP}${maxLevel > currentLevel ? `/${nextLevel}` : ''}.\n**Level**: ${currentLevel}/${maxLevel}.\n**Rank**: ${userRank}/${guild.memberCount}.`)
+                        .setDescription(`>>> **XP**: ${currentXP}${maxLevel > currentLevel ? `/${nextLevel}` : ''}.\n**Level**: ${currentLevel}/${maxLevel}.\n**Rank**: ${userRank}/${(await guild.members.fetch()).filter(member => !member.user.bot).size}.`)
 
                         await interaction.reply({ embeds: [embed] });
                     });

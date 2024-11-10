@@ -17,27 +17,27 @@ module.exports =
             switch (interaction.options.getSubcommand())
             {
                 case 'application':
-                    appInfos();
+                    appInfo();
                     break;
 
                 case 'emoji':
-                    emojiInfos();
+                    emojiInfo();
                     break;
 
                 case 'role':
-                    roleInfos();
+                    roleInfo();
                     break;
 
                 case 'channel':
-                    channelInfos();
+                    channelInfo();
                     break;
 
                 case 'server':
-                    guildInfos();
+                    guildInfo();
                     break;
 
                 case 'user':
-                    userInfos();
+                    userInfo();
                     break;
 
                 default:
@@ -45,7 +45,7 @@ module.exports =
                     break;
             };
 
-            async function appInfos()
+            async function appInfo()
             {
                 const embed = new EmbedBuilder()
                 .setColor('Orange')
@@ -70,17 +70,12 @@ module.exports =
                     .setURL('https://discord.com/invite/RkB3ZQsmGV')
                     .setLabel('Discord')
                     .setStyle(ButtonStyle.Link)
-                ).addComponents(
-                    new ButtonBuilder()
-                    .setURL('https://manager.pistachedev.fr/dashboard')
-                    .setLabel('Dashboard')
-                    .setStyle(ButtonStyle.Link)
                 )
 
                 await interaction.reply({ embeds: [embed], components: [buttons] });
             };
 
-            async function emojiInfos()
+            async function emojiInfo()
             {
                 const emojiID = interaction.options.getString('id');
                 const emoji = guild.emojis.cache.get(emojiID); // Get the emoji in the server list.
@@ -102,7 +97,7 @@ module.exports =
                 await interaction.reply({ embeds: [embed], components: [button] });
             };
 
-            async function roleInfos()
+            async function roleInfo()
             {
                 const role = interaction.options.getRole('role');
 
@@ -114,7 +109,7 @@ module.exports =
                 await interaction.reply({ embeds: [embed] });
             };
 
-            async function channelInfos()
+            async function channelInfo()
             {
                 var channel = interaction.options.getChannel('channel');
                 if (!channel) channel = interaction.channel; // Select the current channel if nothing is specified.
@@ -127,7 +122,7 @@ module.exports =
                 await interaction.reply({ embeds: [embed] });
             };
 
-            async function guildInfos()
+            async function guildInfo()
             {
                 const embed = new EmbedBuilder()
                 .setColor('Orange')
@@ -135,7 +130,7 @@ module.exports =
                 .setAuthor({ name: 'Server information', iconURL: guild.iconURL() })
                 .setTitle(guild.name)
                 .addFields([{ name: ':identification_card:・**Basic information:**', value: `>>> **Name**: ${guild.name}.\n**ID**: ${guild.id}.\n**Creation Date**: <t:${Math.floor(guild.createdAt / 1000)}:F>.\n**Owner**: <@${guild.ownerId}>.` }])
-                .addFields([{ name: ':bar_chart:・**Stats**:', value: `>>> **Members Count**: ${guild.memberCount} members.\n**Channels and categories**: ${guild.channels.cache.size} channels and categories.\n**Roles**: ${guild.roles.cache.size - 1} roles.\n**Boost**: ${guild.premiumSubscriptionCount} boost (**level ${guild.premiumTier}/3**).` }])
+                .addFields([{ name: ':bar_chart:・**Stats**:', value: `>>> **Members Count**: ${guild.memberCount} members.\n**Humans Count**: ${(await guild.members.fetch()).filter(member => !member.user.bot).size} humans.\n**Bots Count**: ${(await guild.members.fetch()).filter(member => member.user.bot).size} bots.\n**Channels and categories**: ${guild.channels.cache.size} channels and categories.\n**Roles**: ${guild.roles.cache.size - 1} roles.\n**Boost**: ${guild.premiumSubscriptionCount} boost (**level ${guild.premiumTier}/3**).` }])
 
                 var button = new ActionRowBuilder()
                 .addComponents(
@@ -148,7 +143,7 @@ module.exports =
                 await interaction.reply({ embeds: [embed], components: [button] });
             };
 
-            async function userInfos()
+            async function userInfo()
             {
                 var target = interaction.options.getUser('user');
                 if (!target) target = interaction.member; // Select the current user if nothing is specified.
@@ -165,23 +160,37 @@ module.exports =
                     userRoles = `${userRoles}, <@&${role.id}>`;
                 });
 
-                const embed = new EmbedBuilder()
-                .setColor('Gold')
-                .setTitle('Member information:')
-                .setThumbnail(target.user.avatarURL())
-                .setImage(target.user.bannerURL())
-                .addFields([{ name: ':identification_card:・**User**:', value: `>>> **Username**: ${target.user.username}.\n**Pseudo**: ${target.user.globalName}.\n**ID**: ${target.user.id}.\n**Account Creation**: <t:${Math.floor(target.user.createdAt / 1000)}:F>.\n**Bot**: ${target.user.bot ? 'Yes' : 'No'}.` }])
-                .addFields([{ name: ':globe_with_meridians:・**Server profile**:', value: `>>> **Pseudo**: ${target.displayName}.\n**Join Date**: <t:${Math.floor(target.joinedAt / 1000) }:F>.\n**Roles**: ${userRoles == '' ? 'None' : userRoles}.` }])
+                db.query('SELECT * FROM warns WHERE guild = ? AND target = ?', [guild.id, target.id], async (err, warns) =>
+                {
+                    if (err) throw err;
 
-                var button = new ActionRowBuilder()
-                .addComponents(
-                    new ButtonBuilder()
-                    .setURL(target.user.avatarURL())
-                    .setLabel('Profile picture')
-                    .setStyle(ButtonStyle.Link)
-                )
+                    db.query('SELECT * FROM xp WHERE guild = ? AND user = ?', [guild.id, target.id], async (err, xp) =>
+                    {
+                        if (err) throw err;
 
-                await interaction.reply({ embeds: [embed], components: [button] });
+                        const userXP = xp.length < 1 ? 0 : xp[0].xp;
+                        const level = xp.length < 1 ? 0 : xp[0].level;
+
+                        const embed = new EmbedBuilder()
+                        .setColor('Gold')
+                        .setTitle('Member information:')
+                        .setThumbnail(target.user.avatarURL())
+                        .setImage(target.user.bannerURL())
+                        .addFields([{ name: ':identification_card:・**User**:', value: `>>> **Username**: ${target.user.username}.\n**Pseudo**: ${target.user.globalName}.\n**ID**: ${target.id}.\n**Account Creation**: <t:${Math.floor(target.user.createdAt / 1000)}:F>.\n**Bot**: ${target.user.bot ? 'Yes' : 'No'}.` }])
+                        .addFields([{ name: ':globe_with_meridians:・**Server profile**:', value: `>>> **Pseudo**: ${target.displayName}.\n**Join Date**: <t:${Math.floor(target.joinedAt / 1000) }:F>.\n**Roles**: ${userRoles == '' ? 'None' : userRoles}.` }])
+                        .addFields([{ name: ':robot:・**Manager stats**:', value: `>>> **Warns Count**: ${warns.length} warns.\n**XP Level**: Level ${level}.\n**XP Points**: ${userXP} points.` }])
+
+                        var button = new ActionRowBuilder()
+                        .addComponents(
+                            new ButtonBuilder()
+                            .setURL(target.user.avatarURL())
+                            .setLabel('Profile picture')
+                            .setStyle(ButtonStyle.Link)
+                        )
+
+                        await interaction.reply({ embeds: [embed], components: [button] });
+                    });
+                });
             };
         }
         catch (err)

@@ -24,12 +24,6 @@ module.exports =
                     .setLabel('Discord')
                     .setStyle(ButtonStyle.Link)
                 )
-                .addComponents(
-                    new ButtonBuilder()
-                    .setURL('https://manager.pistachedev.fr/dashboard')
-                    .setLabel('Dashboard')
-                    .setStyle(ButtonStyle.Link)
-                )
 
                 const embed = new EmbedBuilder()
                 .setColor('Gold')
@@ -39,7 +33,6 @@ module.exports =
                 .addFields([{ name: 'I - Cybersecurity', value: 'For cybersecurity reasons, please place the application role only above the necessary roles.' }])
                 .addFields([{ name: 'II - Open Source', value: 'This application is fully Open Source! You can contribute to it or read the code if you wish, directly on GitHub.' }])
                 .addFields([{ name: 'III - Development', value: 'The application is under development, so you may encounter bugs or malfunctions. To report them, we have a community Discord server.' }])
-                .addFields([{ name: 'IV - Online Dashboard', value: 'The application can be configured using the \`/config\` command, but configuration can also be done via an online dashboard on the official website.' }])
                 .setTimestamp()
                 .setFooter({ text: `Manager v${config.version}.` })
 
