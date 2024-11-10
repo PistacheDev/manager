@@ -22,14 +22,14 @@ module.exports =
             {
                 if (err) throw err;
 
-                db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, data) =>
+                db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, config) =>
                 {
                     if (err) throw err;
                     let goals = '';
 
                     for (let i = 0; i < 4; i++) // Fetch and load every goals.
                     {
-                        const goal = data[0].xpgoals.split(' ')[i];
+                        const goal = config[0].xpgoals.split(' ')[i];
                         if (goal != 0) goals = `${goals}**Goal ${i + 1}/4**: Level ${goal.split('-')[0]} ➜ <@&${goal.split('-')[1]}>.${i < 3 ? '\n' : ''}`;
                         else goals = `${goals}**Goal ${i + 1}/4**: Not configured.${i < 3 ? '\n' : ''}`;
                     };
@@ -46,6 +46,35 @@ module.exports =
 
                     interaction.message.edit({ embeds: [embed] });
                     interaction.deferUpdate();
+
+                    db.query('SELECT * FROM xp WHERE guild = ?', [guild.id], async (err, data) =>
+                    {
+                        if (err) throw err;
+                        if (data.length < 1) return;
+
+                        for (let i = 0; i < data.length; i++)
+                        {
+                            const userData = data[i];
+                            let currentXP = parseInt(userData.xp);
+                            let currentLevel = parseInt(userData.level);
+
+                            if (currentLevel > maxLevel) // If the user level is greater than the new max level.
+                            {
+                                const difference = currentLevel - maxLevel; // Calculate how many times the loop has to execute.
+
+                                for (let n = 0; n < difference; n++) // Convert the levels in XP points.
+                                {
+                                    currentLevel -= 1;
+                                    currentXP += 500 + (currentLevel * 10);
+                                };
+
+                                db.query('UPDATE xp SET xp = ?, level = ? WHERE guild = ? AND user = ?', [currentXP, currentLevel, guild.id, userData.user], async (err) =>
+                                {
+                                    if (err) throw err;
+                                });
+                            };
+                        };
+                    });
                 });
             });
         }

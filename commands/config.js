@@ -32,7 +32,7 @@ module.exports =
             .setColor('Orange')
             .setAuthor({ name: 'Configuration Panel', iconURL: client.user.avatarURL() })
             .setThumbnail(client.user.avatarURL())
-            .setDescription('Configure the application with **its configuration panel**. Through the different tabs, you will find all the **configurable options** of Manager.\n\n>>> __**Now, you can also configure the application with the online dashboard**__ available on the official website of the application (*link provided below*).')
+            .setDescription('Configure the application with **its configuration panel**. Through the different tabs, you will find all the **configurable options** of Manager.\n\n>>> When you are in a **configuration tab**, press the button with the **emoji corresponding** to **the option** you want to modify.\nSome options has **several steps** to **properly configure** them.')
             .setTimestamp()
             .setFooter({ text: guild.name, iconURL: guild.iconURL() })
 
