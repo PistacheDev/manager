@@ -14,11 +14,9 @@ module.exports =
             {
                 if (err) throw err;
 
-                // Modal options.
                 const maxMembers = interaction.fields.getTextInputValue('autoraidmodeModalOption');
                 const interval = interaction.fields.getTextInputValue('autoraidmodeModalOption2');
 
-                // Some verifications.
                 if (isNaN(maxMembers) || isNaN(interval)) return interaction.reply(':warning: PLeaser, enter a **number**!');
                 if (maxMembers < 3 || maxMembers > 10) return interaction.reply(':warning: The maximum members must be **between 3 and 10**!');
                 if (interval < 3 || interval > 10) return interaction.reply(':warning: The interval must be **between 1 and 10 seconds**');

@@ -7,12 +7,11 @@ module.exports =
     {
         try
         {
-            if (!message.guild) return; // If the message wasn't in server.
+            if (!message.guild) return;
             const guild = message.guild;
 
             db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, data) =>
             {
-                // Some verifications.
                 if (err) throw err;
                 if (data.length < 1 || data[0].messagesLogs == 0 || message.author == null || message.author.bot) return;
 

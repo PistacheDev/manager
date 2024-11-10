@@ -1,4 +1,5 @@
 const { PermissionsBitField, EmbedBuilder } = require('discord.js');
+const { fixMissingConfig } = require('../../functions/missingConfig');
 const axios = require('axios');
 const cheerio = require('cheerio');
 
@@ -12,12 +13,12 @@ module.exports =
         {
             const guild = interaction.guild;
 
-            db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, data) =>
+            db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, config) =>
             {
                 if (err) throw err;
-                if (data.length < 1) return interaction.reply(':warning: Your server isn\'t registered in the database!\n:grey_question: To fix this issue, run the \`/repair\` command.');
+                let data = config;
+                if (config.length < 1) data = fixMissingConfig(guild);
 
-                // Modal options.
                 const roleID = interaction.fields.getTextInputValue('youtubeModalOption');
                 const channelURL = interaction.fields.getTextInputValue('youtubeModalOption2');
 

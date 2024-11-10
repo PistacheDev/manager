@@ -8,13 +8,13 @@ module.exports =
     {
         try
         {
-            if (!channel.guild) return; // If the channel isn't in a guild (like a DM).
+            if (!channel.guild) return;
             const guild = channel.guild;
 
             db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, data) =>
             {
                 if (err) throw err;
-                if (data.length < 1 || data[0].channelsLogs == 0) return; // Some database verifications.
+                if (data.length < 1 || data[0].channelsLogs == 0) return;
 
                 const auditLogs = await guild.fetchAuditLogs({ type: AuditLogEvent.ChannelDelete, limit: 10 }); // Fetch server logs.
                 const results = auditLogs.entries;

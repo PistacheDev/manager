@@ -10,17 +10,14 @@ module.exports =
     {
         try
         {
-            // Command options.
             const target = interaction.guild.members.cache.get(interaction.options.getUser('user').id); // Fetch the user in the server list.
             const reason = interaction.options.getString('reason');
 
-            // Some shortcuts.
             const guild = interaction.guild;
             const mod = interaction.member;
             const targetID = target.id;
             const ownerID = guild.ownerId;
 
-            // Some verifications.
             if (targetID == mod.id) return interaction.reply(':warning: You can\'t kick **yourself**!');
             if (ownerID == targetID) return interaction.reply(':warning: You can\'t kick the **server owner**.');
             if (mod.roles.highest.comparePositionTo(target.roles.highest) <= 0) return interaction.reply(':warning: You **can\'t kick** this member!');
@@ -31,7 +28,7 @@ module.exports =
             target.kick({ reason: `[${mod.id}] ${reason}` }).then(() =>
             {
                 interaction.channel.send(`:man_judge: ${target.user.username} (${target.id}) has been kicked by <@${mod.id}>!\n**Reason**: **\`${reason}\`**`);
-                interaction.deferUpdate(); // To avoid an error.
+                interaction.deferUpdate();
 
                 const embed = new EmbedBuilder()
                 .setColor('Red')

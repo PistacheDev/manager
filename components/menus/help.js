@@ -19,7 +19,7 @@ module.exports =
                     interaction.message.delete();
                     break;
 
-                default: // Show commands by type. 
+                default:
                     displayPage(interaction.values.toString());
                     break;
             };
@@ -52,7 +52,7 @@ module.exports =
                 for (const script of commandsScripts)
                 {
                     const command = require(`../../commands/${script}`);
-                    if (command.type != type) continue; // Check if the command type correspond.
+                    if (command.type != type) continue;
 
                     if (!command.data.options[0] || command.data.options[0].type) // Commands doesn't have any ptions with a type.
                     {
@@ -61,7 +61,7 @@ module.exports =
                     }
                     else
                     {
-                        for (var i = 0; i < command.data.options.length; i++)
+                        for (let i = 0; i < command.data.options.length; i++)
                         {
                             // Avoid to take the sub commands options.
                             if (!command.data.options[i].type) embed.addFields([{ name: `/${command.name} ${command.data.options[i].name}`, value: `**Description**: ${command.data.options[i].description}\n**Required permission**: ${command.ownerOnly ? 'Owner only' : command.permission ? discordPermissions[command.permission] : 'None'}.` }])

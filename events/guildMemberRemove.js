@@ -12,7 +12,7 @@ module.exports =
             db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, data) =>
             {
                 if (err) throw err;
-                if (data.length < 1 || data[0].memberRemove == 0) return; // Some database verifications.
+                if (data.length < 1 || data[0].memberRemove == 0) return;
 
                 const embed = new EmbedBuilder()
                 .setColor('Red')

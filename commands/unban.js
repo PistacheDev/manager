@@ -14,10 +14,9 @@ module.exports =
 
             guild.bans.fetch().then(async bans =>
             {
-                const targetID = interaction.options.getString('id'); // Command option.
-                const bannedUser = bans.find(banned => banned.user.id == targetID);
+                const targetID = interaction.options.getString('id');
+                const bannedUser = bans.find(banned => banned.user.id == targetID); // Get the user in the bans list.
 
-                // Some verifications.
                 if (!client.users.cache.get(targetID)) return interaction.reply(':warning: This user **doesn\'t exist**!');
                 if (!bannedUser) return interaction.reply(':warning: This user **isn\'t banned** from this server!');
 

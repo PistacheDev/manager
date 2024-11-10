@@ -13,9 +13,8 @@ module.exports =
             if (!channel) channel = interaction.channel; // Select the current channel if nothing is specified.
 
             const amount = interaction.options.getNumber('amount');
-	        const messages = await channel.messages.fetch({ limit: 100 }); // Save the 100 latest messages.
+	        const messages = await channel.messages.fetch({ limit: 100 }); // Fetch the 100 latest messages.
 
-            // Some verifications.
     	    if (amount < 1 || amount > 100) return interaction.reply(':warning: Please! Enter a number **between 1** and **100**!');
     	    if (messages.length <= 0) return interaction.reply(':warning: **No message available** in this channel!');
 
@@ -36,12 +35,14 @@ module.exports =
                 {
                     interaction.reply(`:white_check_mark: **${deletedCount} messages** has been **successfully deleted**!`).then(sentMessage =>
                     {
-                        messageToDelete = sentMessage; // Set the message to delete.
+                        messageToDelete = sentMessage;
                     });
                 };
 
-                await new Promise(resolve => setTimeout(resolve, 2000)); // Wait before delete the message.
-                messageToDelete.delete();
+                setTimeout(() =>
+                {
+                    messageToDelete.delete(); // Delete the message after 2 seconds.
+                }, 2000);
 	        });
         }
         catch (err)

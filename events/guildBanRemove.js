@@ -7,12 +7,12 @@ module.exports =
     {
         try
         {
-            const guild = ban.guild; // Shortcut.
+            const guild = ban.guild;
 
             db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, data) =>
             {
                 if (err) throw err;
-                if (data.length < 1 || data[0].bansLogs == 0) return; // Some database verifications.
+                if (data.length < 1 || data[0].bansLogs == 0) return;
 
                 const auditLogs = await guild.fetchAuditLogs({ type: AuditLogEvent.MemberBanRemove, limit: 10 }); // Fetch server logs.
                 const results = auditLogs.entries;

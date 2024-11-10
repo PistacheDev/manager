@@ -1,4 +1,5 @@
 const { PermissionsBitField, EmbedBuilder } = require('discord.js');
+const { fixMissingConfig } = require('../../functions/missingConfig');
 
 module.exports =
 {
@@ -10,15 +11,13 @@ module.exports =
         {
             const guild = interaction.guild;
 
-            db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, data) =>
+            db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, config) =>
             {
                 if (err) throw err;
-
-                // Modal option.
                 var newRole = interaction.fields.getTextInputValue('joinRoleModalOption');
+                let data = config;
 
-                // Some verifications.
-                if (data.length < 1) return interaction.reply(':warning: Your server isn\'t registered in the database!\n:grey_question: To fix this issue, run the \`/repair\` command.');
+                if (config.length < 1) data = fixMissingConfig(guild);
                 if (newRole && !guild.roles.cache.get(newRole)) return interaction.reply(':warning: This role doesn\'t exist!');
 
                 db.query('UPDATE config SET joinRole = ? WHERE guild = ?', [newRole ? newRole : 0, guild.id], async (err) =>

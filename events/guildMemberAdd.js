@@ -15,7 +15,7 @@ module.exports =
             db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, data) =>
             {
                 if (err) throw err;
-                if (data.length < 1) return; // Some database verifications.
+                if (data.length < 1) return;
 
                 const embed = new EmbedBuilder()
                 .setColor('Green')
@@ -38,7 +38,6 @@ module.exports =
 
                 if (data[0].raidmode == 0 && data[0].autoraidmode != 0)
                 {
-                    // Some data.
                     const [maxMembers, interval] = data[0].autoraidmode.split(' ');
                     const now = Date.now();
                     const timestamps = newMembers.get(guild.id) || [];

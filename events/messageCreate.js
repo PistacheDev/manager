@@ -14,13 +14,12 @@ module.exports =
     {
         try
         {
-            if (message.author.bot || !message.guild || message.content == '') return; // Some verifications to continue.
+            if (message.author.bot || !message.guild || message.content == '') return;
 
             const guild = message.guild;
             const author = message.author;
             const member = message.member;
 
-            // Some security verifications.
             const isSpamming = antiSpam();
             if (isSpamming) return;
             const containLink = antiLinks();
@@ -36,15 +35,13 @@ module.exports =
                 db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, data) =>
                 {
                     if (err) throw err;
-                    if (data.length < 1 || data[0].antispam == 0) return false; // Some database verifications.
+                    if (data.length < 1 || data[0].antispam == 0) return false;
                     const [ignoreBots, maxMessages, interval, maxWarns, sanction] = data[0].antispam.split(' ');
 
-                    // Some verifications.
                     if (ignoreBots == 1 && author.bot) return false;
                     if (author.id == client.user.id) return false;
                     if (author.id == guild.ownerId || member.permissions.has(Perms.Administrator)) return false;
 
-                    // Some data.
                     const now = Date.now();
                     const timestamps = messages.get(author.id) || [];
                     const filter = timestamps.filter(timestamp => now - timestamp < interval * 1000);
@@ -79,7 +76,6 @@ module.exports =
                         else
                         {
                             message.reply(`:warning: This is your **warning ${warns}/${maxWarns}** for spamming!`);
-                            // Last warn.
                             if (warns == maxWarns) message.channel.send(`:man_judge: Next time, you **will be ${sanction == 'ban' ? 'banned' : 'muted'}** for spamming!`);
                         };
 
@@ -94,7 +90,6 @@ module.exports =
             {
                 db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, data) =>
                 {
-                    // Some verifications.
                     if (err) throw err;
                     if (data.length < 1 || data[0].antilinks == 0) return false;
                     if (data[0].antilinks == 1 && author.bot) return false;
@@ -175,7 +170,6 @@ module.exports =
                             });
                         };
 
-                        // Some data.
                         const [alert, maxXP, maxLevel] = config[0].xp.split(' ');
                         let currentXP = parseInt(data[0].xp) + generateNumber(maxXP);
                         let currentLevel = parseInt(data[0].level);

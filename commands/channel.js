@@ -12,7 +12,7 @@ module.exports =
 			var channel = interaction.options.getChannel('channel');
 			if (!channel) channel = interaction.channel; // Select the current channel if nothing is specified.
 
-			// Check what subcommand has been executed.
+			// Check what sub command has been executed.
 			switch (interaction.options.getSubcommand())
 			{
 				case 'clone':
@@ -40,7 +40,7 @@ module.exports =
 			{
 				channel.clone().then(newChannel =>
 				{
-					channel.delete(); // Delete the original channel.
+					channel.delete();
 					newChannel.send(`:repear: Channel **recreated**!`);
 					if (channel.id != interaction.channel.id) interaction.reply(`:white_check_mark: <#${channel.id}> has been **recreated** successfully!`);
 				});
