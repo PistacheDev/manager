@@ -8,15 +8,11 @@ module.exports =
     {
         try
         {
-            // Modal options.
             const alert = interaction.fields.getTextInputValue('xpSettingsModalOption');
             const maxXP = interaction.fields.getTextInputValue('xpSettingsModalOption2');
             const maxLevel = interaction.fields.getTextInputValue('xpSettingsModalOption3');
-
-            // Some shortcuts.
             const guild = interaction.guild;
 
-            // Some verifications.
             if (alert != 'yes' && alert != 'no') return interaction.reply(':warning: Your answer for the **alert** option is invalid!');
             if (maxLevel && isNaN(maxXP) && isNaN(maxLevel)) return interaction.reply(':warning: Please, enter a **number**!');
             if (maxLevel > 100 || maxLevel < 10) return interaction.reply(':warning: The maximum level must be **between 10 and 100**!');

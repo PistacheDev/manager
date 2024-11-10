@@ -1,4 +1,5 @@
-const { ActionRowBuilder, StringSelectMenuBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, PermissionsBitField } = require('discord.js');
+const { PermissionsBitField, ActionRowBuilder, StringSelectMenuBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require('discord.js');
+const { fixMissingConfig } = require('../../functions/missingConfig');
 
 module.exports =
 {
@@ -35,10 +36,11 @@ module.exports =
             .setTimestamp()
             .setFooter({ text: guild.name, iconURL: guild.iconURL() })
 
-            db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, data) =>
+            db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, config) =>
             {
                 if (err) throw err;
-                if (data.length < 1) return interaction.reply(':warning: Your server isn\'t registered in the database!\n:grey_question: To fix this issue, run the \`/repair\` command.');
+                let data = config;
+                if (config.length < 1) data = fixMissingConfig(guild);
 
                 switch (interaction.values.toString())
                 {
@@ -107,7 +109,7 @@ module.exports =
             {
                 let status = ':x: Inactive';
 
-                if (data.autoraidmode != 0)
+                if (data.autoraidmode != 0) // Update the data if the option is enabled.
                 {
                     const [maxMembers, interval] = data.autoraidmode.split(' ');
                     status = `:white_check_mark: Active.\n**Detection**: More than ${maxMembers} new members in ${interval} seconds`;
@@ -151,7 +153,7 @@ module.exports =
                 embed.addFields([{ name: ':hand_splayed:・Anti spam:', value: `>>> **Status**: ${status}.\n**Function**: Prevent the members from **spamming messages**.` }])
                 status = ':x: Inactive';
 
-                if (data.warn != '0') // Same.
+                if (data.warn != '0')
                 {
                     const [maxWarns, sanction] = data.warn.split(' ');
                     status = `:white_check_mark: Active.\n**Maximum Warns**: ${maxWarns} warns.\n**Sanction**: ${sanction == 'ban' ? 'Ban' : `Mute for ${sanction} hours`}`;
@@ -208,7 +210,7 @@ module.exports =
                 embed.addFields([{ name: ':gear:・XP system:', value: `>>> **Status**: ${status}.\n**Function**: Set the **application behavior** in the XP system.` }])
                 let goals = '';
 
-                for (let i = 0; i < 4; i++) // Same.
+                for (let i = 0; i < 4; i++)
                 {
                     const goal = data.xpgoals.split(' ')[i];
                     if (goal != 0) goals = `${goals}**Goal ${i + 1}/4**: Level ${goal.split('-')[0]} ➜ <@&${goal.split('-')[1]}>.${i < 3 ? '\n' : ''}`;

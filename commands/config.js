@@ -1,4 +1,4 @@
-const { PermissionsBitField, ActionRowBuilder, StringSelectMenuBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, SlashCommandBuilder } = require('discord.js');
+const { PermissionsBitField, ActionRowBuilder, StringSelectMenuBuilder, EmbedBuilder, SlashCommandBuilder } = require('discord.js');
 
 module.exports =
 {
@@ -28,14 +28,6 @@ module.exports =
                 ])
             )
 
-            var button = new ActionRowBuilder()
-            .addComponents(
-                new ButtonBuilder()
-                .setURL(`https://manager.pistachedev.fr/dashboard`)
-                .setLabel('Dashboard')
-                .setStyle(ButtonStyle.Link)
-            )
-
             const embed = new EmbedBuilder()
             .setColor('Orange')
             .setAuthor({ name: 'Configuration Panel', iconURL: client.user.avatarURL() })
@@ -44,7 +36,7 @@ module.exports =
             .setTimestamp()
             .setFooter({ text: guild.name, iconURL: guild.iconURL() })
 
-            interaction.reply({ embeds: [embed], components: [menu, button] });
+            interaction.reply({ embeds: [embed], components: [menu] });
         }
         catch (err)
         {

@@ -9,7 +9,7 @@ module.exports =
     {
         const guild = interaction.guild;
 
-        // Check what subcommand has been executed.
+        // Check what sub command has been executed.
         switch (interaction.options.getSubcommand())
         {
             case 'list':
@@ -31,7 +31,6 @@ module.exports =
 
         function warnsList()
         {
-            // Command option.
             const target = guild.members.cache.get(interaction.options.getUser('user').id); // Fetch the user in the server list.
 
             db.query('SELECT * FROM warns WHERE guild = ? AND target = ?', [guild.id, target.user.id], async (err, data) =>
@@ -47,7 +46,7 @@ module.exports =
                 .setDescription(`Warns count: **${data.length.toString()} warns**.`)
                 .setTimestamp()
 
-                // Add the fields to the embed.
+                // Build the embed.
                 for (let warnsCount = 0; warnsCount < data.length; warnsCount++)
                 {
                     embed.addFields([{ name: `${warnsCount + 1}) Warn \`${data[warnsCount].warnID}\`:`, value: `**Moderator**: <@${await data[warnsCount].moderator}>.\n**Sanction Date**: <t:${Math.floor(parseInt(data[warnsCount].date / 1000))}>.\n**Reason**: \`${data[warnsCount].reason}\`.` }]); 
@@ -59,7 +58,6 @@ module.exports =
 
         function warnRemove()
         {
-            // Command option.
             const warnID = interaction.options.getString('id');
 
             db.query('SELECT * FROM warns WHERE guild = ? AND warnID = ?', [guild.id, warnID], async (err, data) =>
@@ -77,7 +75,6 @@ module.exports =
 
         function warnsClear()
         {
-            // Command option.
             const target = guild.members.cache.get(interaction.options.getUser('user').id); // Fetch the user in the server list.
 
             db.query('DELETE FROM warns WHERE guild = ? AND target = ?', [guild.id, target.user.id], async (err, data) =>

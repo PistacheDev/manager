@@ -9,7 +9,7 @@
     "express": "^4.21.1",
     "fs": "^0.0.1-security",
     "jsonwebtoken": "^9.0.2",
-    "mysql2": "^3.11.3",
+    "mysql2": "^3.11.4",
     "path": "^0.12.7"
   }
 }

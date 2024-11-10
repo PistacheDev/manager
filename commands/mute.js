@@ -10,20 +10,17 @@ module.exports =
     {
         try
         {
-            // Command options.
             const target = guild.members.cache.get(interaction.options.getUser('user').id); // Fetch the user in the server list.
             const time = interaction.options.getNumber('time');
             const scale = interaction.options.getString('scale');
             const reason = interaction.options.getString('reason');
 
-            // Some shortcuts.
             const guild = interaction.guild;
             const mod = interaction.member;
             const targetID = target.id;
             const ownerID = guild.ownerId;
             const scaleStr = scale == 'm' ? 'minutes' : scale == 'h' ? 'hours' : 'days';
 
-            // Some verifications.
             if (targetID == mod.id) return interaction.reply(':warning: You can\'t mute **yourself**!');
             if (ownerID == targetID) return interaction.reply(':warning: You can\'t mute the **server owner**!');
             if (mod.roles.highest.comparePositionTo(target.roles.highest) <= 0) return interaction.reply(':warning: You **can\'t mute** this member!');

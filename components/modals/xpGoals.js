@@ -8,15 +8,11 @@ module.exports =
     {
         try
         {
-            // Modal options.
             const goal = interaction.fields.getTextInputValue('xpGoalsModalOption');
             const level = interaction.fields.getTextInputValue('xpGoalsModalOption2')
             const roleID = interaction.fields.getTextInputValue('xpGoalsModalOption3');
-
-            // Some  shortcuts.
             const guild = interaction.guild;
 
-            // Some verifications.
             if (isNaN(goal) || isNaN(level)) return interaction.reply(':warning: Please, enter a **number**!');
             if (goal < 1 || goal > 4) return interaction.reply(':warning: The goal must be **between 1 and 4**!');
             if (level < 10 || level > 100) return interaction.reply(':warning: The level must be **between 10 and 100**!');
@@ -28,7 +24,6 @@ module.exports =
                 if (data[0].xp == 0) return interaction.reply(':warning: The XP system is **disabled** in this server!');
                 const xpGoals = data[0].xpgoals.split(' ');
 
-                // Update the targeted data.
                 if (roleID) xpGoals[goal - 1] = `${level}-${roleID}`;
                 else xpGoals[goal - 1] = 0;
 
@@ -36,7 +31,6 @@ module.exports =
                 {
                     if (err) throw err;
 
-                    // Some data.
                     let status = ':x: Inactive';
                     let goals = '';
 

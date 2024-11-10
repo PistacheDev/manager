@@ -9,14 +9,11 @@ module.exports =
     {
         try
         {
-            // Command option.
             const target = interaction.guild.members.cache.get(interaction.options.getUser('user').id); // Fetch the user in the server list.
 
-            // Some shortcuts.
             const guild = interaction.guild;
             const mod = interaction.member;
 
-            // Some verifications.
             if (!target.isCommunicationDisabled()) return interaction.reply(':warning: This member **isn\'t muted**!');
             if (!target.moderatable) return interaction.reply(':warning: **Impossible** to unmute this member!');
 

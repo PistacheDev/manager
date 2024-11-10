@@ -1,3 +1,4 @@
+const { fixMissingConfig } = require('../../functions/missingConfig');
 const { EmbedBuilder } = require('discord.js');
 
 module.exports =
@@ -10,16 +11,17 @@ module.exports =
         {
             const guild = interaction.guild;
 
-            db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, data) =>
+            db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, config) =>
             {
                 if (err) throw err;
-                if (data.length < 1) return interaction.reply(':warning: Your server isn\'t registered in the database!\n:grey_question: To fix this issue, run the \`/repair\` command.');
+                let data = config;
+                if (config.length < 1) data = fixMissingConfig(guild);
 
                 let spamStatus = ':x: Inactive';
                 let warnsStatus = ':x: Inactive';
                 let pingStatus = ':x: Inactive';
 
-                if (data[0].antispam != 0) // Update the data if the option is enabled.
+                if (data[0].antispam != 0)
                 {
                     const [ignoreBot, maxMessages, interval, maxWarns, sanction] = data[0].antispam.split(' ');
                     spamStatus = `:white_check_mark: Active.\n**Ignore Bots**: ${ignoreBot == 1 ? 'Yes' : 'No'}.\n**Spam Detection:** More than ${maxMessages} messages in ${interval} seconds.\n**Maximum Warns**: ${maxWarns} warns.\n**Sanction**: ${sanction == 'ban' ? 'Ban' : `Mute for ${sanction} minutes`}`;

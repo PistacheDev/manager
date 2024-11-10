@@ -1,4 +1,5 @@
 const { PermissionsBitField, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, EmbedBuilder } = require('discord.js');
+const { fixMissingConfig } = require('../../functions/missingConfig');
 
 module.exports =
 {
@@ -10,10 +11,11 @@ module.exports =
         {
             const guild = interaction.guild;
 
-            db.query(`SELECT * FROM config WHERE guild = ?`, [guild.id], async (err, data) =>
+            db.query(`SELECT * FROM config WHERE guild = ?`, [guild.id], async (err, config) =>
             {
                 if (err) throw err;
-                if (data.length < 1) return interaction.reply(':warning: Your server isn\'t registered in the database!\n:grey_question: To fix this issue, run the \`/repair\` command.');
+                let data = config;
+                if (config.length < 1) data = fixMissingConfig(guild);
 
                 if (data[0].antispam == 0)
                 {
@@ -85,7 +87,7 @@ module.exports =
                         warnsStatus = `:white_check_mark: Active.\n**Maximum Warns**: ${maxWarns} warns.\n**Sanction**: ${sanction == 'ban' ? 'Ban' : `Mute for ${sanction} hours`}`;
                     };
 
-                    if (data[0].antipings != 0) // Update the default data if the option is enabled.
+                    if (data[0].antipings != 0)
                     {
                         const [ignoreBots, sanction] = data[0].antipings.split(' ');
                         pingStatus = `:white_check_mark: Active.\n**Ignore Bots**: ${ignoreBots == 1 ? 'Yes' : 'No'}.\n**Sanction**: ${sanction == 'ban' ? 'Ban' : `Mute for ${sanction} minutes`}`;

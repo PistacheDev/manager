@@ -7,7 +7,6 @@ module.exports =
     {
         try
         {
-            // Some shortcuts.
             const guild = interaction.guild;
             const user = interaction.user;
 
@@ -18,7 +17,6 @@ module.exports =
             {
                 if (err) throw err;
 
-                // Some data.
                 let newXP = parseInt(amountXP);
                 let currentLevel = 0;
 
@@ -31,7 +29,6 @@ module.exports =
                 }
                 else
                 {
-                    // Update the data if the user is already in the database.
                     newXP = parseInt(data[0].xp) + parseInt(amountXP);
                     currentLevel = parseInt(data[0].level);
 
@@ -41,21 +38,23 @@ module.exports =
                     });
                 };
 
-                // Amount of XP required to level up.
-                let nextLevel = 500 + (currentLevel * 10);
-                let loop = 0;
-
-                while (newXP >= nextLevel && loop < 10) // Level up while the user has enough XP.
+                db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, config) =>
                 {
-                    // Update the data.
-                    newXP -= nextLevel;
-                    currentLevel += 1;
-                    nextLevel = 500 + (currentLevel * 10);
-                    loop += 1;
+                    if (err) throw err;
 
-                    db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, config) =>
+                    const [alert, maxXP, maxLevel] = config[0].xp.split(' ');
+                    if (currentLevel == maxLevel || currentLevel > maxLevel) return; 
+
+                    let nextLevel = 500 + (currentLevel * 10);
+                    let loop = 0;
+
+                    while (newXP >= nextLevel && loop < 3) // Level up while the user has enough XP.
                     {
-                        if (err) throw err;
+                        newXP -= nextLevel;
+                        currentLevel += 1;
+                        nextLevel = 500 + (currentLevel * 10);
+                        loop += 1;
+                        if (currentLevel > maxLevel) currentLevel = 0;
 
                         for (let i = 0; i < 4; i++)
                         {
@@ -71,13 +70,15 @@ module.exports =
                                 };
                             };
                         };
-                    });
 
-                    db.query('UPDATE xp SET xp = ?, level = ? WHERE guild = ? AND user = ?', [newXP, currentLevel, guild.id, user.id], async (err) =>
-                    {
-                        if (err) throw err;
-                    });
-                };
+                        db.query('UPDATE xp SET xp = ?, level = ? WHERE guild = ? AND user = ?', [newXP, currentLevel, guild.id, user.id], async (err) =>
+                        {
+                            if (err) throw err;
+                        });
+
+                        if (currentLevel == maxLevel) break; // Stop level up the user if he reached the max level.
+                    };
+                });
             });
 
             const embed = new EmbedBuilder()

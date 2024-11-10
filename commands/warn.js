@@ -11,18 +11,15 @@ module.exports =
     {
         try
         {
-            // Command options.
             const target = interaction.guild.members.cache.get(interaction.options.getUser('user').id); // Fetch the user in the server list.
             const reason = interaction.options.getString('reason');
             const warnID = `WARN-${generateString()}`; // Generate an ID.
 
-            // Some shortcuts.
             const guild = interaction.guild;
             const mod = interaction.member;
             const targetID = target.id;
             const ownerID = guild.ownerId;
 
-            // Some verifications.
             if (target.user.bot) return interaction.reply(':warning: You can\'t warn **a bot**!');
             if (targetID == mod.id) return interaction.reply(':warning: You can\'t warn **yourself**!');
             if (ownerID == targetID) return interaction.reply(':warning: You can\'t warn the **server owner**!');

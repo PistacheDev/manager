@@ -13,7 +13,7 @@ module.exports =
         {
             const guild = interaction.guild;
 
-            // Check what command has been executed.
+            // Check what sub command has been executed.
             switch (interaction.options.getSubcommand())
             {
                 case 'application':
@@ -45,7 +45,6 @@ module.exports =
                     break;
             };
 
-            // Application information script.
             async function appInfos()
             {
                 const embed = new EmbedBuilder()
@@ -81,7 +80,6 @@ module.exports =
                 await interaction.reply({ embeds: [embed], components: [buttons] });
             };
 
-            // Emoji information script.
             async function emojiInfos()
             {
                 const emojiID = interaction.options.getString('id');
@@ -104,7 +102,6 @@ module.exports =
                 await interaction.reply({ embeds: [embed], components: [button] });
             };
 
-            // Role information script.
             async function roleInfos()
             {
                 const role = interaction.options.getRole('role');
@@ -117,7 +114,6 @@ module.exports =
                 await interaction.reply({ embeds: [embed] });
             };
 
-            // Channel information script.
             async function channelInfos()
             {
                 var channel = interaction.options.getChannel('channel');
@@ -131,7 +127,6 @@ module.exports =
                 await interaction.reply({ embeds: [embed] });
             };
 
-            // Server information script.
             async function guildInfos()
             {
                 const embed = new EmbedBuilder()
@@ -153,7 +148,6 @@ module.exports =
                 await interaction.reply({ embeds: [embed], components: [button] });
             };
 
-            // User information script.
             async function userInfos()
             {
                 var target = interaction.options.getUser('user');
@@ -164,7 +158,7 @@ module.exports =
 
                 target.roles.cache.forEach(role =>
                 {
-                    if (role.name == '@everyone') return; // Ignore @everyone.
+                    if (role.name == '@everyone') return;
                     if (userRoles == '') userRoles = `<@&${role.id}>`;
 
                     // Update the list.

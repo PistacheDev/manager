@@ -12,7 +12,7 @@ module.exports =
             .addComponents(
                 new StringSelectMenuBuilder()
                 .setCustomId('helpMenu')
-                .setPlaceholder('Sélectionnez un onglet.')
+                .setPlaceholder('Select a tab.')
                 .setOptions([
                     { emoji: '🏡', label: 'Home', description: 'Return to home.', value: 'home' },
                     { emoji: '👑', label: 'Management', description: 'Management commands.', value: 'management' },

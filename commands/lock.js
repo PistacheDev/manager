@@ -9,22 +9,19 @@ module.exports =
     {
         try
         {
-            // Command options.
             var channel = interaction.options.getChannel('channel');
             if (!channel) channel = interaction.channel; // Select the current channel if nothing is specified.
             const reason = interaction.options.getString('reason');
 
-            // Some shortcuts.
             const guild = interaction.guild;
             const mod = interaction.member;
 
-            // Some verifications.
             if (channel.permissionOverwrites.cache.get(guild.roles.everyone.id)?.deny.toArray(false).includes('SendMessages')) return interaction.reply(':warning: This channel is **already locked**!');
             if (!channel.manageable) return interaction.reply(':warning: **Impossible** to lock this channel!');
 
 	        channel.permissionOverwrites.edit(guild.roles.everyone.id,
             {
-                SendMessages: false // Remove the SendMessages permission for @everyone.
+                SendMessages: false // Remove the SendMessages permission for the @everyone role.
     	    }).then(() =>
             {
                 const embed = new EmbedBuilder()

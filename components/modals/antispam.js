@@ -8,17 +8,13 @@ module.exports =
     {
         try
         {
-            // Modal options.
             const ignoreBots = interaction.fields.getTextInputValue('antispamModalOption');
             const maxMessages = interaction.fields.getTextInputValue('antispamModalOption2');
             const interval = interaction.fields.getTextInputValue('antispamModalOption3');
             const maxWarns = interaction.fields.getTextInputValue('antispamModalOption4');
             const sanction = interaction.fields.getTextInputValue('antispamModalOption5');
-
-            // Some shortcuts.
             const guild = interaction.guild;
 
-            // Some verifications.
             if (ignoreBots != 'yes' && ignoreBots != 'no') return interaction.reply(':warning: Your answer for the **Ignore Bots** option is invalid!');
             if (isNaN(maxMessages) || isNaN(interval) || isNaN(maxWarns) || (sanction != 'ban' && isNaN(sanction))) return interaction.reply(':warning: Please! Enter a **number**!');
             if (maxMessages < 1 || maxMessages > 10) return interaction.reply(':warning: The maximum messages must be **between 1 and 10 messages**!');
@@ -43,7 +39,7 @@ module.exports =
                         warnStatus = `:white_check_mark: Active.\n**Maximum Warns**: ${maxWarns} warns.\n**Sanction**: ${sanction == 'ban' ? 'Ban' : `Mute for ${sanction} hours`}`;
                     };
 
-                    if (data[0].antipings != 0) // Update the default data if the option is enabled.
+                    if (data[0].antipings != 0)
                     {
                         const [ignoreBots, sanction] = data[0].antipings.split(' ');
                         pingStatus = `:white_check_mark: Active.\n**Ignore Bots**: ${ignoreBots == 1 ? 'Yes' : 'No'}.\n**Sanction**: ${sanction == 'ban' ? 'Ban' : `Mute for ${sanction} minutes`}`;

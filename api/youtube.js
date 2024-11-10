@@ -9,7 +9,7 @@ async function youtubeNotifications()
     {
         if (err) throw err;
 
-        for (var i = 0; i < data.length; i++)
+        for (let i = 0; i < data.length; i++)
         {
             try
             {
