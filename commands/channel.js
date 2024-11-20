@@ -12,17 +12,14 @@ module.exports =
 			var channel = interaction.options.getChannel('channel');
 			if (!channel) channel = interaction.channel; // Select the current channel if nothing is specified.
 
-			// Check what sub command has been executed.
-			switch (interaction.options.getSubcommand())
+			switch (interaction.options.getSubcommand()) // Check what sub command has been executed.
 			{
 				case 'clone':
 					cloneChannel();
 					break;
-
 				case 'recreate':
 					recreateChannel();
 					break;
-
 				default:
 					interaction.reply(':warning: Unknown **command**!');
 					break;

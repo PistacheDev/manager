@@ -14,11 +14,9 @@ module.exports =
                 case 'home':
                     homePage();
                     break;
-
                 case 'close':
                     interaction.message.delete();
                     break;
-
                 default:
                     displayPage(interaction.values.toString());
                     break;

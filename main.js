@@ -115,7 +115,7 @@ catch (err)
 
 function processHandler (err) // Prevent the application from crashing.
 {
-    if (err.code == 10062) return; // Ignore the "unknown interaction" error.
+    if (err.code == 10062 || err.code == 40060) return; // Ignore the "unknown interaction" and "already responded" errors.
     console.error(`[error] processHandler, ${err}, ${Date.now()}`);
 };
 
