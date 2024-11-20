@@ -24,25 +24,20 @@ module.exports =
                 if (conf.length < 1) config = fixMissingConfig(guild);
                 if (config[0].xp == 0) return interaction.reply(':warning: The XP system is **disabled** in this server!');
 
-                // Check what sub command has been executed.
-                switch (interaction.options.getSubcommand())
+                switch (interaction.options.getSubcommand()) // Check what sub command has been executed.
                 {
                     case 'give':
                         giveXP();
                         break;
-
                     case 'remove':
                         removeXP();
                         break;
-
                     case 'clear':
                         clearXP();
                         break;
-
                     case 'drop':
                         dropXP();
                         break;
-
                     default:
                         interaction.reply(':warning: Unknown **command**!');
                         break;

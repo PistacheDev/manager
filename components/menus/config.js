@@ -47,35 +47,27 @@ module.exports =
                     case 'home':
                         homeMenu();
                         break;
-
                     case 'security':
                         securityMenu(data[0]);
                         break;
-
                     case 'moderation':
                         moderationMenu(data[0]);
                         break;
-
                     case 'XP':
                         xpMenu(data[0]);
                         break;
-
                     case 'API':
                         apiMenu(data[0]);
                         break;
-
                     case 'members':
                         membersMenu(data[0]);
                         break;
-
                     case 'logs':
                         logsMenu(data[0]);
                         break;
-
                     case 'close':
                         interaction.message.delete();
                         break;
-
                     default:
                         interaction.reply(':warning: Unknown **tab**!');
                         break;

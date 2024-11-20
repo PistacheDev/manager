@@ -9,21 +9,17 @@ module.exports =
     {
         const guild = interaction.guild;
 
-        // Check what sub command has been executed.
-        switch (interaction.options.getSubcommand())
+        switch (interaction.options.getSubcommand()) // Check what sub command has been executed.
         {
             case 'list':
                 warnsList();
                 break;
-
             case 'remove':
                 warnRemove();
                 break;
-
             case 'clear':
                 warnsClear();
                 break;
-
             default:
                 interaction.reply(':warning: Unknown **command**!');
                 break;
