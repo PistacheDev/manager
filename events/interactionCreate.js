@@ -48,8 +48,8 @@ module.exports =
             if (!script) return interaction.reply(':warning: Unknown **interaction**!'); // If still nothing, return an error.
 
             // Some permissions verifications.
-            if (script.permission && !interaction.member.permissions.has(script.permission) && !interaction.member.permissions.has(Perms.Administrator) && interaction.user.id != interaction.guild.ownerId) return interaction.reply(':warning: Vous n\'avez pas les permissions requises pour faire cette interaction.');
-            if (script.ownerOnly && interaction.user.id != guild.ownerId) return interaction.reply(`:warning: Cette interaction est **réservée au propriétaire** du serveur.`);
+            if (script.permission && !interaction.member.permissions.has(script.permission) && !interaction.member.permissions.has(Perms.Administrator) && interaction.user.id != interaction.guild.ownerId) return interaction.reply(':warning: You don\'t have the **required permissions** for this interaction.');
+            if (script.ownerOnly && interaction.user.id != guild.ownerId) return interaction.reply(`:warning: This interaction **is restricted** to the **server's owner**.`);
 
             console.log(`[debug] interactionCreate, ${script.name}, ${guild.id}, ${interaction.user.id}, ${Date.now()}`);
             await script.run(client, db, interaction); // Run the script.
