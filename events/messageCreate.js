@@ -98,8 +98,9 @@ module.exports =
 
                     const content = message.content.toLowerCase(); // Convert the text in lower cases.
                     const containLink = url.keywords.some(keyword => content.includes(keyword)); // Search any URL keywords in the text.
+                    const isGif = content.includes('tenor.com');
 
-                    if (containLink)
+                    if (containLink && !isGif)
                     {
                         message.delete().then(() =>
                         {
