@@ -4,7 +4,7 @@ const { EmbedBuilder } = require('discord.js');
 module.exports =
 {
     name: 'antilinksButton',
-    ownerOnly: true,
+    ownerOnly: false,
     async run(client, db, interaction)
     {
         try

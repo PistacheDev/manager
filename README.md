@@ -4,7 +4,6 @@ ONLY PistacheDev is allowed to modificate the .gitignore file!
 
 ## Important
 You can contribute to this project!
-You've just to update the program and submit a pull request!
 
 ## Required
 - Nodejs
