@@ -1,19 +1,19 @@
-const fs = require('fs');
-const { Routes } = require('discord.js');
-const { REST } = require('@discordjs/rest');
-const { youtubeNotifications } = require('../api/youtube');
+const fs = require("fs");
+const { Routes } = require("discord.js");
+const { REST } = require("@discordjs/rest");
+const { youtubeNotifications } = require("../api/youtube");
 
 module.exports =
 {
-    name: 'ready',
+    name: "ready",
     once: true,
     async run(client, db)
     {
         try
         {
-            const commandsScripts = fs.readdirSync('./commands').filter(scripts => scripts.endsWith('.js'));
+            const commandsScripts = fs.readdirSync("./commands").filter(scripts => scripts.endsWith(".js"));
             const clientCommands = [];
-            const rest = new REST({ version: '10' }).setToken(process.env.APP_TOKEN); // Create a rest for the commands dynamic deployment.
+            const rest = new REST({ version: "10" }).setToken(process.env.APP_TOKEN); // Create a rest for the commands dynamic deployment.
 
             for (const command of commandsScripts)
             {

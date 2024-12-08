@@ -1,21 +1,21 @@
-const { PermissionsBitField, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder } = require('discord.js');
+const { PermissionsBitField, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder } = require("discord.js");
 
 module.exports =
 {
-    name: 'memberRemoveButton',
+    name: "memberRemoveButton",
     permission: PermissionsBitField.Flags.Administrator,
     async run(client, db, interaction)
     {
         try
         {
             const modal = new ModalBuilder()
-            .setCustomId('memberRemoveModal')
-            .setTitle('Setup the channel:')
+            .setCustomId("memberRemoveModal")
+            .setTitle("Setup the channel:")
 
             const modalOption = new TextInputBuilder()
-            .setCustomId('memberRemoveModalOption')
-            .setLabel('Channel ID:')
-            .setPlaceholder('To disable this option, let this field empty.')
+            .setCustomId("memberRemoveModalOption")
+            .setLabel("Channel ID:")
+            .setPlaceholder("To disable this option, let this field empty.")
             .setStyle(TextInputStyle.Short)
             .setRequired(false)
 

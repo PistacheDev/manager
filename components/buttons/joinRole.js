@@ -1,21 +1,21 @@
-const { PermissionsBitField, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder } = require('discord.js');
+const { PermissionsBitField, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder } = require("discord.js");
 
 module.exports =
 {
-    name: 'joinRoleButton',
+    name: "joinRoleButton",
     permission: PermissionsBitField.Flags.Administrator,
     async run(client, db, interaction)
     {
         try
         {
             const modal = new ModalBuilder()
-            .setCustomId('joinRoleModal')
-            .setTitle('Setup the role:')
+            .setCustomId("joinRoleModal")
+            .setTitle("Setup the role:")
 
             const modalOption = new TextInputBuilder()
-            .setCustomId('joinRoleModalOption')
-            .setLabel('Role ID:')
-            .setPlaceholder('To disable this option, let this field empty.')
+            .setCustomId("joinRoleModalOption")
+            .setLabel("Role ID:")
+            .setPlaceholder("To disable this option, let this field empty.")
             .setStyle(TextInputStyle.Short)
             .setRequired(false)
 

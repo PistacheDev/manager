@@ -1,18 +1,18 @@
-const { PermissionsBitField, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder } = require('discord.js');
+const { PermissionsBitField, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder } = require("discord.js");
 
 module.exports =
 {
-    name: 'youtubeButton',
+    name: "youtubeButton",
     permission: PermissionsBitField.Flags.Administrator,
     async run(client, db, interaction)
     {
         try
         {
-            db.query('SELECT * FROM config WHERE guild = ?', [interaction.guild.id], async (err, data) =>
+            db.query("SELECT * FROM config WHERE guild = ?", [interaction.guild.id], async (err, data) =>
             {
                 if (err) throw err;
                 if (data[0].youtubeNotifs == 0) return showFirstModal(); // The option is turned off for this server, so the user can't disable it.
-                const [channelID, roleID, youtubeID, latestVideoID] = data[0].youtubeNotifs.split(' ');
+                const [channelID, roleID, youtubeID, latestVideoID] = data[0].youtubeNotifs.split(" ");
 
                 if (roleID == 0 || youtubeID == 0) showSecondModal(); // The configuration isn't finished, so the user isn't allowed to disable it for now.
                 else showFirstModal(); // The option is turned on, so the user is now allowed to disable it.
@@ -20,13 +20,13 @@ module.exports =
                 async function showFirstModal()
                 {
                     const modal = new ModalBuilder()
-                    .setCustomId('youtubeModal')
-                    .setTitle('Setup the notifications:')
+                    .setCustomId("youtubeModal")
+                    .setTitle("Setup the notifications:")
 
                     const modalOption = new TextInputBuilder()
-                    .setCustomId('youtubeModalOption')
-                    .setLabel('Channel ID:')
-                    .setPlaceholder('To disable this option, let this field empty.')
+                    .setCustomId("youtubeModalOption")
+                    .setLabel("Channel ID:")
+                    .setPlaceholder("To disable this option, let this field empty.")
                     .setStyle(TextInputStyle.Short)
                     .setRequired(false)
 
@@ -40,13 +40,13 @@ module.exports =
                 async function showSecondModal()
                 {
                     const modal = new ModalBuilder()
-                    .setCustomId('youtubeSetupModal')
-                    .setTitle('Setup the notifications:')
+                    .setCustomId("youtubeSetupModal")
+                    .setTitle("Setup the notifications:")
 
                     const modalOption = new TextInputBuilder()
-                    .setCustomId('youtubeModalOption')
-                    .setLabel('Role ID:')
-                    .setPlaceholder('Enter a role ID or @everyone.')
+                    .setCustomId("youtubeModalOption")
+                    .setLabel("Role ID:")
+                    .setPlaceholder("Enter a role ID or @everyone.")
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
 
@@ -54,9 +54,9 @@ module.exports =
                     .addComponents(modalOption);
 
                     const modalOption2 = new TextInputBuilder()
-                    .setCustomId('youtubeModalOption2')
-                    .setLabel('YouTube channel:')
-                    .setPlaceholder('Enter the channel URL (https://www.youtube.com/@example).')
+                    .setCustomId("youtubeModalOption2")
+                    .setLabel("YouTube channel:")
+                    .setPlaceholder("Enter the channel URL (https://www.youtube.com/@example).")
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
 

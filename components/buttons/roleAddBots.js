@@ -1,21 +1,21 @@
-const { PermissionsBitField, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder } = require('discord.js');
+const { PermissionsBitField, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder } = require("discord.js");
 
 module.exports =
 {
-    name: 'roleAddBotsButton',
+    name: "roleAddBotsButton",
     permission: PermissionsBitField.Flags.Administrator,
     async run(client, db, interaction)
     {
         try
         {
             const modal = new ModalBuilder()
-            .setCustomId('roleAddBotsModal')
-            .setTitle('Role to give:')
+            .setCustomId("roleAddBotsModal")
+            .setTitle("Role to give:")
 
             const modalOption = new TextInputBuilder()
-            .setCustomId('roleAddBotsModalOption')
-            .setLabel('Role ID:')
-            .setPlaceholder('Role to attribute to bots.')
+            .setCustomId("roleAddBotsModalOption")
+            .setLabel("Role ID:")
+            .setPlaceholder("Role to attribute to bots.")
             .setStyle(TextInputStyle.Short)
             .setRequired(true)
 

@@ -2,15 +2,15 @@ const { PermissionsBitField } = require("discord.js");
 
 module.exports =
 {
-    name: 'roleAddHumansModal',
+    name: "roleAddHumansModal",
     permission: PermissionsBitField.Flags.Administrator,
     async run(client, db, interaction)
     {
         try
         {
             const guild = interaction.guild;
-            const role = interaction.fields.getTextInputValue('roleAddHumansModalOption');
-            if (!guild.roles.cache.get(role)) return interaction.reply(':warning: This role **doesn\'t exist**!');
+            const role = interaction.fields.getTextInputValue("roleAddHumansModalOption");
+            if (!guild.roles.cache.get(role)) return interaction.reply(":warning: This role **doesn't exist**!");
 
             interaction.message.delete();
             const members = await guild.members.fetch();

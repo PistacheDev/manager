@@ -1,7 +1,7 @@
-const { PermissionsBitField } = require('discord.js');
+const { PermissionsBitField } = require("discord.js");
 const Perms = PermissionsBitField.Flags;
-const { generateNumber } = require('../functions/numberGenerator');
-const url = require('../URL.json');
+const { generateNumber } = require("../functions/numberGenerator");
+const url = require("../URL.json");
 
 // Some Maps for the anti spam.
 const messages = new Map();
@@ -9,12 +9,12 @@ const warnings = new Map();
 
 module.exports =
 {
-    name: 'messageCreate',
+    name: "messageCreate",
     async run(client, db, message)
     {
         try
         {
-            if (message.author.bot || !message.guild || message.content == '') return;
+            if (message.author.bot || !message.guild || message.content == "") return;
 
             const guild = message.guild;
             const author = message.author;
@@ -27,16 +27,16 @@ module.exports =
             const usedForbiddenPing = pingCheck();
             if (usedForbiddenPing) return;
 
-            if (message.content == `<@${client.user.id}>`) message.reply(`:wave: Hey <@${author.id}>! I\'m online and functionnal!`);
+            if (message.content == `<@${client.user.id}>`) message.reply(`:wave: Hey <@${author.id}>! I'm online and functionnal!`);
             xp(); // XP system.
 
             function antiSpam()
             {
-                db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, data) =>
+                db.query("SELECT * FROM config WHERE guild = ?", [guild.id], async (err, data) =>
                 {
                     if (err) throw err;
                     if (data.length < 1 || data[0].antispam == 0) return false;
-                    const [ignoreBots, maxMessages, interval, maxWarns, sanction] = data[0].antispam.split(' ');
+                    const [ignoreBots, maxMessages, interval, maxWarns, sanction] = data[0].antispam.split(" ");
 
                     if (ignoreBots == 1 && author.bot) return false;
                     if (author.id == client.user.id) return false;
@@ -53,11 +53,11 @@ module.exports =
                     if (filter.length >= maxMessages)
                     {
                         const warns = (warnings.get(author.id) || 0) + 1;
-                        warnings.set(author.id, warns); // Add the warn to the member's count.
+                        warnings.set(author.id, warns); // Add the warn to the member' count.
 
                         if (warns > maxWarns) // Too many warns.
                         {
-                            if (sanction == 'ban')
+                            if (sanction == "ban")
                             {
                                 member.ban({ reason: `[Anti spam] Still spamming after ${warns} warns.` }).then(() =>
                                 {
@@ -68,7 +68,7 @@ module.exports =
                             {
                                 member.timeout(sanction * 60000).then(() =>
                                 {
-                                    message.reply(`:man_judge: You've been **muted for ${sanction} minutes** for spamming!`);
+                                    message.reply(`:man_judge: You"ve been **muted for ${sanction} minutes** for spamming!`);
                                     warnings.set(author.id, 0);
                                 });
                             };
@@ -76,7 +76,7 @@ module.exports =
                         else
                         {
                             message.reply(`:warning: This is your **warning ${warns}/${maxWarns}** for spamming!`);
-                            if (warns == maxWarns) message.channel.send(`:man_judge: Next time, you **will be ${sanction == 'ban' ? 'banned' : 'muted'}** for spamming!`);
+                            if (warns == maxWarns) message.channel.send(`:man_judge: Next time, you **will be ${sanction == "ban" ? "banned" : "muted"}** for spamming!`);
                         };
 
                         return true;
@@ -88,7 +88,7 @@ module.exports =
 
             function antiLinks()
             {
-                db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, data) =>
+                db.query("SELECT * FROM config WHERE guild = ?", [guild.id], async (err, data) =>
                 {
                     if (err) throw err;
                     if (data.length < 1 || data[0].antilinks == 0) return false;
@@ -98,13 +98,13 @@ module.exports =
 
                     const content = message.content.toLowerCase(); // Convert the text in lower cases.
                     const containLink = url.keywords.some(keyword => content.includes(keyword)); // Search any URL keywords in the text.
-                    const isGif = content.includes('tenor.com');
+                    const isGif = content.includes("tenor.com");
 
                     if (containLink && !isGif)
                     {
                         message.delete().then(() =>
                         {
-                            message.channel.send(`:warning: <@${author.id}>, links aren\'t allowed in this server!`);
+                            message.channel.send(`:warning: <@${author.id}>, links aren't allowed in this server!`);
                             return true;
                         });
                     };
@@ -115,7 +115,7 @@ module.exports =
 
             function pingCheck()
             {
-                db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, data) =>
+                db.query("SELECT * FROM config WHERE guild = ?", [guild.id], async (err, data) =>
                 {
                     if (err) throw err;
                     if (data[0].length < 1 || data[0].antipings == 0) return false;
@@ -125,12 +125,12 @@ module.exports =
                     if (author.id == client.user.id) return false;
                     if (author.id == guild.ownerId || member.permissions.has(Perms.Administrator)) return false;
 
-                    if (message.content.includes('@everyone' || '@here'))
+                    if (message.content.includes("@everyone" || "@here"))
                     {
                         message.delete();
-                        const mention = message.content.includes('@everyone') ? 'everyone' : 'here';
+                        const mention = message.content.includes("@everyone") ? "everyone" : "here";
 
-                        if (sanction == 'ban')
+                        if (sanction == "ban")
                         {
                             member.ban({ reason: `Anti pings enabled!` }).then(() =>
                             {
@@ -141,7 +141,7 @@ module.exports =
                         {
                             member.timeout(sanction * 60000).then(() =>
                             {
-                                message.channel.send(`:man_judge: <@${author.id}>, you've been **muted for ${sanction} minutes** for using the ${mention} mention!`);
+                                message.channel.send(`:man_judge: <@${author.id}>, you"ve been **muted for ${sanction} minutes** for using the ${mention} mention!`);
                             });
                         };
 
@@ -154,31 +154,31 @@ module.exports =
 
             function xp()
             {
-                db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, config) =>
+                db.query("SELECT * FROM config WHERE guild = ?", [guild.id], async (err, config) =>
                 {
                     if (err) throw err;
                     if (config.length < 1 || config[0].xp == 0) return;
 
-                    db.query('SELECT * FROM xp WHERE guild = ? AND user = ?', [guild.id, author.id], async (err, data) =>
+                    db.query("SELECT * FROM xp WHERE guild = ? AND user = ?", [guild.id, author.id], async (err, data) =>
                     {
                         if (err) throw err;
                         if (data.length < 1)
                         {
-                            db.query('INSERT INTO xp (`user`, `guild`, `xp`) VALUES (?, ?, ?)', [author.id, guild.id, generateNumber(15)], async (err) =>
+                            db.query("INSERT INTO xp (`user`, `guild`, `xp`) VALUES (?, ?, ?)", [author.id, guild.id, generateNumber(15)], async (err) =>
                             {
                                 if (err) throw err;
                                 return;
                             });
                         };
 
-                        const [alert, maxXP, maxLevel] = config[0].xp.split(' ');
+                        const [alert, maxXP, maxLevel] = config[0].xp.split(" ");
                         let currentXP = parseInt(data[0].xp) + generateNumber(maxXP);
                         let currentLevel = parseInt(data[0].level);
 
                         if (maxLevel > currentLevel && 500 + (currentLevel * 10) <= currentXP) // Level up the user if he has enough XP to pass to the next level.
                         {
                             currentXP = currentXP - (500 + (currentLevel * 10));
-                            db.query('UPDATE xp SET xp = ?, level = ? WHERE guild = ? AND user = ?', [currentXP, currentLevel + 1, guild.id, author.id], async (err) =>
+                            db.query("UPDATE xp SET xp = ?, level = ? WHERE guild = ? AND user = ?", [currentXP, currentLevel + 1, guild.id, author.id], async (err) =>
                             {
                                 if (err) throw err;
                             });
@@ -186,11 +186,11 @@ module.exports =
                             if (alert == 1) message.channel.send(`:tada: Congratulation <@${author.id}> @${author.username}! You just passed to **level ${currentLevel + 1}**!`);
                             for (let i = 0; i < 4; i++)
                             {
-                                const goal = config[0].xpgoals.split(' ')[i];
+                                const goal = config[0].xpgoals.split(" ")[i];
 
                                 if (goal != 0)
                                 {
-                                    const [requiredLevel, roleID] = goal.split('-');
+                                    const [requiredLevel, roleID] = goal.split("-");
 
                                     if (currentLevel + 1 >= requiredLevel && !member.roles.cache.has(roleID))
                                     {
@@ -201,7 +201,7 @@ module.exports =
                         }
                         else
                         {
-                            db.query('UPDATE xp SET xp = ? WHERE guild = ? AND user = ?', [currentXP, guild.id, author.id], async (err) =>
+                            db.query("UPDATE xp SET xp = ? WHERE guild = ? AND user = ?", [currentXP, guild.id, author.id], async (err) =>
                             {
                                 if (err) throw err;
                             });

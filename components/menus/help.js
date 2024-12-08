@@ -1,20 +1,20 @@
-const { EmbedBuilder } = require('discord.js');
-const fs = require('fs');
-const discordPermissions = require('../../permissions.json');
+const { EmbedBuilder } = require("discord.js");
+const fs = require("fs");
+const discordPermissions = require("../../permissions.json");
 
 module.exports =
 {
-    name: 'helpMenu',
+    name: "helpMenu",
     async run(client, db, interaction)
     {
         try
         {
             switch (interaction.values.toString())
             {
-                case 'home':
+                case "home":
                     homePage();
                     break;
-                case 'close':
+                case "close":
                     interaction.message.delete();
                     break;
                 default:
@@ -25,10 +25,10 @@ module.exports =
             function homePage()
             {
                 const embed = new EmbedBuilder()
-                .setColor('Orange')
-                .setAuthor({ name: 'Assistance menu', iconURL: client.user.avatarURL() })
+                .setColor("Orange")
+                .setAuthor({ name: "Assistance menu", iconURL: client.user.avatarURL() })
                 .setThumbnail(client.user.avatarURL())
-                .setDescription('Quickly obtain the list of **commands by categories**!\nTo configure the application, run `/config`!\nYou can **navigate between the tabs** with the selective menu below.\n\n>>> A **documentation** will be added to the **official website** to help the **users to use** the application, and to help **programmers** to easily **understand the code**.')
+                .setDescription("Quickly obtain the list of **commands by categories**!\nTo configure the application, run `/config`!\nYou can **navigate between the tabs** with the selective menu below.\n\n>>> A **documentation** will be added to the **official website** to help the **users to use** the application, and to help **programmers** to easily **understand the code**.")
                 .setTimestamp()
                 .setFooter({ text: `Executed by @${interaction.user.username}`, iconURL: interaction.user.avatarURL() })
 
@@ -38,11 +38,11 @@ module.exports =
 
             async function displayPage(type)
             {
-                const commandsScripts = fs.readdirSync('./commands').filter(scripts => scripts.endsWith('.js'));
+                const commandsScripts = fs.readdirSync("./commands").filter(scripts => scripts.endsWith(".js"));
 
                 let embed = new EmbedBuilder()
-                .setColor('Orange')
-                .setAuthor({ name: 'Assistance menu', iconURL: client.user.avatarURL() })
+                .setColor("Orange")
+                .setAuthor({ name: "Assistance menu", iconURL: client.user.avatarURL() })
                 .setThumbnail(client.user.avatarURL())
                 .setTimestamp()
                 .setFooter({ text: `Executed by @${interaction.user.username}`, iconURL: interaction.user.avatarURL() })
@@ -54,7 +54,7 @@ module.exports =
 
                     if (!command.data.options[0] || command.data.options[0].type) // Commands doesn't have any ptions with a type.
                     {
-                        embed.addFields([{ name: `/${command.name}`, value: `**Description**: ${command.data.description}\n**Required permission**: ${command.ownerOnly ? 'Owner only' : command.permission ? discordPermissions[command.permission] : 'None'}.` }])
+                        embed.addFields([{ name: `/${command.name}`, value: `**Description**: ${command.data.description}\n**Required permission**: ${command.ownerOnly ? "Owner only" : command.permission ? discordPermissions[command.permission] : "None"}.` }])
                         continue;
                     }
                     else
@@ -62,7 +62,7 @@ module.exports =
                         for (let i = 0; i < command.data.options.length; i++)
                         {
                             // Avoid to take the sub commands options.
-                            if (!command.data.options[i].type) embed.addFields([{ name: `/${command.name} ${command.data.options[i].name}`, value: `**Description**: ${command.data.options[i].description}\n**Required permission**: ${command.ownerOnly ? 'Owner only' : command.permission ? discordPermissions[command.permission] : 'None'}.` }])
+                            if (!command.data.options[i].type) embed.addFields([{ name: `/${command.name} ${command.data.options[i].name}`, value: `**Description**: ${command.data.options[i].description}\n**Required permission**: ${command.ownerOnly ? "Owner only" : command.permission ? discordPermissions[command.permission] : "None"}.` }])
                         };
                     };
                 };

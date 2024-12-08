@@ -1,21 +1,21 @@
-const { PermissionsBitField, EmbedBuilder, SlashCommandBuilder } = require('discord.js');
+const { PermissionsBitField, EmbedBuilder, SlashCommandBuilder } = require("discord.js");
 
 module.exports =
 {
-    name: 'unmute',
-    type: 'moderation',
+    name: "unmute",
+    type: "moderation",
     permission: PermissionsBitField.Flags.ModerateMembers,
     async run(client, db, interaction)
     {
         try
         {
-            const target = interaction.guild.members.cache.get(interaction.options.getUser('user').id); // Fetch the user in the server list.
+            const target = interaction.guild.members.cache.get(interaction.options.getUser("user").id); // Fetch the user in the server list.
 
             const guild = interaction.guild;
             const mod = interaction.member;
 
-            if (!target.isCommunicationDisabled()) return interaction.reply(':warning: This member **isn\'t muted**!');
-            if (!target.moderatable) return interaction.reply(':warning: **Impossible** to unmute this member!');
+            if (!target.isCommunicationDisabled()) return interaction.reply(":warning: This member **isn't muted**!");
+            if (!target.moderatable) return interaction.reply(":warning: **Impossible** to unmute this member!");
 
             target.timeout(null).then(() =>
             {
@@ -23,10 +23,10 @@ module.exports =
                 interaction.deferUpdate();
 
                 const embed = new EmbedBuilder()
-                .setColor('Green')
+                .setColor("Green")
                 .setThumbnail(guild.iconURL())
-                .setDescription(`:scales: You've been unmuted in **${guild.name}**!`)
-                .addFields([{ name: ':man_judge:・Moderator:', value: `>>> **User**: <@${mod.id}> @${mod.user.username}.\n**ID**: ${mod.id}.\n**Date de votre désexclusion**: <t:${Math.floor(Date.now() / 1000)}:F>.` }])
+                .setDescription(`:scales: You"ve been unmuted in **${guild.name}**!`)
+                .addFields([{ name: ":man_judge:・Moderator:", value: `>>> **User**: <@${mod.id}> @${mod.user.username}.\n**ID**: ${mod.id}.\n**Date de votre désexclusion**: <t:${Math.floor(Date.now() / 1000)}:F>.` }])
                 .setTimestamp()
                 .setFooter({ text: guild.name, iconURL: guild.iconURL() })
 
@@ -43,11 +43,11 @@ module.exports =
     {
         return new SlashCommandBuilder()
         .setName(this.name)
-        .setDescription('Unmute a member.')
+        .setDescription("Unmute a member.")
         .addUserOption(
             opt => opt
-            .setName('user')
-            .setDescription('Member to unmute.')
+            .setName("user")
+            .setDescription("Member to unmute.")
             .setRequired(true)
         ).setDefaultMemberPermissions(this.permission)
     }

@@ -1,21 +1,21 @@
-const { PermissionsBitField, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder } = require('discord.js');
+const { PermissionsBitField, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder } = require("discord.js");
 
 module.exports =
 {
-    name: 'xpGoalsButton',
+    name: "xpGoalsButton",
     permission: PermissionsBitField.Flags.Administrator,
     async run(client, db, interaction)
     {
         try
         {
             const modal = new ModalBuilder()
-            .setCustomId('xpGoalsModal')
-            .setTitle('Goals setup:')
+            .setCustomId("xpGoalsModal")
+            .setTitle("Goals setup:")
 
             const modalOption = new TextInputBuilder()
-            .setCustomId('xpGoalsModalOption')
-            .setLabel('Targeted goal:')
-            .setPlaceholder('Targeted goal (1 ~ 4).')
+            .setCustomId("xpGoalsModalOption")
+            .setLabel("Targeted goal:")
+            .setPlaceholder("Targeted goal (1 ~ 4).")
             .setStyle(TextInputStyle.Short)
             .setRequired(true)
 
@@ -23,9 +23,9 @@ module.exports =
             .addComponents(modalOption)
 
             const modalOption2 = new TextInputBuilder()
-            .setCustomId('xpGoalsModalOption2')
-            .setLabel('Level:')
-            .setPlaceholder('Level to reach to get the role (10 ~ 100).')
+            .setCustomId("xpGoalsModalOption2")
+            .setLabel("Level:")
+            .setPlaceholder("Level to reach to get the role (10 ~ 100).")
             .setStyle(TextInputStyle.Short)
             .setRequired(true)
 
@@ -33,9 +33,9 @@ module.exports =
             .addComponents(modalOption2)
 
             const modalOption3 = new TextInputBuilder()
-            .setCustomId('xpGoalsModalOption3')
-            .setLabel('Role ID:')
-            .setPlaceholder('To disable this goal, let this field empty.')
+            .setCustomId("xpGoalsModalOption3")
+            .setLabel("Role ID:")
+            .setPlaceholder("To disable this goal, let this field empty.")
             .setStyle(TextInputStyle.Short)
             .setRequired(false)
 

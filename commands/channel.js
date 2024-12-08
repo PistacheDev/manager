@@ -1,27 +1,27 @@
-const { PermissionsBitField, SlashCommandBuilder } = require('discord.js');
+const { PermissionsBitField, SlashCommandBuilder } = require("discord.js");
 
 module.exports =
 {
-	name: 'channel',
-	type: 'management',
+	name: "channel",
+	type: "management",
 	permission: PermissionsBitField.Flags.ManageChannels,
 	async run(client, db, interaction)
 	{
 		try
 		{
-			var channel = interaction.options.getChannel('channel');
+			var channel = interaction.options.getChannel("channel");
 			if (!channel) channel = interaction.channel; // Select the current channel if nothing is specified.
 
 			switch (interaction.options.getSubcommand()) // Check what sub command has been executed.
 			{
-				case 'clone':
+				case "clone":
 					cloneChannel();
 					break;
-				case 'recreate':
+				case "recreate":
 					recreateChannel();
 					break;
 				default:
-					interaction.reply(':warning: Unknown **command**!');
+					interaction.reply(":warning: Unknown **command**!");
 					break;
 			};
 
@@ -53,24 +53,24 @@ module.exports =
 	{
 		return new SlashCommandBuilder()
 		.setName(this.name)
-		.setDescription('Channel dedicated commands.')
+		.setDescription("Channel dedicated commands.")
 		.addSubcommand(
 			cmd => cmd
-			.setName('clone')
-			.setDescription('Clone a channel.')
+			.setName("clone")
+			.setDescription("Clone a channel.")
 			.addChannelOption(
 				opt => opt
-				.setName('channel')
-				.setDescription('Channel to clone.')
+				.setName("channel")
+				.setDescription("Channel to clone.")
 			)
 		).addSubcommand(
 			cmd => cmd
-			.setName('recreate')
-			.setDescription('Recreate a channel.')
+			.setName("recreate")
+			.setDescription("Recreate a channel.")
 			.addChannelOption(
 				opt => opt
-				.setName('channel')
-				.setDescription('Channel to recreate.')
+				.setName("channel")
+				.setDescription("Channel to recreate.")
 			)
 		).setDefaultMemberPermissions(this.permission)
 	}
