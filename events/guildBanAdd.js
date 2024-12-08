@@ -1,15 +1,15 @@
-const { EmbedBuilder, AuditLogEvent } = require('discord.js');
+const { EmbedBuilder, AuditLogEvent } = require("discord.js");
 
 module.exports =
 {
-    name: 'guildBanAdd',
+    name: "guildBanAdd",
     async run(client, db, ban)
     {
         try
         {
             const guild = ban.guild;
 
-            db.query('SELECT * FROM config WHERE guild = ?', [ban.guild.id], async (err, data) =>
+            db.query("SELECT * FROM config WHERE guild = ?", [ban.guild.id], async (err, data) =>
             {
                 if (err) throw err;
                 if (data.length < 1 || data[0].bansLogs == 0) return;
@@ -20,14 +20,14 @@ module.exports =
                 if (!log) return;
 
                 const embed = new EmbedBuilder()
-                .setColor('Red')
-                .setTitle('New Ban!')
+                .setColor("Red")
+                .setTitle("New Ban!")
                 .setThumbnail(ban.user.displayAvatarURL())
                 .setImage(ban.user.bannerURL())
-                .addFields([{ name: ':airplane_departure:・Banned User:', value: `>>> **Identity**: <@${ban.user.id}> @${ban.user.username}.\n**Account Creation**: <t:${Math.floor(ban.user.createdAt / 1000)}:F>.\n**Bot**: ${ban.user.bot ? 'Yes' : 'No'}.` }])
-                .addFields([{ name: ':man_judge:・Moderator:', value: `>>> **Identity**: <@${log.executorId}> @${guild.members.cache.get(log.executorId).user.username}.\n**Bot**: ${guild.members.cache.get(log.executorId).user.bot ? 'Yes' : 'No'}.` }])
-                .addFields([{ name: ':scales:・Reason:', value: `\`\`\`${log.reason == null ? 'None' : log.reason}\`\`\`` }])
-                .addFields([{ name: ':paperclips:・IDs:', value: `>>> **Banned**: ${ban.user.id}.\n**Moderator**: ${log.executorId}.\n**Server**: ${guild.id}.` }])
+                .addFields([{ name: ":airplane_departure:・Banned User:", value: `>>> **Identity**: <@${ban.user.id}> @${ban.user.username}.\n**Account Creation**: <t:${Math.floor(ban.user.createdAt / 1000)}:F>.\n**Bot**: ${ban.user.bot ? "Yes" : "No"}.` }])
+                .addFields([{ name: ":man_judge:・Moderator:", value: `>>> **Identity**: <@${log.executorId}> @${guild.members.cache.get(log.executorId).user.username}.\n**Bot**: ${guild.members.cache.get(log.executorId).user.bot ? "Yes" : "No"}.` }])
+                .addFields([{ name: ":scales:・Reason:", value: `\`\`\`${log.reason == null ? "None" : log.reason}\`\`\`` }])
+                .addFields([{ name: ":paperclips:・IDs:", value: `>>> **Banned**: ${ban.user.id}.\n**Moderator**: ${log.executorId}.\n**Server**: ${guild.id}.` }])
                 .setTimestamp()
                 .setFooter({ text: `Cybersecurity with ${client.user.username}`, iconURL: client.user.avatarURL() })
 

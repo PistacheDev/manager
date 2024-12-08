@@ -1,6 +1,6 @@
-const { Collection } = require('discord.js');
-const fs = require('fs');
-const { PermissionsBitField } = require('discord.js');
+const { Collection } = require("discord.js");
+const fs = require("fs");
+const { PermissionsBitField } = require("discord.js");
 const Perms = PermissionsBitField.Flags; // Shortcut.
 
 // Create a class to contain every commands and components.
@@ -9,8 +9,8 @@ class Scripts
     constructor()
     {
         this.list = new Collection(); // Create a Discord Collection.
-        const commandsScripts = fs.readdirSync('./commands').filter(scripts => scripts.endsWith('.js'));
-        const componentsFolders = ['buttons', 'menus', 'modals']; // List of folders in the "components" folder.
+        const commandsScripts = fs.readdirSync("./commands").filter(scripts => scripts.endsWith(".js"));
+        const componentsFolders = ["buttons", "menus", "modals"]; // List of folders in the "components" folder.
 
         for (const command of commandsScripts)
         {
@@ -21,7 +21,7 @@ class Scripts
         // Scan each components folders.
         componentsFolders.forEach(folder =>
         {
-            const componentsScripts = fs.readdirSync(`./components/${folder}`).filter(scripts => scripts.endsWith('.js'));
+            const componentsScripts = fs.readdirSync(`./components/${folder}`).filter(scripts => scripts.endsWith(".js"));
 
             for (const component of componentsScripts)
             {
@@ -34,7 +34,7 @@ class Scripts
 
 module.exports =
 {
-    name: 'interactionCreate',
+    name: "interactionCreate",
     scripts: new Scripts(), // Import the Scripts class.
     async run(client, db, interaction)
     {
@@ -45,10 +45,10 @@ module.exports =
 
             let script = this.scripts.list.get(interaction.commandName); // Search a corresponding script in the scripts list with the command name.
             if (!script) script = this.scripts.list.get(interaction.customId); // If nothing correspond, try again with the interaction customId.
-            if (!script) return interaction.reply(':warning: Unknown **interaction**!'); // If still nothing, return an error.
+            if (!script) return interaction.reply(":warning: Unknown **interaction**!"); // If still nothing, return an error.
 
             // Some permissions verifications.
-            if (script.permission && !interaction.member.permissions.has(script.permission) && !interaction.member.permissions.has(Perms.Administrator) && interaction.user.id != interaction.guild.ownerId) return interaction.reply(':warning: You don\'t have the **required permissions** for this interaction.');
+            if (script.permission && !interaction.member.permissions.has(script.permission) && !interaction.member.permissions.has(Perms.Administrator) && interaction.user.id != interaction.guild.ownerId) return interaction.reply(":warning: You don't have the **required permissions** for this interaction.");
             if (script.ownerOnly && interaction.user.id != guild.ownerId) return interaction.reply(`:warning: This interaction **is restricted** to the **server's owner**.`);
 
             console.log(`[debug] interactionCreate, ${script.name}, ${guild.id}, ${interaction.user.id}, ${Date.now()}`);

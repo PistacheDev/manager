@@ -1,9 +1,9 @@
-const { PermissionsBitField, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, SlashCommandBuilder } = require('discord.js');
+const { PermissionsBitField, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, SlashCommandBuilder } = require("discord.js");
 
 module.exports =
 {
-    name: 'roles',
-    type: 'management',
+    name: "roles",
+    type: "management",
     permission: PermissionsBitField.Flags.Administrator,
     async run(client, db, interaction)
     {
@@ -11,37 +11,37 @@ module.exports =
         {
             switch (interaction.options.getSubcommand()) // Check what sub command has been executed.
             {
-                case 'add':
+                case "add":
                     addRole();
                     break;
                 default:
-                    interaction.reply(':warning: Unknown **command**!');
+                    interaction.reply(":warning: Unknown **command**!");
 					break;
             };
 
             function addRole()
             {
                 const embed = new EmbedBuilder()
-                .setColor('Orange')
-                .setAuthor({ name: 'Give a specific role to everyone!', iconURL: client.user.avatarURL() })
+                .setColor("Orange")
+                .setAuthor({ name: "Give a specific role to everyone!", iconURL: client.user.avatarURL() })
                 .setThumbnail(interaction.guild.iconURL())
-                .setDescription(':dart:・__**Target a specific type of members:**__\n:bust_in_silhouette: ➜ Attribute the specific role to **humans ONLY**.\n:robot: ➜ Attribute the specific role to **bots ONLY**.\n:busts_in_silhouette: ➜ Attribute the specific role to **everyone**.')
+                .setDescription(":dart:・__**Target a specific type of members:**__\n:bust_in_silhouette: ➜ Attribute the specific role to **humans ONLY**.\n:robot: ➜ Attribute the specific role to **bots ONLY**.\n:busts_in_silhouette: ➜ Attribute the specific role to **everyone**.")
 
                 var buttons = new ActionRowBuilder()
                 .addComponents(
                     new ButtonBuilder()
-                    .setCustomId('roleAddHumansButton')
-                    .setEmoji('👤')
+                    .setCustomId("roleAddHumansButton")
+                    .setEmoji("👤")
                     .setStyle(ButtonStyle.Primary)
                 ).addComponents(
                     new ButtonBuilder()
-                    .setCustomId('roleAddBotsButton')
-                    .setEmoji('🤖')
+                    .setCustomId("roleAddBotsButton")
+                    .setEmoji("🤖")
                     .setStyle(ButtonStyle.Primary)
                 ).addComponents(
                     new ButtonBuilder()
-                    .setCustomId('roleAddEveryoneButton')
-                    .setEmoji('👥')
+                    .setCustomId("roleAddEveryoneButton")
+                    .setEmoji("👥")
                     .setStyle(ButtonStyle.Primary)
                 )
 
@@ -58,11 +58,11 @@ module.exports =
     {
         return new SlashCommandBuilder()
 		.setName(this.name)
-		.setDescription('Role dedicated commands.')
+		.setDescription("Role dedicated commands.")
 		.addSubcommand(
 			cmd => cmd
-			.setName('add')
-			.setDescription('Add a specific role for eveyone.')
+			.setName("add")
+			.setDescription("Add a specific role for eveyone.")
 		).setDefaultMemberPermissions(this.permission)
     }
 };

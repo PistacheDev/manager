@@ -1,24 +1,24 @@
-const { EmbedBuilder, AuditLogEvent } = require('discord.js');
+const { EmbedBuilder, AuditLogEvent } = require("discord.js");
 
 // Map for the auto raidmode.
 const newMembers = new Map();
 
 module.exports =
 {
-    name: 'guildMemberAdd',
+    name: "guildMemberAdd",
     async run(client, db, member)
     {
         try
         {
             const guild = member.guild;
 
-            db.query('SELECT * FROM config WHERE guild = ?', [guild.id], async (err, data) =>
+            db.query("SELECT * FROM config WHERE guild = ?", [guild.id], async (err, data) =>
             {
                 if (err) throw err;
                 if (data.length < 1) return;
 
                 const embed = new EmbedBuilder()
-                .setColor('Green')
+                .setColor("Green")
                 .setDescription(`:wave: Welcome to <@${member.id}> @${member.user.username} who has just **joined the server**!\n\n:clock7: **Exact date** of arrival: <t:${Math.floor(member.joinedAt / 1000)}:F>.\n:tada: Now, we are **${guild.memberCount} member(s)** on the server!`)
                 .setThumbnail(member.user.avatarURL())
 
@@ -38,7 +38,7 @@ module.exports =
 
                 if (data[0].raidmode == 0 && data[0].autoraidmode != 0)
                 {
-                    const [maxMembers, interval] = data[0].autoraidmode.split(' ');
+                    const [maxMembers, interval] = data[0].autoraidmode.split(" ");
                     const now = Date.now();
                     const timestamps = newMembers.get(guild.id) || [];
                     const filter = timestamps.filter(timestamp => now - timestamp < interval * 1000);
@@ -49,7 +49,7 @@ module.exports =
 
                     if (filter.length >= maxMembers) // Limit exceeded.
                     {
-                        db.query('UPDATE config SET raidmode = ? WHERE guild = ?', [1, guild.id], async (err) =>
+                        db.query("UPDATE config SET raidmode = ? WHERE guild = ?", [1, guild.id], async (err) =>
                         {
                             if (err) throw err;
                         });

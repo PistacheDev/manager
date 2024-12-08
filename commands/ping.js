@@ -1,9 +1,9 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder } = require("discord.js");
 
 module.exports =
 {
-    name: 'ping',
-    type: 'application',
+    name: "ping",
+    type: "application",
     async run(client, db, interaction)
     {
         try
@@ -20,6 +20,6 @@ module.exports =
     {
         return new SlashCommandBuilder()
         .setName(this.name)
-        .setDescription('Application latency.')
+        .setDescription("Application latency.")
     }
 };
