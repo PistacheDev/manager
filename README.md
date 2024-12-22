@@ -2,9 +2,6 @@
 Official Manager source code!
 ONLY PistacheDev is allowed to modificate the .gitignore file!
 
-## Important
-You can contribute to this project!
-
 ## Required
 - Nodejs
 - Python (if you want to run some tools like update.py)

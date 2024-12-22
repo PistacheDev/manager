@@ -1,5 +1,5 @@
 const { PermissionsBitField, EmbedBuilder, messageLink } = require("discord.js");
-const url = require("../URL.json");
+const url = require("../url.json");
 const Perms = PermissionsBitField.Flags;
 
 module.exports =
