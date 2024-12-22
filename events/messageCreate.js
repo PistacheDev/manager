@@ -1,7 +1,7 @@
 const { PermissionsBitField } = require("discord.js");
 const Perms = PermissionsBitField.Flags;
 const { generateNumber } = require("../functions/numberGenerator");
-const url = require("../URL.json");
+const url = require("../url.json");
 
 // Some Maps for the anti spam.
 const messages = new Map();

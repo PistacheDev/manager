@@ -17,7 +17,7 @@ module.exports =
 
                 const auditLogs = await guild.fetchAuditLogs({ type: AuditLogEvent.MessageDelete, limit: 10 }); // Fetch server logs.
                 const results = auditLogs.entries;
-                const log = results.find(entry => entry.targetId == message.author.id); // Fetch for the latest log with the member ID.
+                const log = results.find(entry => entry.targetId == message.id); // Fetch for the latest log with the member ID.
                 if (!log) return;
 
                 const embed = new EmbedBuilder()

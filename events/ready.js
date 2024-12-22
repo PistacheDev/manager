@@ -2,6 +2,7 @@ const fs = require("fs");
 const { Routes } = require("discord.js");
 const { REST } = require("@discordjs/rest");
 const { youtubeNotifications } = require("../api/youtube");
+const { twitchNotifications } = require("../api/twitch");
 
 module.exports =
 {
@@ -25,8 +26,15 @@ module.exports =
             rest.put( Routes.applicationCommands(client.user.id), { body: clientCommands } ).catch(console.error); // Deploy the commands.
             console.log(`[debug] Logged to Discord as ${client.user.username} (${client.user.id})!`);
 
+            // Run the notifications system at startup.
             youtubeNotifications();
-            setInterval(youtubeNotifications, 300000); // Run the YouTube notifications system every 5 minutes.
+            twitchNotifications();
+
+            setInterval(() => // Run the notifications system every 5 minutes.
+            {
+                youtubeNotifications();
+                twitchNotifications();
+            }, 300000);
         }
         catch (err)
         {

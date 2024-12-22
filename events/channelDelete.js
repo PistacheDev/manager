@@ -1,5 +1,5 @@
 const { AuditLogEvent, EmbedBuilder } = require("discord.js");
-const channelTypes = require("../channelTypes.json");
+const channelTypes = require("../channels.json");
 
 module.exports =
 {

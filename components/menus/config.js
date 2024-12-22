@@ -223,19 +223,33 @@ module.exports =
             {
                 let status = ":x: Inactive";
 
-                if (data.youtubeNotifs != 0) // Update the data if the ooption is enabled.
+                if (data.youtube != 0) // Update the data if the option is enabled.
                 {
-                    const [channelID, roleID, youtubeID, latestVideoID] = data.youtubeNotifs.split(" ");
+                    const [channelID, roleID, youtubeID, latestVideoID] = data.youtube.split(" ");
                     status = `:white_check_mark: Active.\n**Configured Channel**: <#${channelID}>.\n**Notification Role**: ${roleID == 0 ? "Awaiting configuration" : roleID == "@everyone" ? "@everyone" : `<@&${roleID}>`}.\n**YouTube Channel**: ${youtubeID == 0 ? "Awaiting configuration" : youtubeID}`;
                 };
 
                 embed.addFields([{ name: ":video_camera:・YouTube Notifications:", value: `>>> **Status**: ${status}.\n**Function**: **Sends a message** in the **configured channel** when the **configured YouTube channel** releases a **new video**.` }])
+                status = ":x: Inactive";
+
+                if (data.twitch != 0)
+                {
+                    const [channelID, roleID, twitchID, isLive] = data.twitch.split(" ");
+                    status = `:white_check_mark: Active.\n**Configured Channel**: <#${channelID}>.\n**Notification Role**: ${roleID == 0 ? "Awaiting configuration" : roleID == "@everyone" ? "@everyone" : `<@&${roleID}>`}.\n**Twitch Channel**: ${twitchID == 0 ? "Awaiting configuration" : twitchID}`;
+                };
+
+                embed.addFields([{ name: ":television:・Twitch Notifications:", value: `>>> **Status**: ${status}.\n**Function**: **Sends a message** in the **configured channel** when the **configured Twitch channel** is **live**.` }])
 
                 var buttons = new ActionRowBuilder()
                 .addComponents(
                     new ButtonBuilder()
                     .setCustomId("youtubeButton")
                     .setEmoji("📹")
+                    .setStyle(ButtonStyle.Primary)
+                ).addComponents(
+                    new ButtonBuilder()
+                    .setCustomId("twitchButton")
+                    .setEmoji("📺")
                     .setStyle(ButtonStyle.Primary)
                 )
 

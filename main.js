@@ -88,11 +88,8 @@ try
     // Middleware.
     app.get("*", async (req, res, next) =>
     {
-        // Enforce the domain name if we are in release mode.
-        if (req.get("host").startsWith(config.express.host) && !config.debug) return res.redirect(`https://manager.pistachedev.fr${req.url}`);
-
-        // We create a log only if the request isn't an another file or a sensitive page.
-        if (![".css", ".png", ".js", ".ico"].includes(path.extname(req.url)) && !req.url.startsWith("/callback")) console.log(`[debug] website, ${req.url}, ${req.method}, ${res.statusCode}, ${req.ip}, ${Date.now()}`);
+        if (req.get("host").startsWith(config.express.host) && !config.debug) return res.redirect(`https://manager.pistachedev.fr${req.url}`); // Enforce the domain name if we are in release mode.
+        if (![".css", ".png", ".js", ".ico"].includes(path.extname(req.url)) && !req.url.startsWith("/callback")) console.log(`[debug] website, ${req.url}, ${req.method}, ${res.statusCode}, ${req.ip}, ${Date.now()}`); // We create a log only if the request isn't an another file or a sensitive page.
         next();
     });
 

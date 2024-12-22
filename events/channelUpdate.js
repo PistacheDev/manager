@@ -1,5 +1,5 @@
 const { AuditLogEvent, EmbedBuilder } = require("discord.js");
-const channelTypes = require("../channelTypes.json");
+const channelTypes = require("../channels.json");
 
 module.exports =
 {
@@ -18,7 +18,7 @@ module.exports =
 
                 const auditLogs = await guild.fetchAuditLogs({ type: AuditLogEvent.ChannelUpdate, limit: 10 }); // Fetch server logs.
                 const results = auditLogs.entries;
-                const log = results.find(entry => entry.targetId == channel.id); // Fetch for the latest log with the channel ID.
+                const log = results.find(entry => entry.targetId == oldChannel.id); // Fetch for the latest log with the channel ID.
                 if (!log) return;
 
                 // Detect every modifications made on the channel and create a report.

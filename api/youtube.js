@@ -13,8 +13,8 @@ async function youtubeNotifications()
         {
             try
             {
-                if (data[i].youtubeNotifs == 0) continue; // The option is turned off for this server.
-                const [channelID, roleID, youtubeID, videoID] = data[i].youtubeNotifs.split(" ");
+                if (data[i].youtube == 0) continue; // The option is turned off for this server.
+                const [channelID, roleID, youtubeID, videoID] = data[i].youtube.split(" ");
                 if (roleID == 0 || youtubeID == 0) continue; // The configuration isn't finished for this server.
 
                 setTimeout(() => {}, 300); // Wait to avoid to create too many requests.
@@ -41,7 +41,7 @@ async function youtubeNotifications()
                     let videoDescription = fullVideoDescription.replace(/\\n/g, " ");
 
                     // Reduce some data if they are too long for the embed.
-                    if (videoTitle.length > 43) videoTitle = `${videoTitle.slice(0, 40)}...`;
+                    if (videoTitle.length > 40) videoTitle = `${videoTitle.slice(0, 37)}...`;
                     if (videoDescription.length > 260) videoDescription = `${videoDescription.slice(0, 257)}...`;
 
                     const embed = new EmbedBuilder()
@@ -54,10 +54,10 @@ async function youtubeNotifications()
                     .setTimestamp()
                     .setFooter({ text: channelName, iconURL: `https://yt3.ggpht.com/${channelIcon}` })
 
-                    db.query("UPDATE config SET youtubeNotifs = ? WHERE guild = ?", [`${channelID} ${roleID} ${youtubeID} ${latestVideoID}`, data[i].guild], async (err) =>
+                    db.query("UPDATE config SET youtube = ? WHERE guild = ?", [`${channelID} ${roleID} ${youtubeID} ${latestVideoID}`, data[i].guild], async (err) =>
                     {
                         if (err) throw err;
-                        client.channels.cache.get(channelID).send({ content: `A **new video** is **available**! ||${roleID == "@everyone" ? "@everyone" : `<@&${roleID}>`}||`, embeds: [embed] });
+                        client.channels.cache.get(channelID).send({ content: `[${channelName}](https://www.youtube.com/channel/${youtubeID}) uploaded a [new video](https://www.youtube.com/watch?v=${latestVideoID})! ||${roleID == "@everyone" ? "@everyone" : `<@&${roleID}>`}||`, embeds: [embed] });
                     });
                 };
             }
