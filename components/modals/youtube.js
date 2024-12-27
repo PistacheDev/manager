@@ -20,14 +20,14 @@ module.exports =
                 if (config.length < 1) data = fixMissingConfig(guild);
                 if (newChannel && !guild.channels.cache.get(newChannel)) return interaction.reply(":warning: This channel doesn't exist or the application can't access it!");
 
-                db.query("UPDATE config SET youtube = ? WHERE guild = ?", [!newChannel ? 0 : `${newChannel} 0 0 0`, guild.id], async (err) =>
+                db.query("UPDATE config SET youtube = ? WHERE guild = ?", [!newChannel ? 0 : `${newChannel} 0 0 0 0`, guild.id], async (err) =>
                 {
                     if (err) throw err;
                     let status = ":x: Inactive";
 
                     if (data[0].twitch != 0)
                     {
-                        const [channelID, roleID, twitchID, isLive] = data.twitch.split(" ");
+                        const [channelID, roleID, twitchID, isLive] = data[0].twitch.split(" ");
                         status = `:white_check_mark: Active.\n**Configured Channel**: <#${channelID}>.\n**Notification Role**: ${roleID == 0 ? "Awaiting configuration" : roleID == "@everyone" ? "@everyone" : `<@&${roleID}>`}.\n**Twitch Channel**: ${twitchID == 0 ? "Awaiting configuration" : twitchID}`;
                     };
 

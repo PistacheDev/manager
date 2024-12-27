@@ -225,7 +225,7 @@ module.exports =
 
                 if (data.youtube != 0) // Update the data if the option is enabled.
                 {
-                    const [channelID, roleID, youtubeID, latestVideoID] = data.youtube.split(" ");
+                    const [channelID, roleID, youtubeID, videoID, previousID] = data.youtube.split(" ");
                     status = `:white_check_mark: Active.\n**Configured Channel**: <#${channelID}>.\n**Notification Role**: ${roleID == 0 ? "Awaiting configuration" : roleID == "@everyone" ? "@everyone" : `<@&${roleID}>`}.\n**YouTube Channel**: ${youtubeID == 0 ? "Awaiting configuration" : youtubeID}`;
                 };
 

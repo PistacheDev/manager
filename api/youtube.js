@@ -14,21 +14,25 @@ async function youtubeNotifications()
             try
             {
                 if (data[i].youtube == 0) continue; // The option is turned off for this server.
-                const [channelID, roleID, youtubeID, videoID] = data[i].youtube.split(" ");
+                const [channelID, roleID, youtubeID, videoID, previousID] = data[i].youtube.split(" ");
                 if (roleID == 0 || youtubeID == 0) continue; // The configuration isn't finished for this server.
 
                 setTimeout(() => {}, 300); // Wait to avoid to create too many requests.
                 const videos = await axios.get(`https://www.youtube.com/channel/${youtubeID}/videos`);
                 const html = cheerio.load(videos.data).html(); // Convert the data in HTML.
-
                 const regex = /"webCommandMetadata":{"url":"\/watch\?v=([^"]+)"/;
                 const latestVideoID = `${html.match(regex) ? html.match(regex)[1] : 0}`;
 
                 if (latestVideoID != videoID)
                 {
                     if (latestVideoID == 0) continue;
-                    setTimeout(() => {}, 300);
+                    if (latestVideoID == previousID)
+                    {
+                        db.query("UPDATE config SET youtube = ? WHERE guild = ?", [`${channelID} ${roleID} ${youtubeID} ${previousID} 0`, data[i].guild], async (err) => { if (err) throw err; });
+                        continue;
+                    };
 
+                    setTimeout(() => {}, 300);
                     const video = await axios.get(`https://www.youtube.com/watch?v=${latestVideoID}`);
                     const html = cheerio.load(video.data).html(); // Convert the data in HTML.
 
@@ -40,7 +44,7 @@ async function youtubeNotifications()
                     const fullVideoDescription = descriptionMatch ? descriptionMatch[1] : "No description available for this video!";
                     let videoDescription = fullVideoDescription.replace(/\\n/g, " ");
 
-                    // Reduce some data if they are too long for the embed.
+                    // Reduce some data length if they are too long for the embed.
                     if (videoTitle.length > 40) videoTitle = `${videoTitle.slice(0, 37)}...`;
                     if (videoDescription.length > 260) videoDescription = `${videoDescription.slice(0, 257)}...`;
 
@@ -54,7 +58,7 @@ async function youtubeNotifications()
                     .setTimestamp()
                     .setFooter({ text: channelName, iconURL: `https://yt3.ggpht.com/${channelIcon}` })
 
-                    db.query("UPDATE config SET youtube = ? WHERE guild = ?", [`${channelID} ${roleID} ${youtubeID} ${latestVideoID}`, data[i].guild], async (err) =>
+                    db.query("UPDATE config SET youtube = ? WHERE guild = ?", [`${channelID} ${roleID} ${youtubeID} ${latestVideoID} ${videoID}`, data[i].guild], async (err) =>
                     {
                         if (err) throw err;
                         client.channels.cache.get(channelID).send({ content: `[${channelName}](https://www.youtube.com/channel/${youtubeID}) uploaded a [new video](https://www.youtube.com/watch?v=${latestVideoID})! ||${roleID == "@everyone" ? "@everyone" : `<@&${roleID}>`}||`, embeds: [embed] });

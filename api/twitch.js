@@ -20,7 +20,7 @@ async function twitchNotifications()
                 setTimeout(() => {}, 300);
                 const channel = await axios.get(`https://www.twitch.tv/${twitchID}`);
                 const html = cheerio.load(channel.data).html();
-                const isLive = /"isLiveBroadcast":true/.test(html) ? 1 : 0;
+                const isLive = /isLiveBroadcast/.test(html) ? 1 : 0;
 
                 if (parseInt(wasLive) != isLive)
                 {

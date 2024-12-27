@@ -33,14 +33,14 @@ module.exports =
                 const latestVideoID = `${html.match(regex) ? html.match(regex)[1] : null}`;
                 const youtubeID = html.match(/"channelUrl":"([^"]+)"/)[1].split("channel/")[1];
 
-                db.query("UPDATE config SET youtube = ? WHERE guild = ?", [`${channelID} ${roleID} ${youtubeID} ${latestVideoID}`, guild.id], async (err) =>
+                db.query("UPDATE config SET youtube = ? WHERE guild = ?", [`${channelID} ${roleID} ${youtubeID} ${latestVideoID} 0`, guild.id], async (err) =>
                 {
                     if (err) throw err;
                     let status = ":x: Inactive";
 
                     if (data[0].twitch != 0)
                     {
-                        const [channelID, roleID, twitchID, isLive] = data.twitch.split(" ");
+                        const [channelID, roleID, twitchID, isLive] = data[0].twitch.split(" ");
                         status = `:white_check_mark: Active.\n**Configured Channel**: <#${channelID}>.\n**Notification Role**: ${roleID == 0 ? "Awaiting configuration" : roleID == "@everyone" ? "@everyone" : `<@&${roleID}>`}.\n**Twitch Channel**: ${twitchID == 0 ? "Awaiting configuration" : twitchID}`;
                     };
 
