@@ -27,7 +27,7 @@ module.exports =
                 await axios.get(channelURL);
                 const twitchID = channelURL.split("twitch.tv/")[1];
 
-                db.query("UPDATE config SET twitch = ? WHERE guild = ?", [`${channelID} ${roleID} ${twitchID} 0`, guild.id], async (err) =>
+                db.query("UPDATE config SET twitch = ? WHERE guild = ?", [`${channelID} ${roleID} ${twitchID} 0 0`, guild.id], async (err) =>
                 {
                     if (err) throw err;
                     let status = ":x: Inactive";
