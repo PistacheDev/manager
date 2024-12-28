@@ -14,7 +14,7 @@ async function twitchNotifications()
             try
             {
                 if (data[i].twitch == 0) continue;
-                const [channelID, roleID, twitchID, wasLive] = data[i].twitch.split(" ");
+                const [channelID, roleID, twitchID, wasLive, check] = data[i].twitch.split(" ");
                 if (roleID == 0 || channelID == 0) continue;
 
                 setTimeout(() => {}, 300);
@@ -24,21 +24,32 @@ async function twitchNotifications()
 
                 if (parseInt(wasLive) != isLive)
                 {
-                    db.query("UPDATE config SET twitch = ? WHERE guild = ?", [`${channelID} ${roleID} ${twitchID} ${isLive}`, data[i].guild], async (err) =>
+                    if (isLive == 0 && parseInt(check) < 3) // Check 3 times that the channel is offline to ensure that the info is correct to avoid mass pings.
+                    {
+                        db.query("UPDATE config SET twitch = ? WHERE guild = ?", [`${channelID} ${roleID} ${twitchID} ${wasLive} ${parseInt(check)++}`, data[i].guild], async (err) =>
+                        {
+                            if (err) throw err;
+                        });
+
+                        return;
+                    };
+
+                    db.query("UPDATE config SET twitch = ? WHERE guild = ?", [`${channelID} ${roleID} ${twitchID} ${isLive} 0`, data[i].guild], async (err) =>
                     {
                         if (err) throw err;
                         if (isLive == 1)
                         {
                             const channelIcon = html.match(/<meta property="og:image" content="([^"]+)"/)[1];
                             const title = html.match(/<meta name="description" content="([^"]+)"/)[1];
+                            const thumbnail = `https://static-cdn.jtvnw.net/previews-ttv/live_user_${twitchID}-640x360.jpg`;
 
                             const embed = new EmbedBuilder()
                             .setColor("Purple")
                             .setURL(`https://www.twitch.tv/${twitchID}`)
                             .setTitle(title)
-                            .setDescription(`[Livestream](https://www.twitch.tv/${twitchID})\n[Channel's icon](${channelIcon})\n[Thumbnail](https://static-cdn.jtvnw.net/previews-ttv/live_user_${twitchID}-640x360.jpg)`)
+                            .setDescription(`[Livestream](https://www.twitch.tv/${twitchID})\n[Channel's icon](${channelIcon})\n[Thumbnail](${thumbnail})`)
                             .setThumbnail(channelIcon)
-                            .setImage(`https://static-cdn.jtvnw.net/previews-ttv/live_user_${twitchID}-640x360.jpg`)
+                            .setImage(thumbnail)
                             .setTimestamp()
                             .setFooter({ text: twitchID, iconURL: channelIcon })
 

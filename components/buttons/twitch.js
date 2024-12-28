@@ -12,7 +12,7 @@ module.exports =
             {
                 if (err) throw err;
                 if (data[0].twitch == 0) return showFirstModal(); // The option is turned off for this server, so the user can't disable it.
-                const [channelID, roleID, twitchID, isLive] = data[0].twitch.split(" ");
+                const [channelID, roleID, twitchID, isLive, check] = data[0].twitch.split(" ");
 
                 if (roleID == 0 || twitchID == 0) showSecondModal(); // The configuration isn't finished, so the user isn't allowed to disable it for now.
                 else showFirstModal(); // The option is turned on, so the user is now allowed to disable it.

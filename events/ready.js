@@ -24,7 +24,7 @@ module.exports =
 
             console.log(`[debug] ${clientCommands.length} commands were successfully deployed!`);
             rest.put( Routes.applicationCommands(client.user.id), { body: clientCommands } ).catch(console.error); // Deploy the commands.
-            console.log(`[debug] Logged to Discord as ${client.user.username} (${client.user.id})!`);
+            console.log(`[debug] Logged into Discord as ${client.user.id} aka ${client.user.username}!`);
 
             // Run the notifications system at startup.
             youtubeNotifications();

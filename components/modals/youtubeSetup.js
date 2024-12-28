@@ -40,7 +40,7 @@ module.exports =
 
                     if (data[0].twitch != 0)
                     {
-                        const [channelID, roleID, twitchID, isLive] = data[0].twitch.split(" ");
+                        const [channelID, roleID, twitchID, isLive, check] = data[0].twitch.split(" ");
                         status = `:white_check_mark: Active.\n**Configured Channel**: <#${channelID}>.\n**Notification Role**: ${roleID == 0 ? "Awaiting configuration" : roleID == "@everyone" ? "@everyone" : `<@&${roleID}>`}.\n**Twitch Channel**: ${twitchID == 0 ? "Awaiting configuration" : twitchID}`;
                     };
 

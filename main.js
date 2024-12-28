@@ -1,6 +1,6 @@
 require("dotenv").config();
 const { Client, IntentsBitField, Partials, ActivityType } = require("discord.js");
-const config = require("./config.json");
+const config = require("./json/config.json");
 console.log(`[debug] Currently running in ${config.debug ? "debug" : "release"} mode!`);
 const mysql = require("mysql2");
 const express = require("express");

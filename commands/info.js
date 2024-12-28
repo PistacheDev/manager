@@ -1,7 +1,7 @@
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, PermissionsBitField, SlashCommandBuilder } = require("discord.js");
-const config = require("../config.json");
+const config = require("../json/config.json");
 const package = require("../package.json");
-const channelTypes = require("../channels.json");
+const channelTypes = require("../json/channels.json");
 
 module.exports =
 {
