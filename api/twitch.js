@@ -24,9 +24,9 @@ async function twitchNotifications()
 
                 if (parseInt(wasLive) != isLive)
                 {
-                    if (isLive == 0 && parseInt(check) < 3) // Check 3 times that the channel is offline to ensure that the info is correct to avoid mass pings.
+                    if (isLive == 0 && parseInt(check) < 2) // Check 2 times that the channel is offline to ensure that the info is correct to avoid mass pings.
                     {
-                        db.query("UPDATE config SET twitch = ? WHERE guild = ?", [`${channelID} ${roleID} ${twitchID} ${wasLive} ${parseInt(check)++}`, data[i].guild], async (err) =>
+                        db.query("UPDATE config SET twitch = ? WHERE guild = ?", [`${channelID} ${roleID} ${twitchID} ${wasLive} ${parseInt(check) + 1}`, data[i].guild], async (err) =>
                         {
                             if (err) throw err;
                         });
