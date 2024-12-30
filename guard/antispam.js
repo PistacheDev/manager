@@ -30,7 +30,7 @@ async function antispam(message)
         if (filter.length >= maxMessages)
         {
             const warns = (warnings.get(author.id) || 0) + 1;
-            warnings.set(author.id, warns); // Add the warn to the member' count.
+            warnings.set(author.id, warns); // Add the warn to the member's count.
 
             if (warns > maxWarns) // Too many warns.
             {

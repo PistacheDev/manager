@@ -32,6 +32,7 @@ CREATE TABLE config (
     antibots VARCHAR(255) DEFAULT '1',
     antilinks VARCHAR(255) DEFAULT '2',
     antispam VARCHAR(255) DEFAULT '0 5 5 2 10',
+    antiswear VARCHAR(255) DEFAULT '0 1 3 60',
     warn VARCHAR(255) DEFAULT '3 1',
     antipings VARCHAR(255) DEFAULT '0 20',
     xp VARCHAR(255) DEFAULT '0',
@@ -44,5 +45,16 @@ CREATE TABLE config (
     messagesLogs VARCHAR(255) DEFAULT '0',
     channelsLogs VARCHAR(255) DEFAULT '0',
     bansLogs VARCHAR(255) DEFAULT '0'
+);
+```
+
+========== "bans" table: ==========
+``` sh
+CREATE TABLE bans (
+    guild VARCHAR(255),
+    user VARCHAR(255),
+    moderator VARCHAR(255),
+    reason VARCHAR(2000),
+    date VARCHAR(255)
 );
 ```

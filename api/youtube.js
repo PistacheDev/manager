@@ -21,26 +21,19 @@ async function youtubeNotifications()
                 const videos = await axios.get(`https://www.youtube.com/channel/${youtubeID}/videos`);
                 const html = cheerio.load(videos.data).html(); // Convert the data in HTML.
                 const regex = /"webCommandMetadata":{"url":"\/watch\?v=([^"]+)"/;
-                const latestVideoID = `${html.match(regex) ? html.match(regex)[1] : 0}`;
+                const latestID = `${html.match(regex) ? html.match(regex)[1] : 0}`;
 
-                if (latestVideoID != videoID)
+                if (latestID != videoID && latestID != 0 && latestID != previousID)
                 {
-                    if (latestVideoID == 0) continue;
-                    if (latestVideoID == previousID && latestVideoID != 0)
-                    {
-                        db.query("UPDATE config SET youtube = ? WHERE guild = ?", [`${channelID} ${roleID} ${youtubeID} ${previousID} 0`, data[i].guild], async (err) => { if (err) throw err; });
-                        continue;
-                    };
-
                     setTimeout(() => {}, 300);
-                    const video = await axios.get(`https://www.youtube.com/watch?v=${latestVideoID}`);
-                    const html = cheerio.load(video.data).html(); // Convert the data in HTML.
+                    const video = await axios.get(`https://www.youtube.com/watch?v=${latestID}`);
+                    const videoHtml = cheerio.load(video.data).html(); // Convert the data in HTML.
 
                     // Fetch required information.
-                    let videoTitle = html.match(/"title":{"runs":\[\{"text":"([^"]+)"\}\]/)[1];
-                    const channelName = html.match(/"channel":{"simpleText":"([^"]+)"}/)[1];
-                    const channelIcon = html.match(/"thumbnails":\[\{"url":"https:\/\/yt3.ggpht.com\/([^"]+)"\}\]/)[1];
-                    const descriptionMatch = html.match(/"attributedDescription":{"content":"([^"]+)"/);
+                    let videoTitle = videoHtml.match(/"title":{"runs":\[\{"text":"([^"]+)"\}\]/)[1];
+                    const channelName = videoHtml.match(/"channel":{"simpleText":"([^"]+)"}/)[1];
+                    const channelIcon = videoHtml.match(/"thumbnails":\[\{"url":"https:\/\/yt3.ggpht.com\/([^"]+)"\}\]/)[1];
+                    const descriptionMatch = videoHtml.match(/"attributedDescription":{"content":"([^"]+)"/);
                     const fullVideoDescription = descriptionMatch ? descriptionMatch[1] : "No description available for this video!";
                     let videoDescription = fullVideoDescription.replace(/\\n/g, " ");
 
@@ -50,18 +43,18 @@ async function youtubeNotifications()
 
                     const embed = new EmbedBuilder()
                     .setColor("Red")
-                    .setURL(`https://www.youtube.com/watch?v=${latestVideoID}`)
+                    .setURL(`https://www.youtube.com/watch?v=${latestID}`)
                     .setTitle(videoTitle)
                     .setThumbnail(`https://yt3.ggpht.com/${channelIcon}`)
                     .setDescription(videoDescription)
-                    .setImage(`https://i.ytimg.com/vi/${latestVideoID}/maxresdefault.jpg`)
+                    .setImage(`https://i.ytimg.com/vi/${latestID}/maxresdefault.jpg`)
                     .setTimestamp()
                     .setFooter({ text: channelName, iconURL: `https://yt3.ggpht.com/${channelIcon}` })
 
-                    db.query("UPDATE config SET youtube = ? WHERE guild = ?", [`${channelID} ${roleID} ${youtubeID} ${latestVideoID} ${videoID}`, data[i].guild], async (err) =>
+                    db.query("UPDATE config SET youtube = ? WHERE guild = ?", [`${channelID} ${roleID} ${youtubeID} ${latestID} ${videoID}`, data[i].guild], async (err) =>
                     {
                         if (err) throw err;
-                        client.channels.cache.get(channelID).send({ content: `[${channelName}](https://www.youtube.com/channel/${youtubeID}) uploaded a [new video](https://www.youtube.com/watch?v=${latestVideoID})! ||${roleID == "@everyone" ? "@everyone" : `<@&${roleID}>`}||`, embeds: [embed] });
+                        client.channels.cache.get(channelID).send({ content: `[${channelName}](https://www.youtube.com/channel/${youtubeID}) uploaded a [new video](https://www.youtube.com/watch?v=${latestID})! ||${roleID == "@everyone" ? "@everyone" : `<@&${roleID}>`}||`, embeds: [embed] });
                     });
                 };
             }

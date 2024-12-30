@@ -30,10 +30,17 @@ module.exports =
                 {
                     if (err) throw err;
 
+                    let swearState = ":x: Inactive";
                     let warnStatus = ":x: Inactive";
                     let pingStatus = ":x: Inactive";
 
-                    if (data[0].warn != 0) // Update the data if the option is enabled.
+                    if (data[0].antiswear != 0)
+                    {
+                        const [ignoreBots, ignoreAdmins, maxWarns, sanction] = data[0].antiswear.split(" ");
+                        swearState = `:white_check_mark: Active.\n**Ignore Bots**: ${ignoreBots == 1 ? "Yes" : "No"}.\n**Ignore Administrators**: ${ignoreAdmins == 1 ? "Yes" : "No"}.\n**Maximum Warns**: ${maxWarns} warns.\n**Sanction**: ${sanction == "ban" ? "Ban" : `Mute for ${sanction} minutes`}`;
+                    };
+
+                    if (data[0].warn != 0)
                     {
                         const [maxWarns, sanction] = data[0].warn.split(" ");
                         warnStatus = `:white_check_mark: Active.\n**Maximum Warns**: ${maxWarns} warns.\n**Sanction**: ${sanction == "ban" ? "Ban" : `Mute for ${sanction} hours`}`;
@@ -50,6 +57,7 @@ module.exports =
                     .setAuthor({ name: "Configuration Panel", iconURL: client.user.avatarURL() })
                     .setDescription("Press the button with the **emoji corresponding** to **the option** you want to modify.")
                     .addFields([{ name: ":hand_splayed:・Anti spam:", value: `>>> **Status**: :white_check_mark: Active.\n**Ignore Bots**: ${ignoreBots == "yes" ? "Yes" : "No"}.\n**Spam Detection:** More than ${maxMessages} messages in ${interval} seconds.\n**Maximum Warns**: ${maxWarns} warns.\n**Sanction**: ${sanction == "ban" ? "Ban" : `Mute for ${sanction} minutes`}.\n**Function**: Prevent the members from **spamming messages**.` }])
+                    .addFields([{ name: ":no_entry:・Anti swear:", value: `>>> **Status**: ${swearState}.\n**Function**: Prevent the members from **using bad words**.` }])
                     .addFields([{ name: ":warning:・Warns:", value: `>>> **Status**: ${warnStatus}.\n**Function**: The member **is sanctionned** if its warns count reached the **maximum amount**.` }])
                     .addFields([{ name: ":loud_sound:・Anti pings:", value: `>>> **Status**: ${pingStatus}.\n**Function**: Prevent the members from using **@everyone and @here**.` }])
                     .addFields([{ name: ":globe_with_meridians:・Anti links:", value: `>>> **Status**: ${data[0].antilinks == 0 ? ":x: Inactive" : data[0].antilinks == 1 ? ":white_check_mark: Active" : ":lock: Enforced (bots too)"}.\n**Function**: Delete messages **containing links**.` }])

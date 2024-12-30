@@ -40,7 +40,7 @@ module.exports =
             {
                 if (err) throw err;
                 let data = config;
-                if (config.length < 1) data = fixMissingConfig(guild);
+                if (config.length < 1) data = await fixMissingConfig(guild);
 
                 switch (interaction.values.toString())
                 {
@@ -137,6 +137,15 @@ module.exports =
                 embed.addFields([{ name: ":hand_splayed:・Anti spam:", value: `>>> **Status**: ${status}.\n**Function**: Prevent the members from **spamming messages**.` }])
                 status = ":x: Inactive";
 
+                if (data.antiswear != "0")
+                {
+                    const [ignoreBots, ignoreAdmins, maxWarns, sanction] = data.antiswear.split(" ");
+                    status = `:white_check_mark: Active.\n**Ignore Bots**: ${ignoreBots == 1 ? "Yes" : "No"}.\n**Ignore Administrators**: ${ignoreAdmins == 1 ? "Yes" : "No"}.\n**Maximum Warns**: ${maxWarns} warns.\n**Sanction**: ${sanction == "ban" ? "Ban" : `Mute for ${sanction} minutes`}`;
+                };
+
+                embed.addFields([{ name: ":no_entry:・Anti swear:", value: `>>> **Status**: ${status}.\n**Function**: Prevent the members from **using bad words**.` }])
+                status = ":x: Inactive";
+
                 if (data.warn != "0")
                 {
                     const [maxWarns, sanction] = data.warn.split(" ");
@@ -160,6 +169,11 @@ module.exports =
                     new ButtonBuilder()
                     .setCustomId("antispamButton")
                     .setEmoji("🖐️")
+                    .setStyle(ButtonStyle.Primary)
+                ).addComponents(
+                    new ButtonBuilder()
+                    .setCustomId("antiswearButton")
+                    .setEmoji("⛔")
                     .setStyle(ButtonStyle.Primary)
                 ).addComponents(
                     new ButtonBuilder()

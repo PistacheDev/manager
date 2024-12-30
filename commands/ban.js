@@ -12,6 +12,7 @@ module.exports =
         {
             const target = interaction.guild.members.cache.get(interaction.options.getUser("user").id); // Fetch the user in the server list.
             const reason = interaction.options.getString("reason");
+            const definitive = interaction.options.getBoolean("definitive");
             const deleteTime = interaction.options.getNumber("messages");
 
             const guild = interaction.guild;
@@ -29,19 +30,27 @@ module.exports =
 
             target.ban({ reason: `[${mod.id}] ${reason}`, deleteMessageDays: deleteTime ? deleteTime : 0 }).then(() =>
             {
-                interaction.channel.send(`:man_judge: ${target.user.username} (${targetID}) has been banned by <@${mod.id}>!\n**Reason**: **\`${reason}\`**`);
+                interaction.channel.send(`:man_judge: ${target.user.username} (${targetID}) has been banned ${definitive ? "definitively" : ""} by <@${mod.id}>!\n**Reason**: **\`${reason}\`**`);
                 interaction.deferUpdate();
 
                 const embed = new EmbedBuilder()
                 .setColor("Red")
                 .setThumbnail(guild.iconURL())
-                .setDescription(`:scales: You've been banned from **${guild.name}**!`)
+                .setDescription(`:scales: You've been banned ${definitive ? "definitively" : ""} from **${guild.name}**!`)
                 .addFields([{ name: ":man_judge:・Moderator:", value: `>>> **User**: <@${mod.id}> @${mod.user.username}.\n**ID**: ${mod.id}.\n**Ban Date**: <t:${Math.floor(Date.now() / 1000)}:F>.` }])
                 .addFields([{ name: ":grey_question:・Reason:", value: `\`\`\`${reason}\`\`\`` }])
                 .setTimestamp()
                 .setFooter({ text: guild.name, iconURL: guild.iconURL() })
 
                 target.user.createDM({ force: true }).send({ embeds: [embed] });
+
+                if (definitive)
+                {
+                    db.query("INSERT INTO bans (`guild`, `user`, `moderator`, `reason`, `date`) VALUES (?, ?, ?, ?, ?)", [guild.id, target.id, mod.id, reason.replace(/"/g, "\\'"), Date.now()], async (err) =>
+                    {
+                        if (err) throw err;
+                    });
+                };
             });
         }
         catch (err)
@@ -64,6 +73,11 @@ module.exports =
             opt => opt
             .setName("reason")
             .setDescription("Sanction reason.")
+            .setRequired(true)
+        ).addBooleanOption(
+            opt => opt
+            .setName("definitive")
+            .setDescription("Auto-ban the user each time he tries to join the server even unbanned. ONLY revocable by the owner.")
             .setRequired(true)
         ).addNumberOption(
             opt => opt

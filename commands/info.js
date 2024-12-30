@@ -1,4 +1,5 @@
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, PermissionsBitField, SlashCommandBuilder } = require("discord.js");
+const { boot } = require("../main");
 const config = require("../json/config.json");
 const package = require("../package.json");
 const channelTypes = require("../json/channels.json");
@@ -43,7 +44,7 @@ module.exports =
                 const embed = new EmbedBuilder()
                 .setColor("Orange")
                 .setThumbnail(client.user.avatarURL())
-                .addFields([{ name: ":robot:・**Identity**:", value: `>>> **Name**: <@${client.user.id}> ${client.user.username}.\n**Tag**: ${client.user.tag}.\n**ID**: ${client.user.id}.\n**Version**: ${config.version}.\n**Server Count**: ${client.guilds.cache.size} servers.` }])
+                .addFields([{ name: ":robot:・**Identity**:", value: `>>> **Name**: <@${client.user.id}> ${client.user.username}.\n**Tag**: ${client.user.tag}.\n**ID**: ${client.user.id}.\n**Version**: ${config.version}.\n**Server Count**: ${client.guilds.cache.size} servers.\n**Last Boot**: <t:${Math.floor(boot / 1000)}:R>.` }])
                 .addFields([{ name: ":gear:・**Settings**:", value: `>>> **Application Latency**: ${client.ws.ping}ms.\n**Nodejs**: ${process.version}.\n**Discord.js**: v${package.dependencies["discord.js"].split("^")[1]}.` }])
                 .addFields([{ name: ":desktop:・**Host:**", value: ">>> **Host**: OVHcloud (Canada).\n**OS**: Fedora 40.\n**CPU**: 4 vCores.\n**RAM**: 8 GB.\n**Internet Speed**: 250 MB/sec." }])
 

@@ -16,7 +16,7 @@ module.exports =
                 if (err) throw err;
                 let data = config;
 
-                if (config.length < 1) data = fixMissingConfig(guild);
+                if (config.length < 1) data = await fixMissingConfig(guild);
                 let status = ":x: Inactive";
 
                 if (data[0].autoraidmode != 0)
