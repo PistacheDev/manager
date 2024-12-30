@@ -17,7 +17,7 @@ module.exports =
                 var newRole = interaction.fields.getTextInputValue("joinRoleModalOption");
                 let data = config;
 
-                if (config.length < 1) data = fixMissingConfig(guild);
+                if (config.length < 1) data = await fixMissingConfig(guild);
                 if (newRole && !guild.roles.cache.get(newRole)) return interaction.reply(":warning: This role doesn't exist!");
 
                 db.query("UPDATE config SET joinRole = ? WHERE guild = ?", [newRole ? newRole : 0, guild.id], async (err) =>

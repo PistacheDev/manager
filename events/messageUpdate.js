@@ -1,5 +1,6 @@
-const { EmbedBuilder } = require("discord.js");
+const { EmbedBuilder, messageLink } = require("discord.js");
 const { antilinks } = require("../guard/antilinks");
+const { antiswear } = require("../guard/antiswear");
 
 module.exports =
 {
@@ -16,8 +17,9 @@ module.exports =
                 if (err) throw err;
                 if (data.length < 1) return;
 
-                const containLink = antilinks(newMessage);
-                if (containLink || data[0].messagesLogs == 0 || oldMessage.author == null || oldMessage.author.bot || oldMessage.content == newMessage.content) return;
+                const isInsulting = await antiswear(newMessage);
+                const containLink = await antilinks(newMessage);
+                if (isInsulting || containLink || data[0].messagesLogs == 0 || oldMessage.author == null || oldMessage.author.bot || oldMessage.content == newMessage.content) return;
 
                 const embed = new EmbedBuilder()
                 .setColor("Blue")

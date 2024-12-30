@@ -21,7 +21,7 @@ module.exports =
                 if (err) throw err;
                 let config = conf;
 
-                if (conf.length < 1) config = fixMissingConfig(guild);
+                if (conf.length < 1) config = await fixMissingConfig(guild);
                 if (config[0].xp == 0) return interaction.reply(":warning: The XP system is **disabled** in this server!");
 
                 switch (interaction.options.getSubcommand()) // Check what sub command has been executed.

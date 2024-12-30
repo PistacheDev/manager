@@ -43,9 +43,9 @@ module.exports =
                 .setTimestamp()
 
                 // Build the embed.
-                for (let warnsCount = 0; warnsCount < data.length; warnsCount++)
+                for (let i = 0; i < data.length; i++)
                 {
-                    embed.addFields([{ name: `${warnsCount + 1}) Warn \`${data[warnsCount].warnID}\`:`, value: `**Moderator**: <@${await data[warnsCount].moderator}>.\n**Sanction Date**: <t:${Math.floor(parseInt(data[warnsCount].date / 1000))}>.\n**Reason**: \`${data[warnsCount].reason}\`.` }]); 
+                    embed.addFields([{ name: `${i + 1}) Warn \`${data[i].warnID}\`:`, value: `**Moderator**: <@${await data[i].moderator}>.\n**Sanction Date**: <t:${Math.floor(parseInt(data[i].date / 1000))}>.\n**Reason**: \`${data[i].reason}\`.` }]); 
                 };
 
                 await interaction.reply({ embeds: [embed] });

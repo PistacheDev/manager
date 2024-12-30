@@ -17,7 +17,7 @@ module.exports =
                 var newChannel = interaction.fields.getTextInputValue("twitchModalOption");
                 let data = config;
 
-                if (config.length < 1) data = fixMissingConfig(guild);
+                if (config.length < 1) data = await fixMissingConfig(guild);
                 if (newChannel && !guild.channels.cache.get(newChannel)) return interaction.reply(":warning: This channel doesn't exist or the application can't access it!");
 
                 db.query("UPDATE config SET twitch = ? WHERE guild = ?", [!newChannel ? 0 : `${newChannel} 0 0 0 0`, guild.id], async (err) =>

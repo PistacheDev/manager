@@ -49,6 +49,7 @@ const db = mysql.createPool
 });
 
 client.login(process.env.APP_TOKEN); // Login to the Discord bot account.
+module.exports.boot = Date.now();
 module.exports.client = client;
 module.exports.db = db;
 

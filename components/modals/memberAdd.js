@@ -17,7 +17,7 @@ module.exports =
                 var newChannel = interaction.fields.getTextInputValue("memberAddModalOption");
                 let data = config;
 
-                if (config.length < 1) data = fixMissingConfig(guild);
+                if (config.length < 1) data = await fixMissingConfig(guild);
                 if (newChannel && !guild.channels.cache.get(newChannel)) return interaction.reply(":warning: The channel doesn't exist or the application can't access it!");
 
                 db.query("UPDATE config SET memberAdd = ? WHERE guild = ?", [newChannel ? newChannel : 0, guild.id], async (err) =>

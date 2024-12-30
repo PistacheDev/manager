@@ -17,7 +17,7 @@ module.exports =
             {
                 if (err) throw err;
                 let data = config;
-                if (config.length < 1) data = fixMissingConfig(guild);
+                if (config.length < 1) data = await fixMissingConfig(guild);
 
                 const roleID = interaction.fields.getTextInputValue("youtubeModalOption");
                 const channelURL = interaction.fields.getTextInputValue("youtubeModalOption2");

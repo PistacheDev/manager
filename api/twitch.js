@@ -13,18 +13,18 @@ async function twitchNotifications()
         {
             try
             {
-                if (data[i].twitch == 0) continue;
+                if (data[i].twitch == 0) continue; // The option is turned off for this server.
                 const [channelID, roleID, twitchID, wasLive, check] = data[i].twitch.split(" ");
-                if (roleID == 0 || channelID == 0) continue;
+                if (roleID == 0 || channelID == 0) continue; // The configuration isn't finished for this server.
 
-                setTimeout(() => {}, 300);
+                setTimeout(() => {}, 300); // Wait to avoid too many requests.
                 const channel = await axios.get(`https://www.twitch.tv/${twitchID}`);
                 const html = cheerio.load(channel.data).html();
-                const isLive = /isLiveBroadcast/.test(html) ? 1 : 0;
+                const isLive = /isLiveBroadcast/.test(html) ? 1 : 0; // Fetch if the channel's live or not.
 
                 if (parseInt(wasLive) != isLive)
                 {
-                    if (isLive == 0 && parseInt(check) < 2) // Check 2 times that the channel is offline to ensure that the info is correct to avoid mass pings.
+                    if (isLive == 0 && parseInt(check) < 3) // Check 3 times that the channel is offline to ensure that the info is correct to avoid mass pings.
                     {
                         db.query("UPDATE config SET twitch = ? WHERE guild = ?", [`${channelID} ${roleID} ${twitchID} ${wasLive} ${parseInt(check) + 1}`, data[i].guild], async (err) =>
                         {
@@ -39,6 +39,7 @@ async function twitchNotifications()
                         if (err) throw err;
                         if (isLive == 1)
                         {
+                            // Fetch the required info.
                             const channelIcon = html.match(/<meta property="og:image" content="([^"]+)"/)[1];
                             const title = html.match(/<meta name="description" content="([^"]+)"/)[1];
                             const thumbnail = `https://static-cdn.jtvnw.net/previews-ttv/live_user_${twitchID}-640x360.jpg`;

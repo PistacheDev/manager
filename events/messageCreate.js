@@ -2,6 +2,8 @@ const { generateNumber } = require("../functions/numberGenerator");
 const { antilinks } = require("../guard/antilinks");
 const { antispam } = require("../guard/antispam");
 const { antipings } = require("../guard/antipings");
+const { antiswear } = require("../guard/antiswear");
+const { bansdef } = require("../guard/bansdef");
 
 module.exports =
 {
@@ -10,19 +12,19 @@ module.exports =
     {
         try
         {
-            if (!message.guild || message.content == "") return;
+            if (!message.guild || message.content == "" || message.author.id == client.user.id) return;
 
             const guild = message.guild;
             const author = message.author;
             const member = message.member;
 
+            const isBanned = await bansdef(message);
+            const isInsulting = await antiswear(message);
             const isSpamming = await antispam(message);
-            if (isSpamming) return;
             const containLinks = await antilinks(message);
-            if (containLinks) return;
             const forbiddenPing = await antipings(message);
-            if (forbiddenPing) return;
 
+            if (isBanned || isInsulting || isSpamming || containLinks || forbiddenPing) return;
             if (message.author.bot) return;
             if (message.content == `<@${client.user.id}>`) return message.reply(`:wave: Hey <@${author.id}>! I'm online and functionnal!`);
 

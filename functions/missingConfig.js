@@ -1,16 +1,21 @@
 const { db } = require("../main");
 
-function fixMissingConfig(guild)
+async function fixMissingConfig(guild)
 {
-    db.query("INSERT INTO config (`guild`) VALUES (?)", [guild.id], async (err) =>
+    return new Promise((resolve, reject) =>
     {
-        if (err) throw err;
-        setTimeout(() => {}, 100); // Wait to let the database correctly insert the data.
-
-        db.query("SELECT * FROM config WHERE guild = ?", [guild.id], async (err, data) =>
+        db.query("INSERT INTO config (`guild`) VALUES (?)", [guild.id], async (err) =>
         {
-            if (err) throw err;
-            return data;
+            if (err) return reject(err);
+
+            setTimeout(() => // Wait to let the database correctly insert the data.
+            {
+                db.query("SELECT * FROM config WHERE guild = ?", [guild.id], (err, data) =>
+                {
+                    if (err) return reject(err);
+                    resolve(data);
+                });
+            }, 100);
         });
     });
 };
