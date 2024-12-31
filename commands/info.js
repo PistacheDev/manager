@@ -3,6 +3,7 @@ const { boot } = require("../main");
 const config = require("../json/config.json");
 const package = require("../package.json");
 const channelTypes = require("../json/channels.json");
+const os = require("os");
 
 module.exports =
 {
@@ -46,7 +47,7 @@ module.exports =
                 .setThumbnail(client.user.avatarURL())
                 .addFields([{ name: ":robot:・**Identity**:", value: `>>> **Name**: <@${client.user.id}> ${client.user.username}.\n**Tag**: ${client.user.tag}.\n**ID**: ${client.user.id}.\n**Version**: ${config.version}.\n**Server Count**: ${client.guilds.cache.size} servers.\n**Last Boot**: <t:${Math.floor(boot / 1000)}:R>.` }])
                 .addFields([{ name: ":gear:・**Settings**:", value: `>>> **Application Latency**: ${client.ws.ping}ms.\n**Nodejs**: ${process.version}.\n**Discord.js**: v${package.dependencies["discord.js"].split("^")[1]}.` }])
-                .addFields([{ name: ":desktop:・**Host:**", value: ">>> **Host**: OVHcloud (Canada).\n**OS**: Fedora 40.\n**CPU**: 4 vCores.\n**RAM**: 8 GB.\n**Internet Speed**: 250 MB/sec." }])
+                .addFields([{ name: ":desktop:・**Host:**", value: `>>> **OS**: ${os.type()} ${os.arch()}.\n**CPU**: ${os.cpus()[0].model}.\n**RAM usage**: ${(os.totalmem() / 1000000000 - os.freemem() / 1000000000).toFixed(2)}GB/${(os.totalmem() / 1000000000).toFixed(2)}GB.` }])
 
                 var buttons = new ActionRowBuilder()
                 .addComponents(
