@@ -38,7 +38,7 @@ module.exports =
 				channel.clone().then(newChannel =>
 				{
 					channel.delete();
-					newChannel.send(`:repear: Channel **recreated**!`);
+					newChannel.send(`:repeat: Channel **recreated**!`);
 					if (channel.id != interaction.channel.id) interaction.reply(`:white_check_mark: <#${channel.id}> has been **recreated** successfully!`);
 				});
 			};

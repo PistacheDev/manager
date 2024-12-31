@@ -5,7 +5,7 @@ module.exports =
     {
         try
         {
-            // We remove everything related to the server from the dfatabse to save some space on the server.
+            // We remove everything related to this server from the database to save some space on the server disk.
 
             db.query("DELETE FROM config WHERE guild = ?", [guild.id], async (err) =>
             {
