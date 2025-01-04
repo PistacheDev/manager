@@ -23,64 +23,64 @@ module.exports =
                     .setCustomId("xpSettingsModal")
                     .setTitle("Setup the XP settings:")
 
-                    const modalOption = new TextInputBuilder()
-                    .setCustomId("xpSettingsModalOption")
+                    const option1 = new TextInputBuilder()
+                    .setCustomId("option1")
                     .setLabel("Alert when level up:")
                     .setPlaceholder("Answer by \"yes\" or \"no\".")
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
 
-                    const modalInput = new ActionRowBuilder()
-                    .addComponents(modalOption)
+                    const input1 = new ActionRowBuilder()
+                    .addComponents(option1)
 
-                    const modalOption2 = new TextInputBuilder()
-                    .setCustomId("xpSettingsModalOption2")
+                    const option2 = new TextInputBuilder()
+                    .setCustomId("option2")
                     .setLabel("XP per message:")
                     .setPlaceholder("Enter the max amount of XP per message (1 ~ 50).")
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
 
-                    const modalInput2 = new ActionRowBuilder()
-                    .addComponents(modalOption2)
+                    const input2 = new ActionRowBuilder()
+                    .addComponents(option2)
 
-                    const modalOption3 = new TextInputBuilder()
-                    .setCustomId("xpSettingsModalOption3")
+                    const option3 = new TextInputBuilder()
+                    .setCustomId("option3")
                     .setLabel("Maximum Level:")
                     .setPlaceholder("Enter the max level wanted (10 ~ 100).")
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
 
-                    const modalInput3 = new ActionRowBuilder()
-                    .addComponents(modalOption3)
+                    const input3 = new ActionRowBuilder()
+                    .addComponents(option3)
 
-                    modal.addComponents(modalInput, modalInput2, modalInput3);
+                    modal.addComponents(input1, input2, input3);
                     await interaction.showModal(modal);
                 }
                 else
                 {
-                    let goals = "";
+                    let goals = 0;
 
-                    for (let i = 0; i < 4; i++) // Fetch and load every goals.
+                    for (let i = 0; i < 10; i++) // Fetch and load every goals.
                     {
                         const goal = data[0].xpgoals.split(" ")[i];
-                        if (goal != 0) goals = `${goals}**Goal ${i + 1}/4**: Level ${goal.split("-")[0]} ➜ <@&${goal.split("-")[1]}>.${i < 3 ? "\n" : ""}`;
-                        else goals = `${goals}**Goal ${i + 1}/4**: Not configured.${i < 3 ? "\n" : ""}`;
+                        if (goal == 0) goals++;
                     };
 
                     const embed = new EmbedBuilder()
                     .setColor("Orange")
                     .setAuthor({ name: "Configuration Panel", iconURL: client.user.avatarURL() })
                     .setDescription("Press the button with the **emoji corresponding** to **the option** you want to modify.")
-                    .addFields([{ name: ":gear:・XP system:", value: `>>> **Status**: :x: Inactive.\n**Function**: Set the **application behavior** in the XP system.` }])
-                    .addFields([{ name: ":trophy:・Goals:", value: `>>> ${goals}\n**Function**: When a member **reach a certain level**, the application **give a role**.` }]) 
+                    .addFields([{ name: ":gear:・XP system:", value: "➜ :red_circle: Gives XP points to the members per **each message sent**, **between 1** and **the maximum amount of XP points configured**. Each time the members pass the **goal to level up**, their level **increase by 1**. The maximum level is **the configured level**. The members **can be notified** when they level up." }])
+                    .addFields([{ name: ":trophy:・Goals:", value: `➜ :red_circle: When a member **reaches a certain level**, the application **gives a role** to this member. Yet, **${goals == 10 ? "no roles have been configured" : `it remains ${goals} roles configurable available`}**.` }])
                     .setThumbnail(client.user.avatarURL())
                     .setTimestamp()
                     .setFooter({ text: guild.name, iconURL: guild.iconURL() })
 
+                    interaction.message.edit({ embeds: [embed] });
+
                     db.query("UPDATE config SET xp = ? WHERE guild = ?", [0, guild.id], async (err) =>
                     {
                         if (err) throw err;
-                        interaction.message.edit({ embeds: [embed] });
                         interaction.deferUpdate();
                     });
                 };
@@ -88,8 +88,7 @@ module.exports =
         }
         catch (err)
         {
-            interaction.reply(`:warning: An unexpected **error** occured!\n\`\`\`${err}\`\`\``);
-            console.error(`[error] bansLogsButton, ${err}, ${Date.now()}`);
+            console.error(`[error] ${this.name}, ${err}, ${Date.now()}`);
         };
     }
 };

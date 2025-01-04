@@ -12,8 +12,7 @@ module.exports =
         }
         catch (err)
         {
-            interaction.reply(`:warning: An unexpected error occured!\n\`\`\`${err}\`\`\``);
-            console.error(`[error] ping, ${err}, ${Date.now()}`);
+            console.error(`[error] ${this.name}, ${err}, ${Date.now()}`);
         };
     },
     get data()

@@ -103,8 +103,7 @@ module.exports =
         }
         catch (err)
         {
-            interaction.reply(`:warning: An unexpected **error** occured!\n\`\`\`${err}\`\`\``);
-            console.error(`[error] xp ${interaction.options.getSubcommand()}, ${err}, ${Date.now()}`);
+            console.error(`[error] ${this.name} ${interaction.options.getSubcommand()}, ${err}, ${Date.now()}`);
         };
     },
     get data()

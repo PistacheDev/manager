@@ -13,6 +13,7 @@ module.exports =
             const guild = interaction.guild;
             const target = guild.members.cache.get(interaction.options.getUser("user").id);
             const me = guild.members.cache.get(client.user.id);
+
             if (mod.roles.highest.comparePositionTo(target.roles.highest) <= 0) return interaction.reply(":warning: You **can't normalize** this member because he's **higher in the role hierachy** than you or has the same role!" );
             if (me.roles.highest.comparePositionTo(target.roles.highest) <= 0) return interaction.reply(":warning: I **can't normalize** this member because he's **higher in the role hierachy** than me or has the same role!")
 
@@ -28,8 +29,7 @@ module.exports =
         }
         catch (err)
         {
-            interaction.reply(`:warning: An unexpected error occured!\n\`\`\`${err}\`\`\``);
-            console.error(`[error] normalize, ${err}, ${Date.now()}`);
+            console.error(`[error] ${this.name}, ${err}, ${Date.now()}`);
         };
     },
     get data()
@@ -42,7 +42,6 @@ module.exports =
             .setName("user")
             .setDescription("User to normalize.")
             .setRequired(true)
-        )
-        .setDefaultMemberPermissions(this.permission)
+        ).setDefaultMemberPermissions(this.permission)
     }
 };

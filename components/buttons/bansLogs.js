@@ -12,23 +12,22 @@ module.exports =
             .setCustomId("bansLogsModal")
             .setTitle("Setup the channel:")
 
-            const modalOption = new TextInputBuilder()
-            .setCustomId("bansLogsModalOption")
+            const option = new TextInputBuilder()
+            .setCustomId("option")
             .setLabel("Channel ID:")
             .setPlaceholder("To disable this option, let this field empty.")
             .setStyle(TextInputStyle.Short)
             .setRequired(false)
 
-            const modalInput = new ActionRowBuilder()
-            .addComponents(modalOption)
+            const input = new ActionRowBuilder()
+            .addComponents(option)
 
-            modal.addComponents(modalInput);
+            modal.addComponents(input);
             await interaction.showModal(modal);
         }
         catch (err)
         {
-            interaction.reply(`:warning: An unexpected **error** occured!\n\`\`\`${err}\`\`\``);
-            console.error(`[error] bansLogsButton, ${err}, ${Date.now()}`);
+            console.error(`[error] ${this.name}, ${err}, ${Date.now()}`);
         };
     }
 };

@@ -23,70 +23,54 @@ module.exports =
                     .setCustomId("warnModal")
                     .setTitle("Setup the anti spam:")
 
-                    const modalOption = new TextInputBuilder()
-                    .setCustomId("warnModalOption")
+                    const option1 = new TextInputBuilder()
+                    .setCustomId("option1")
                     .setLabel("Maximum Warns:")
                     .setPlaceholder("Maximum number of warns before the sanction.")
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
 
-                    const modalInput = new ActionRowBuilder()
-                    .addComponents(modalOption)
+                    const input1 = new ActionRowBuilder()
+                    .addComponents(option1)
 
-                    const modalOption2 = new TextInputBuilder()
-                    .setCustomId("warnModalOption2")
+                    const option2 = new TextInputBuilder()
+                    .setCustomId("option2")
                     .setLabel("Sanction:")
                     .setPlaceholder("Enter \"ban\" to ban or a number (in hours) to mute.")
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
 
-                    const modalInput2 = new ActionRowBuilder()
-                    .addComponents(modalOption2)
+                    const input2 = new ActionRowBuilder()
+                    .addComponents(option2)
 
-                    modal.addComponents(modalInput, modalInput2);
+                    modal.addComponents(input1, input2);
                     await interaction.showModal(modal);
                 }
                 else
                 {
-                    let spamStatus = ":x: Inactive";
-                    let swearState = ":x: Inactive";
-                    let pingStatus = ":x: Inactive";
-
-                    if (data[0].antispam != 0) // Update the data if the option is enabled.
-                    {
-                        const [ignoreBot, maxMessages, interval, maxWarns, sanction] = data[0].antispam.split(" ");
-                        spamStatus = `:white_check_mark: Active.\n**Ignore Bots**: ${ignoreBot == 1 ? "Yes" : "No"}.\n**Spam Detection:** More than ${maxMessages} messages in ${interval} seconds.\n**Maximum Warns**: ${maxWarns} warns.\n**Sanction**: ${sanction == "ban" ? "Ban" : `Mute for ${sanction} minutes`}`;
-                    };
-
-                    if (data[0].antiswear != 0)
-                    {
-                        const [ignoreBots, ignoreAdmins, maxWarns, sanction] = data[0].antiswear.split(" ");
-                        swearState = `:white_check_mark: Active.\n**Ignore Bots**: ${ignoreBots == 1 ? "Yes" : "No"}.\n**Ignore Administrators**: ${ignoreAdmins == 1 ? "Yes" : "No"}.\n**Maximum Warns**: ${maxWarns} warns.\n**Sanction**: ${sanction == "ban" ? "Ban" : `Mute for ${sanction} minutes`}`;
-                    };
-
-                    if (data[0].antipings != 0)
-                    {
-                        const [ignoreBots, sanction] = data[0].antipings.split(" ");
-                        pingStatus = `:white_check_mark: Active.\n**Ignore Bots**: ${ignoreBots == 1 ? "Yes" : "No"}.\n**Sanction**: ${sanction == "ban" ? "Ban" : `Mute for ${sanction} minutes`}`;
-                    };
+                    const antispam = data[0].antispam;
+                    const antiswear = data[0].antiswear;
+                    const antipings = data[0].antipings;
+                    const antilinks = data[0].antilinks;
 
                     const embed = new EmbedBuilder()
                     .setColor("Orange")
                     .setAuthor({ name: "Configuration Panel", iconURL: client.user.avatarURL() })
                     .setDescription("Press the button with the **emoji corresponding** to **the option** you want to modify.")
-                    .addFields([{ name: ":hand_splayed:・Anti spam:", value: `>>> **Status**: ${spamStatus}.\n**Function**: Prevent the members from **spamming messages**.` }])
-                    .addFields([{ name: ":no_entry:・Anti swear:", value: `>>> **Status**: ${swearState}.\n**Function**: Prevent the members from **using bad words**.` }])
-                    .addFields([{ name: ":warning:・Warns:", value: `>>> **Status**: :x: Inactive.\n**Function**: The member **is sanctionned** if its warns count reached the **maximum amount**.` }])
-                    .addFields([{ name: ":loud_sound:・Anti pings:", value: `>>> **Status**: ${pingStatus}.\n**Function**: Prevent the members from using **@everyone and @here**.` }])
-                    .addFields([{ name: ":globe_with_meridians:・Anti links:", value: `>>> **Status**: ${data[0].antilinks == 0 ? ":x: Inactive" : data[0].antilinks == 1 ? ":white_check_mark: Active" : ":lock: Enforced (bots too)"}.\n**Function**: Delete messages **containing links**.` }])
+                    .addFields([{ name: ":hand_splayed:・Anti spam:", value: `➜ ${antispam == 0 ? ":red_circle:" : ":green_circle:"} Prevent the members from sending **${antispam == 0 ? "too many messages" : `more than ${antispam.split(" ")[1]} messages`}** in **${antispam == 0 ? "a short period of time" : `less than ${antispam.split(" ")[2]} seconds`}** by warning them. After **${antispam == 0 ? "the maximum configured amount of" : antispam.split(" ")[3]} warns** reached, the member will **${antispam == 0 ? "receive a sanction" : `be ${antispam.split(" ")[4] == "ban" ? "banned" : `muted for ${antispam.split(" ")[4]} minutes`}`}**. The bots **${antispam == 0 ? "can be ignored (*not recommended*)" : `${antispam.split(" ")[0] == 0 ? "aren't ignored" : "are ignored"}`}**.` }])
+                    .addFields([{ name: ":no_entry:・Anti swear:", value: `➜ ${antiswear == 0 ? ":red_circle:" : ":green_circle:"} Prevent the members from **using bad words** by warning them. After **${antiswear == 0 ? "the maximum configured amount of" : antiswear.split(" ")[2]} warns** reached, the member will **${antiswear == 0 ? "receive a sanction" : `be ${antiswear.split(" ")[3] == "ban" ? "banned" : `muted for ${antiswear.split(" ")[3]} minutes`}`}**. The bots **${antiswear == 0 ? "can be" : antiswear.split(" ")[0] == 0 ? "aren't" : "are"} ignored** and the administrators **${antiswear == 0 ? "too" : antiswear.split(" ")[1] == 0 ? "aren't ignored" : "are ignored"}**.` }])
+                    .addFields([{ name: ":warning:・Warns:", value: "➜ :red_circle: The member **will be sanctionned** if its warns count reaches **the maximum amount**." }])
+                    .addFields([{ name: ":loud_sound:・Anti pings:", value: `➜ ${antipings == 0 ? ":red_circle:" : ":green_circle:"} Prevent the members from **using the everyone and here mentions** by **deleting the message** and **${antipings == 0 ? "sanctioning them" : antipings.split(" ")[1] == "ban" ? "banning them" : `muting them for ${antipings.split(" ")[1]} minutes`}**. The bots **${antipings == 0 ? "can be ignored (*not recommended*)" : antipings.split(" ")[0] == 0 ? "aren't ignored" : "are ignored"}**.` }])
+                    .addFields([{ name: ":globe_with_meridians:・Anti links:", value: `➜ ${antilinks == 0 ? ":red_circle:" : antilinks == 1 ? ":yellow_circle:" : ":green_circle:"} Delete the messages **containing links**. The bots ${antilinks == 0 ? "can be" : antilinks == 1 ? "are" : "aren't"} ignored.` }])
                     .setThumbnail(client.user.avatarURL())
                     .setTimestamp()
                     .setFooter({ text: guild.name, iconURL: guild.iconURL() })
 
+                    interaction.message.edit({ embeds: [embed] });
+
                     db.query("UPDATE config SET warn = ? WHERE guild = ?", [0, guild.id], async (err) =>
                     {
                         if (err) throw err;
-                        interaction.message.edit({ embeds: [embed] });
                         interaction.deferUpdate();
                     });
                 };
@@ -94,8 +78,7 @@ module.exports =
         }
         catch (err)
         {
-            interaction.reply(`:warning: An unexpected **error** occured!\n\`\`\`${err}\`\`\``);
-            console.error(`[error] warnButton, ${err}, ${Date.now()}`);
+            console.error(`[error] ${this.name}, ${err}, ${Date.now()}`);
         };
     }
 };

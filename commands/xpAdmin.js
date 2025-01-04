@@ -32,6 +32,9 @@ module.exports =
                     case "remove":
                         removeXP();
                         break;
+                    case "remove-all":
+                        removeAll();
+                        break;
                     case "clear":
                         clearXP();
                         break;
@@ -86,7 +89,7 @@ module.exports =
                                 loop += 1;
                                 if (currentLevel > maxLevel) currentLevel = maxLevel;
 
-                                for (let i = 0; i < 4; i++)
+                                for (let i = 0; i < 10; i++)
                                 {
                                     const goal = config[0].xpgoals.split(" ")[i];
 
@@ -157,6 +160,17 @@ module.exports =
                 });
             };
 
+            function removeAll()
+            {
+                if (interaction.user.id != guild.ownerId) return interaction.reply({ content: ":warning: This interaction **is restricted** to the **server's owner**.", ephemeral: true });
+
+                db.query("DELETE FROM xp WHERE guild = ?", [guild.id], async (err) =>
+                {
+                    if (err) throw err;
+                    interaction.reply(":white_check_mark: Successfully removed the XP of every members of the server!");
+                });
+            };
+
             function clearXP()
             {
                 db.query("SELECT * FROM xp WHERE guild = ? AND user = ?", [guild.id, target.id], async (err, data) =>
@@ -194,8 +208,7 @@ module.exports =
         }
         catch (err)
         {
-            interaction.reply(`:warning: An unexpected **error** occured!\n\`\`\`${err}\`\`\``);
-            console.error(`[error] xpadmin ${interaction.options.getSubcommand()}, ${err}, ${Date.now()}`);
+            console.error(`[error] ${this.name} ${interaction.options.getSubcommand()}, ${err}, ${Date.now()}`);
         };
     },
     get data()
@@ -233,6 +246,10 @@ module.exports =
                 .setDescription("Amount of XP to remove.")
                 .setRequired(true)
             )
+        ).addSubcommand(
+            cmd => cmd
+            .setName("remove-all")
+            .setDescription("Remove the XP for every members of the server.")
         ).addSubcommand(
             cmd => cmd
             .setName("clear")

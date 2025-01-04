@@ -11,7 +11,16 @@ module.exports =
     {
         try
         {
+            const roleID = interaction.fields.getTextInputValue("option1");
+            const channelURL = interaction.fields.getTextInputValue("option2");
             const guild = interaction.guild;
+
+            if (roleID != "@everyone" && !guild.roles.cache.get(roleID)) return interaction.reply(":warning: This role doesn't exist!");
+            const request = await axios.get(`${channelURL}/videos`);
+            const html = cheerio.load(request.data).html();
+            const regex = /"webCommandMetadata":{"url":"\/watch\?v=([^"]+)"/;
+            const latestVideoID = `${html.match(regex) ? html.match(regex)[1] : 0}`;
+            const youtubeID = html.match(/"channelUrl":"([^"]+)"/)[1].split("channel/")[1];
 
             db.query("SELECT * FROM config WHERE guild = ?", [guild.id], async (err, config) =>
             {
@@ -19,50 +28,31 @@ module.exports =
                 let data = config;
                 if (config.length < 1) data = await fixMissingConfig(guild);
 
-                const roleID = interaction.fields.getTextInputValue("youtubeModalOption");
-                const channelURL = interaction.fields.getTextInputValue("youtubeModalOption2");
-
                 const channelID = data[0].youtube.split(" ")[0];
-                if (roleID != "@everyone" && !guild.roles.cache.get(roleID)) return interaction.reply(":warning: This role doesn't exist!");
+                const twitch = data[0].twitch;
 
-                const request = await axios.get(`${channelURL}/videos`);
-                const html = cheerio.load(request.data).html(); // Convert the data in HTML.
+                const embed = new EmbedBuilder()
+                .setColor("Orange")
+                .setAuthor({ name: "Configuration Panel", iconURL: client.user.avatarURL() })
+                .setThumbnail(client.user.avatarURL())
+                .setDescription("Press the button with the **emoji corresponding** to **the option** you want to modify.")
+                .addFields([{ name: ":video_camera:・YouTube Notifications:", value: `➜ :green_circle: **Sends a message** in <#${channelID}> mentioning ${roleID == "@everyone" ? "@everyone" : `<@&${roleID}>`} when ${youtubeID} releases a **new video**.` }])
+                .addFields([{ name: ":television:・Twitch Notifications:", value: `➜ ${twitch == 0 ? ":red_circle:" : twitch.split(" ")[1] == 0 ? ":yellow_circle:" : ":green_circle:"} **Sends a message** in ${twitch == 0 ? "the **configured channel**" : `<#${twitch.split(" ")[0]}>`} mentioning ${twitch == 0 ? "the **configured role**" : twitch.split(" ")[1] == 0 ? "the **future role** (setup to complete)" : twitch.split(" ")[1] == "@everyone" ? "@everyone" : `<@&${twitch.split(" ")[1]}>`} when ${twitch == 0 ? "the **configured Twitch channel**" : twitch.split(" ")[1] == 0 ? "the **future Twitch channel**" : `**${twitch.split(" ")[2]}**`} goes to **live**.` }])
+                .setTimestamp()
+                .setFooter({ text: guild.name, iconURL: guild.iconURL() })
 
-                // Fetch required informations.
-                const regex = /"webCommandMetadata":{"url":"\/watch\?v=([^"]+)"/;
-                const latestVideoID = `${html.match(regex) ? html.match(regex)[1] : null}`;
-                const youtubeID = html.match(/"channelUrl":"([^"]+)"/)[1].split("channel/")[1];
+                interaction.message.edit({ embeds: [embed] });
 
                 db.query("UPDATE config SET youtube = ? WHERE guild = ?", [`${channelID} ${roleID} ${youtubeID} ${latestVideoID} 0`, guild.id], async (err) =>
                 {
                     if (err) throw err;
-                    let status = ":x: Inactive";
-
-                    if (data[0].twitch != 0)
-                    {
-                        const [channelID, roleID, twitchID, isLive, check] = data[0].twitch.split(" ");
-                        status = `:white_check_mark: Active.\n**Configured Channel**: <#${channelID}>.\n**Notification Role**: ${roleID == 0 ? "Awaiting configuration" : roleID == "@everyone" ? "@everyone" : `<@&${roleID}>`}.\n**Twitch Channel**: ${twitchID == 0 ? "Awaiting configuration" : twitchID}`;
-                    };
-
-                    const embed = new EmbedBuilder()
-                    .setColor("Orange")
-                    .setAuthor({ name: "Configuration Panel", iconURL: client.user.avatarURL() })
-                    .setThumbnail(client.user.avatarURL())
-                    .setDescription("Press the button with the **emoji corresponding** to **the option** you want to modify.")
-                    .addFields([{ name: ":video_camera:・YouTube Notifications:", value: `>>> **Status**: :white_check_mark: Active.\n**Configured Channel**: <#${channelID}>.\n**Notification Role**: ${roleID == "@everyone" ? "@everyone" : `<@&${roleID}>`}.\n**YouTube Channel**: ${youtubeID}.\n**Function**: **Sends a message** in the **configured channel** when the **configured YouTube channel** releases a **new video**.` }])
-                    .addFields([{ name: ":television:・Twitch Notifications:", value: `>>> **Status**: ${status}.\n**Function**: **Sends a message** in the **configured channel** when the **configured Twitch channel** is **live**.` }])
-                    .setTimestamp()
-                    .setFooter({ text: guild.name, iconURL: guild.iconURL() })
-
-                    await interaction.message.edit({ embeds: [embed] });
                     interaction.deferUpdate();
                 });
             });
         }
         catch (err)
         {
-            interaction.reply(`:warning: An unexpected **error** occured!\n\`\`\`${err}\`\`\``);
-            console.error(`[error] youtubeSetupModal, ${err}, ${Date.now()}`);
+            console.error(`[error] ${this.name}, ${err}, ${Date.now()}`);
         };
     }
 };

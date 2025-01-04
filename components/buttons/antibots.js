@@ -15,39 +15,35 @@ module.exports =
             {
                 if (err) throw err;
                 let data = config;
-
                 if (config.length < 1) data = await fixMissingConfig(guild);
-                let status = ":x: Inactive";
 
-                if (data[0].autoraidmode != 0)
-                {
-                    const [maxMembers, interval] = data[0].autoraidmode.split(" ");
-                    status = `:white_check_mark: Active.\n**Detection**: More than ${maxMembers} new members in ${interval} seconds`;
-                };
+                const raidmode = data[0].raidmode;
+                const auto = data[0].autoraidmode;
+                const antibots = data[0].antibots;
 
                 const embed = new EmbedBuilder()
                 .setColor("Orange")
                 .setAuthor({ name: "Configuration Panel", iconURL: client.user.avatarURL() })
                 .setDescription("Press the button with the **emoji corresponding** to **the option** you want to modify.")
-                .addFields([{ name: ":closed_lock_with_key:・Raidmode:", value: `>>> **Status**: ${data[0].raidmode == 1 ? ":white_check_mark: Active" : ":x: Inactive"}.\n**Function**: Blocks the arrival of **new members**.` }])
-                .addFields([{ name: ":crossed_swords:・Auto raidmode:", value: `>>> **Status**: ${status}.\n**Function**: Enable the **raidmode** when **too many users** join the server in a **short period** of time.` }])
-                .addFields([{ name: ":robot:・Anti bots:", value: `>>> **Status**: ${data[0].antibots == 1 ? ":x: Inactive" : ":white_check_mark: Active"}.\n**Function**: Blocks the **addition of applications**.` }])
+                .addFields([{ name: ":closed_lock_with_key:・Raidmode:", value: `➜ ${raidmode == 1 ? ":green_circle:" : ":red_circle:"} Blocks the arrival of **new members** on the server.` }])
+                .addFields([{ name: ":crossed_swords:・Auto raidmode:", value: `➜ ${auto != 0 ? ":green_circle:" : ":red_circle:"} Enable the **raidmode** when **${auto == 0 ? "too many users" : `more than ${auto.split(" ")[0]} users`}** join the server in ${auto == 0 ? "a **short period** of time" : `less than **${auto.split(" ")[1]} seconds**`}.` }])
+                .addFields([{ name: ":robot:・Anti bots:", value: `➜ ${antibots == 1 ? ":red_circle:" : ":green_circle:"} Blocks the **addition of applications**, except if it has been added by the **server owner**.` }])
                 .setThumbnail(client.user.avatarURL())
                 .setTimestamp()
                 .setFooter({ text: guild.name, iconURL: guild.iconURL() })
 
-                db.query("UPDATE config SET antibots = ? WHERE guild = ?", [data[0].antibots == 0 ? 1 : 0, guild.id], async (err) =>
+                interaction.message.edit({ embeds: [embed] });
+
+                db.query("UPDATE config SET antibots = ? WHERE guild = ?", [antibots == 0 ? 1 : 0, guild.id], async (err) =>
                 {
                     if (err) throw err;
-                    interaction.message.edit({ embeds: [embed] });
                     interaction.deferUpdate();
                 });
             });
         }
         catch (err)
         {
-            interaction.reply(`:warning: An unexpected **error** occured!\n\`\`\`${err}\`\`\``);
-            console.error(`[error] antibotButton, ${err}, ${Date.now()}`);
+            console.error(`[error] ${this.name}, ${err}, ${Date.now()}`);
         };
     }
 };

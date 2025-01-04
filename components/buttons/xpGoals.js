@@ -1,4 +1,5 @@
-const { PermissionsBitField, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder } = require("discord.js");
+const { PermissionsBitField, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require("discord.js");
+const { fixMissingConfig } = require("../../functions/missingConfig");
 
 module.exports =
 {
@@ -8,47 +9,41 @@ module.exports =
     {
         try
         {
-            const modal = new ModalBuilder()
-            .setCustomId("xpGoalsModal")
-            .setTitle("Goals setup:")
+            var buttons = new ActionRowBuilder()
+            .addComponents(
+                new ButtonBuilder()
+                .setCustomId("xpGoalsSetupButton")
+                .setLabel("Manage a goal")
+                .setStyle(ButtonStyle.Secondary)
+            ).addComponents(
+                new ButtonBuilder()
+                .setCustomId("xpGoalsBackButton")
+                .setLabel("Back")
+                .setStyle(ButtonStyle.Danger)
+            )
 
-            const modalOption = new TextInputBuilder()
-            .setCustomId("xpGoalsModalOption")
-            .setLabel("Targeted goal:")
-            .setPlaceholder("Targeted goal (1 ~ 4).")
-            .setStyle(TextInputStyle.Short)
-            .setRequired(true)
+            db.query("SELECT * FROM config WHERE guild = ?", [interaction.guild.id], async (err, config) =>
+            {
+                if (err) throw err;
+                let data = config;
+                if (config.length < 1) data = await fixMissingConfig(guild);
 
-            const modalInput = new ActionRowBuilder()
-            .addComponents(modalOption)
+                let embed = new EmbedBuilder()
+                .setColor("Orange")
 
-            const modalOption2 = new TextInputBuilder()
-            .setCustomId("xpGoalsModalOption2")
-            .setLabel("Level:")
-            .setPlaceholder("Level to reach to get the role (10 ~ 100).")
-            .setStyle(TextInputStyle.Short)
-            .setRequired(true)
+                for (let i = 0; i < 10; i++)
+                {
+                    const goal = data[0].xpgoals.split(" ")[i];
+                    embed.addFields({ name: `**Goal ${i + 1}/10**:`, value: `➜ ${goal != 0 ? ":green_circle:" : ":red_circle:"} Gives the **${goal != 0 ? `role <@&${goal.split("-")[1]}>` : "the configured role"}** when the members reach the **${goal != 0 ? `level ${goal.split("-")[0]}` : "the configured level"}**.` })
+                };
 
-            const modalInput2 = new ActionRowBuilder()
-            .addComponents(modalOption2)
-
-            const modalOption3 = new TextInputBuilder()
-            .setCustomId("xpGoalsModalOption3")
-            .setLabel("Role ID:")
-            .setPlaceholder("To disable this goal, let this field empty.")
-            .setStyle(TextInputStyle.Short)
-            .setRequired(false)
-
-            const modalInput3 = new ActionRowBuilder()
-            .addComponents(modalOption3)
-
-            modal.addComponents(modalInput, modalInput2, modalInput3);
-            await interaction.showModal(modal);
+                await interaction.message.edit({ embeds: [embed], components: [buttons] });
+                interaction.deferUpdate();
+            });
         }
         catch (err)
         {
-            interaction.reply(`:warning: An unexpected **error** occured!\n\`\`\`${err}\`\`\``);
-            console.error(`[error] xpGoalsButton, ${err}, ${Date.now()}`);
+            console.error(`[error] ${this.name}, ${err}, ${Date.now()}`);
         };
     }
 };

@@ -10,7 +10,6 @@ module.exports =
         try
         {
             const target = interaction.guild.members.cache.get(interaction.options.getUser("user").id); // Fetch the user in the server list.
-
             const guild = interaction.guild;
             const mod = interaction.member;
 
@@ -35,8 +34,7 @@ module.exports =
         }
         catch (err)
         {
-            interaction.reply(`:warning: An unexpected error occured!\n\`\`\`${err}\`\`\``);
-            console.error(`[error] unmute, ${err}, ${Date.now()}`);
+            console.error(`[error] ${this.name}, ${err}, ${Date.now()}`);
         };
     },
     get data()

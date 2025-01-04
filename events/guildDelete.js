@@ -24,7 +24,7 @@ module.exports =
         }
         catch (err)
         {
-            console.error(`[error] guildDelete, ${err}, ${Date.now()}`);
+            console.error(`[error] ${this.name}, ${err}, ${Date.now()}`);
         };
     }
 };

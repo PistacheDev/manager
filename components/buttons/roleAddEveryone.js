@@ -12,23 +12,22 @@ module.exports =
             .setCustomId("roleAddEveryoneModal")
             .setTitle("Role to give:")
 
-            const modalOption = new TextInputBuilder()
-            .setCustomId("roleAddEveryoneModalOption")
+            const option = new TextInputBuilder()
+            .setCustomId("option")
             .setLabel("Role ID:")
             .setPlaceholder("Role to attribute to everyone.")
             .setStyle(TextInputStyle.Short)
             .setRequired(true)
 
-            const modalInput = new ActionRowBuilder()
-            .addComponents(modalOption)
+            const input = new ActionRowBuilder()
+            .addComponents(option)
 
-            modal.addComponents(modalInput);
+            modal.addComponents(input);
             await interaction.showModal(modal);
         }
         catch (err)
         {
-            interaction.reply(`:warning: An unexpected **error** occured!\n\`\`\`${err}\`\`\``);
-            console.error(`[error] roleAddEveryoneButton, ${err}, ${Date.now()}`);
+            console.error(`[error] ${this.name}, ${err}, ${Date.now()}`);
         };
     }
 };

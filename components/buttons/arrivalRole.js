@@ -2,33 +2,32 @@ const { PermissionsBitField, ModalBuilder, TextInputBuilder, TextInputStyle, Act
 
 module.exports =
 {
-    name: "joinRoleButton",
+    name: "arrivalRoleButton",
     permission: PermissionsBitField.Flags.Administrator,
     async run(client, db, interaction)
     {
         try
         {
             const modal = new ModalBuilder()
-            .setCustomId("joinRoleModal")
+            .setCustomId("arrivalRoleModal")
             .setTitle("Setup the role:")
 
-            const modalOption = new TextInputBuilder()
-            .setCustomId("joinRoleModalOption")
+            const option = new TextInputBuilder()
+            .setCustomId("option")
             .setLabel("Role ID:")
             .setPlaceholder("To disable this option, let this field empty.")
             .setStyle(TextInputStyle.Short)
             .setRequired(false)
 
-            const modalInput = new ActionRowBuilder()
-            .addComponents(modalOption)
+            const input = new ActionRowBuilder()
+            .addComponents(option)
 
-            modal.addComponents(modalInput);
+            modal.addComponents(input);
             await interaction.showModal(modal);
         }
         catch (err)
         {
-            interaction.reply(`:warning: An unexpected **error** occured!\n\`\`\`${err}\`\`\``);
-            console.error(`[error] joinRoleButton, ${err}, ${Date.now()}`);
+            console.error(`[error] ${this.name}, ${err}, ${Date.now()}`);
         };
     }
 };

@@ -38,7 +38,7 @@ module.exports =
         }
         catch (err)
         {
-            console.error(`[error] ready, ${err}, ${Date.now()}`);
+            console.error(`[error] ${this.name}, ${err}, ${Date.now()}`);
         };
     }
 };

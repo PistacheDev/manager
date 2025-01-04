@@ -23,46 +23,50 @@ module.exports =
                     .setCustomId("autoraidmodeModal")
                     .setTitle("Setup the auto raidmode:")
 
-                    const modalOption = new TextInputBuilder()
-                    .setCustomId("autoraidmodeModalOption")
+                    const option1 = new TextInputBuilder()
+                    .setCustomId("option1")
                     .setLabel("Maximum members:")
                     .setPlaceholder("Maximum of new members during the interval (3 ~ 10).")
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
 
-                    const modalInput = new ActionRowBuilder()
-                    .addComponents(modalOption)
+                    const input1 = new ActionRowBuilder()
+                    .addComponents(option1)
 
-                    const modalOption2 = new TextInputBuilder()
-                    .setCustomId("autoraidmodeModalOption2")
+                    const option2 = new TextInputBuilder()
+                    .setCustomId("option2")
                     .setLabel("Interval:")
                     .setPlaceholder("Interval of time in second (3 ~ 10).")
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
 
-                    const modalInput2 = new ActionRowBuilder()
-                    .addComponents(modalOption2)
+                    const input2 = new ActionRowBuilder()
+                    .addComponents(option2)
 
-                    modal.addComponents(modalInput, modalInput2);
+                    modal.addComponents(input1, input2);
                     await interaction.showModal(modal);
                 }
                 else
                 {
+                    const raidmode = data[0].raidmode;
+                    const antibots = data[0].antibots;
+
                     const embed = new EmbedBuilder()
                     .setColor("Orange")
                     .setAuthor({ name: "Configuration Panel", iconURL: client.user.avatarURL() })
                     .setDescription("Press the button with the **emoji corresponding** to **the option** you want to modify.")
-                    .addFields([{ name: ":closed_lock_with_key:・Raidmode:", value: `>>> **Status**: ${data[0].raidmode == 1 ? ":white_check_mark: Active" : ":x: Inactive"}.\n**Function**: Blocks the arrival of **new members**.` }])
-                    .addFields([{ name: ":crossed_swords:・Auto raidmode:", value: `>>> **Status**: :x: Inactive.\n**Function**: Enable the **raidmode** when **too many users** join the server in a **short period** of time.` }])
-                    .addFields([{ name: ":robot:・Anti bots:", value: `>>> **Status**: ${data[0].antibots == 1 ? ":white_check_mark: Active" : ":x: Inactive"}.\n**Function**: Blocks the **addition of applications**.` }])
+                    .addFields([{ name: ":closed_lock_with_key:・Raidmode:", value: `➜ ${raidmode == 1 ? ":green_circle:" : ":red_circle:"} Blocks the arrival of **new members** on the server.` }])
+                    .addFields([{ name: ":crossed_swords:・Auto raidmode:", value: "➜ :red_circle: Enable the **raidmode** when **too many users** join the server in a **short period** of time." }])
+                    .addFields([{ name: ":robot:・Anti bots:", value: `➜ ${antibots == 1 ? ":green_circle:" : ":red_circle:"} Blocks the **addition of applications**, except if it has been added by the **server owner**.` }])
                     .setThumbnail(client.user.avatarURL())
                     .setTimestamp()
                     .setFooter({ text: guild.name, iconURL: guild.iconURL() })
 
+                    interaction.message.edit({ embeds: [embed] });
+
                     db.query("UPDATE config SET autoraidmode = ? WHERE guild = ?", [0, guild.id], async (err) =>
                     {
                         if (err) throw err;
-                        interaction.message.edit({ embeds: [embed] });
                         interaction.deferUpdate();
                     });
                 };
@@ -70,8 +74,7 @@ module.exports =
         }
         catch (err)
         {
-            interaction.reply(`:warning: An unexpected **error** occured!\n\`\`\`${err}\`\`\``);
-            console.error(`[error] autoraidmodeButton, ${err}, ${Date.now()}`);
+            console.error(`[error] ${this.name}, ${err}, ${Date.now()}`);
         };
     }
 };

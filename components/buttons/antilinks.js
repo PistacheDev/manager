@@ -17,60 +17,37 @@ module.exports =
                 let data = config;
                 if (config.length < 1) data = await fixMissingConfig(guild);
 
-                let spamStatus = ":x: Inactive";
-                let swearState = ":x: Inactive";
-                let warnsStatus = ":x: Inactive";
-                let pingStatus = ":x: Inactive";
-
-                if (data[0].antispam != 0)
-                {
-                    const [ignoreBot, maxMessages, interval, maxWarns, sanction] = data[0].antispam.split(" ");
-                    spamStatus = `:white_check_mark: Active.\n**Ignore Bots**: ${ignoreBot == 1 ? "Yes" : "No"}.\n**Spam Detection:** More than ${maxMessages} messages in ${interval} seconds.\n**Maximum Warns**: ${maxWarns} warns.\n**Sanction**: ${sanction == "ban" ? "Ban" : `Mute for ${sanction} minutes`}`;
-                };
-
-                if (data[0].antiswear != 0)
-                {
-                    const [ignoreBots, ignoreAdmins, maxWarns, sanction] = data[0].antiswear.split(" ");
-                    swearState = `:white_check_mark: Active.\n**Ignore Bots**: ${ignoreBots == 1 ? "Yes" : "No"}.\n**Ignore Administrators**: ${ignoreAdmins == 1 ? "Yes" : "No"}.\n**Maximum Warns**: ${maxWarns} warns.\n**Sanction**: ${sanction == "ban" ? "Ban" : `Mute for ${sanction} minutes`}`;
-                };
-
-                if (data[0].warn != 0)
-                {
-                    const [maxWarns, sanction] = data[0].warn.split(" ");
-                    warnsStatus = `:white_check_mark: Active.\n**Maximum Warns**: ${maxWarns} warns.\n**Sanction**: ${sanction == "ban" ? "Ban" : `Mute for ${sanction} hours`}`;
-                };
-
-                if (data[0].antipings != 0)
-                {
-                    const [ignoreBots, sanction] = data[0].antipings.split(" ");
-                    pingStatus = `:white_check_mark: Active.\n**Ignore Bots**: ${ignoreBots == 1 ? "Yes" : "No"}.\n**Sanction**: ${sanction == "ban" ? "Ban" : `Mute for ${sanction} minutes`}`;
-                };
+                const antispam = data[0].antispam;
+                const antiswear = data[0].antiswear;
+                const warn = data[0].warn;
+                const antipings = data[0].antipings;
+                const antilinks = data[0].antilinks;
 
                 const embed = new EmbedBuilder()
                 .setColor("Orange")
                 .setAuthor({ name: "Configuration Panel", iconURL: client.user.avatarURL() })
                 .setDescription("Press the button with the **emoji corresponding** to **the option** you want to modify.")
-                .addFields([{ name: ":hand_splayed:・Anti spam:", value: `>>> **Status**: ${spamStatus}.\n**Function**: Prevent the members from **spamming messages**.` }])
-                .addFields([{ name: ":no_entry:・Anti swear:", value: `>>> **Status**: ${swearState}.\n**Function**: Prevent the members from **using bad words**.` }])
-                .addFields([{ name: ":warning:・Warns:", value: `>>> **Status**: ${warnsStatus}.\n**Function**: The member **is sanctionned** if its warns count reached the **maximum amount**.` }])
-                .addFields([{ name: ":loud_sound:・Anti pings:", value: `>>> **Status**: ${pingStatus}.\n**Function**: Prevent the members from using **@everyone and @here**.` }])
-                .addFields([{ name: ":globe_with_meridians:・Anti links:", value: `>>> **Status**: ${data[0].antilinks == 0 ? ":white_check_mark: Active" : data[0].antilinks == 1 ? ":lock: Enforced (bots too)" : ":x: Inactive"}.\n**Function**: Delete messages **containing links**.` }])
+                .addFields([{ name: ":hand_splayed:・Anti spam:", value: `➜ ${antispam == 0 ? ":red_circle:" : ":green_circle:"} Prevent the members from sending **${antispam == 0 ? "too many messages" : `more than ${antispam.split(" ")[1]} messages`}** in **${antispam == 0 ? "a short period of time" : `less than ${antispam.split(" ")[2]} seconds`}** by warning them. After **${antispam == 0 ? "the maximum configured amount of" : antispam.split(" ")[3]} warns** reached, the member will **${antispam == 0 ? "receive a sanction" : `be ${antispam.split(" ")[4] == "ban" ? "banned" : `muted for ${antispam.split(" ")[4]} minutes`}`}**. The bots **${antispam == 0 ? "can be ignored (*not recommended*)" : `${antispam.split(" ")[0] == 0 ? "aren't ignored" : "are ignored"}`}**.` }])
+                .addFields([{ name: ":no_entry:・Anti swear:", value: `➜ ${antiswear == 0 ? ":red_circle:" : ":green_circle:"} Prevent the members from **using bad words** by warning them. After **${antiswear == 0 ? "the maximum configured amount of" : antiswear.split(" ")[2]} warns** reached, the member will **${antiswear == 0 ? "receive a sanction" : `be ${antiswear.split(" ")[3] == "ban" ? "banned" : `muted for ${antiswear.split(" ")[3]} minutes`}`}**. The bots **${antiswear == 0 ? "can be" : antiswear.split(" ")[0] == 0 ? "aren't" : "are"} ignored** and the administrators **${antiswear == 0 ? "too" : antiswear.split(" ")[1] == 0 ? "aren't ignored" : "are ignored"}**.` }])
+                .addFields([{ name: ":warning:・Warns:", value: `➜ ${warn == 0 ? ":red_circle:" : ":green_circle:"} The member **will be ${warn == 0 ? "sanctionned" : warn.split(" ")[1] == "ban" ? "banned" : `muted for ${warn.split(" ")[1]} hours`}** if its warns count reaches **${warn == 0 ? "the maximum amount" : `more than ${warn.split(" ")[0]} warns`}**.` }])
+                .addFields([{ name: ":loud_sound:・Anti pings:", value: `➜ ${antipings == 0 ? ":red_circle:" : ":green_circle:"} Prevent the members from **using the everyone and here mentions** by **deleting the message** and **${antipings == 0 ? "sanctioning them" : antipings.split(" ")[1] == "ban" ? "banning them" : `muting them for ${antipings.split(" ")[1]} minutes`}**. The bots **${antipings == 0 ? "can be ignored (*not recommended*)" : antipings.split(" ")[0] == 0 ? "aren't ignored" : "are ignored"}**.` }])
+                .addFields([{ name: ":globe_with_meridians:・Anti links:", value: `➜ ${antilinks == 0 ? ":yellow_circle:" : antilinks == 1 ? ":green_circle:" : ":red_circle:"} Delete the messages **containing links**. The bots ${antilinks == 0 ? "are" : antilinks == 1 ? "aren't" : "can be"} ignored.` }])
                 .setThumbnail(client.user.avatarURL())
                 .setTimestamp()
                 .setFooter({ text: guild.name, iconURL: guild.iconURL() })
 
-                db.query("UPDATE config SET antilinks = ? WHERE guild = ?", [data[0].antilinks == 0 ? 1 : data[0].antilinks == 1 ? 2 : 0, guild.id], async (err) =>
+                interaction.message.edit({ embeds: [embed] });
+
+                db.query("UPDATE config SET antilinks = ? WHERE guild = ?", [antilinks == 0 ? 1 : antilinks == 1 ? 2 : 0, guild.id], async (err) =>
                 {
                     if (err) throw err;
-                    interaction.message.edit({ embeds: [embed] });
                     interaction.deferUpdate();
                 });
             });
         }
         catch (err)
         {
-            interaction.reply(`:warning: An unexpected **error** occured!\n\`\`\`${err}\`\`\``);
-            console.error(`[error] antilinksButton, ${err}, ${Date.now()}`);
+            console.error(`[error] ${this.name}, ${err}, ${Date.now()}`);
         };
     }
 };
