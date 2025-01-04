@@ -58,7 +58,7 @@ module.exports =
                         });
 
                         if (alert == 1) message.channel.send(`:tada: Congratulation <@${author.id}> @${author.username}! You just passed to **level ${currentLevel + 1}**!`);
-                        for (let i = 0; i < 4; i++)
+                        for (let i = 0; i < 10; i++)
                         {
                             const goal = config[0].xpgoals.split(" ")[i];
 
@@ -85,8 +85,7 @@ module.exports =
         }
         catch (err)
         {
-            message.reply(`:warning: An unexpected **error** occured!\n\`\`\`${err}\`\`\``);
-            console.error(`[error] messageCreate, ${err}, ${Date.now()}`);
+            console.error(`[error] ${this.name}, ${err}, ${Date.now()}`);
         };
     }
 };

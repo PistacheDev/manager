@@ -27,13 +27,13 @@ async function youtubeNotifications()
                 {
                     setTimeout(() => {}, 300);
                     const video = await axios.get(`https://www.youtube.com/watch?v=${latestID}`);
-                    const videoHtml = cheerio.load(video.data).html(); // Convert the data in HTML.
+                    const html = cheerio.load(video.data).html(); // Convert the data in HTML.
 
                     // Fetch required information.
-                    let videoTitle = videoHtml.match(/"title":{"runs":\[\{"text":"([^"]+)"\}\]/)[1];
-                    const channelName = videoHtml.match(/"channel":{"simpleText":"([^"]+)"}/)[1];
-                    const channelIcon = videoHtml.match(/"thumbnails":\[\{"url":"https:\/\/yt3.ggpht.com\/([^"]+)"\}\]/)[1];
-                    const descriptionMatch = videoHtml.match(/"attributedDescription":{"content":"([^"]+)"/);
+                    let videoTitle = html.match(/"title":{"runs":\[\{"text":"([^"]+)"\}\]/)[1];
+                    const channelName = html.match(/"channel":{"simpleText":"([^"]+)"}/)[1];
+                    const channelIcon = html.match(/"thumbnails":\[\{"url":"https:\/\/yt3.ggpht.com\/([^"]+)"\}\]/)[1];
+                    const descriptionMatch = html.match(/"attributedDescription":{"content":"([^"]+)"/);
                     const fullVideoDescription = descriptionMatch ? descriptionMatch[1] : "No description available for this video!";
                     let videoDescription = fullVideoDescription.replace(/\\n/g, " ");
 

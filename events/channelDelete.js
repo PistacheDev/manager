@@ -36,7 +36,7 @@ module.exports =
         }
         catch (err)
         {
-            console.error(`[error] channelDelete, ${channel.id}, ${err}, ${Date.now()}`);
+            console.error(`[error] ${this.name}, ${channel.id}, ${err}, ${Date.now()}`);
         };
     }
 };

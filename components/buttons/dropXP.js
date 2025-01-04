@@ -56,7 +56,7 @@ module.exports =
                         loop += 1;
                         if (currentLevel > maxLevel) currentLevel = 0;
 
-                        for (let i = 0; i < 4; i++)
+                        for (let i = 0; i < 10; i++)
                         {
                             const goal = config[0].xpgoals.split(" ")[i];
 
@@ -98,8 +98,7 @@ module.exports =
         }
         catch (err)
         {
-            interaction.reply(`:warning: An unexpected **error** occured!\n\`\`\`${err}\`\`\``);
-            console.error(`[error] dropxpButton, ${err}, ${Date.now()}`);
+            console.error(`[error] ${this.name}, ${err}, ${Date.now()}`);
         };
     }
 };

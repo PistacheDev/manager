@@ -43,7 +43,7 @@ module.exports =
         }
         catch(err)
         {
-            console.error(`[error] guildCreate, ${err}, ${Date.now()}`);
+            console.error(`[error] ${this.name}, ${err}, ${Date.now()}`);
         };
     }
 };

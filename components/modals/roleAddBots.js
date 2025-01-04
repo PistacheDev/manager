@@ -9,7 +9,7 @@ module.exports =
         try
         {
             const guild = interaction.guild;
-            const role = interaction.fields.getTextInputValue("roleAddBotsModalOption");
+            const role = interaction.fields.getTextInputValue("option");
             if (!guild.roles.cache.get(role)) return interaction.reply(":warning: This role **doesn't exist**!");
 
             interaction.message.delete();
@@ -25,8 +25,7 @@ module.exports =
         }
         catch (err)
         {
-            interaction.reply(`:warning: An unexpected **error** occured!\n\`\`\`${err}\`\`\``);
-            console.error(`[error] roleAddBotsModal, ${err}, ${Date.now()}`);
+            console.error(`[error] ${this.name}, ${err}, ${Date.now()}`);
         };
     }
 };

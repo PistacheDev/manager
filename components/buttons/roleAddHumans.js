@@ -12,23 +12,22 @@ module.exports =
             .setCustomId("roleAddHumansModal")
             .setTitle("Role to give:")
 
-            const modalOption = new TextInputBuilder()
-            .setCustomId("roleAddHumansModalOption")
+            const option = new TextInputBuilder()
+            .setCustomId("option")
             .setLabel("Role ID:")
             .setPlaceholder("Role to attribute to humans.")
             .setStyle(TextInputStyle.Short)
             .setRequired(true)
 
-            const modalInput = new ActionRowBuilder()
-            .addComponents(modalOption)
+            const input = new ActionRowBuilder()
+            .addComponents(option)
 
-            modal.addComponents(modalInput);
+            modal.addComponents(input);
             await interaction.showModal(modal);
         }
         catch (err)
         {
-            interaction.reply(`:warning: An unexpected **error** occured!\n\`\`\`${err}\`\`\``);
-            console.error(`[error] roleAddHumansButton, ${err}, ${Date.now()}`);
+            console.error(`[error] ${this.name}, ${err}, ${Date.now()}`);
         };
     }
 };

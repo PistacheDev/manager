@@ -1,4 +1,5 @@
 const { PermissionsBitField, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder } = require("discord.js");
+const { fixMissingConfig } = require("../../functions/missingConfig");
 
 module.exports =
 {
@@ -8,9 +9,12 @@ module.exports =
     {
         try
         {
-            db.query("SELECT * FROM config WHERE guild = ?", [interaction.guild.id], async (err, data) =>
+            db.query("SELECT * FROM config WHERE guild = ?", [interaction.guild.id], async (err, config) =>
             {
                 if (err) throw err;
+                let data = config;
+                if (config.length < 1) data = await fixMissingConfig(guild);
+
                 if (data[0].youtube == 0) return showFirstModal(); // The option is turned off for this server, so the user can't disable it.
                 const [channelID, roleID, youtubeID, latestVideoID] = data[0].youtube.split(" ");
 
@@ -23,17 +27,17 @@ module.exports =
                     .setCustomId("youtubeModal")
                     .setTitle("Setup the notifications:")
 
-                    const modalOption = new TextInputBuilder()
-                    .setCustomId("youtubeModalOption")
+                    const option = new TextInputBuilder()
+                    .setCustomId("option")
                     .setLabel("Channel ID:")
                     .setPlaceholder("To disable this option, let this field empty.")
                     .setStyle(TextInputStyle.Short)
                     .setRequired(false)
 
-                    const modalInput = new ActionRowBuilder()
-                    .addComponents(modalOption)
+                    const input = new ActionRowBuilder()
+                    .addComponents(option)
 
-                    modal.addComponents(modalInput);
+                    modal.addComponents(input);
                     await interaction.showModal(modal);
                 };
 
@@ -43,35 +47,34 @@ module.exports =
                     .setCustomId("youtubeSetupModal")
                     .setTitle("Setup the notifications:")
 
-                    const modalOption = new TextInputBuilder()
-                    .setCustomId("youtubeModalOption")
+                    const option1 = new TextInputBuilder()
+                    .setCustomId("option1")
                     .setLabel("Role ID:")
                     .setPlaceholder("Enter a role ID or @everyone.")
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
 
-                    const modalInput = new ActionRowBuilder()
-                    .addComponents(modalOption);
+                    const input1 = new ActionRowBuilder()
+                    .addComponents(option1);
 
-                    const modalOption2 = new TextInputBuilder()
-                    .setCustomId("youtubeModalOption2")
+                    const option2 = new TextInputBuilder()
+                    .setCustomId("option2")
                     .setLabel("YouTube channel:")
                     .setPlaceholder("Enter the channel URL (https://www.youtube.com/@example).")
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
 
-                    const modalInput2 = new ActionRowBuilder()
-                    .addComponents(modalOption2)
+                    const input2 = new ActionRowBuilder()
+                    .addComponents(option2)
 
-                    modal.addComponents(modalInput, modalInput2);
+                    modal.addComponents(input1, input2);
                     await interaction.showModal(modal);
                 };
             });
         }
         catch (err)
         {
-            interaction.reply(`:warning: An unexpected **error** occured!\n\`\`\`${err}\`\`\``);
-            console.error(`[error] youtubeButton, ${err}, ${Date.now()}`);
+            console.error(`[error] ${this.name}, ${err}, ${Date.now()}`);
         };
     }
 };

@@ -45,19 +45,18 @@ module.exports =
 
             let script = this.scripts.list.get(interaction.commandName); // Search a corresponding script in the scripts list with the command name.
             if (!script) script = this.scripts.list.get(interaction.customId); // If nothing correspond, try again with the interaction customId.
-            if (!script) return interaction.reply(":warning: Unknown **interaction**!"); // If still nothing, return an error.
+            if (!script) return interaction.reply({ content: ":warning: Command or component **not found**!", ephemeral: true }); // If still nothing, return an error.
 
             // Some permissions verifications.
-            if (script.permission && !interaction.member.permissions.has(script.permission) && !interaction.member.permissions.has(Perms.Administrator) && interaction.user.id != interaction.guild.ownerId) return interaction.reply(":warning: You don't have the **required permissions** for this interaction.");
-            if (script.ownerOnly && interaction.user.id != guild.ownerId) return interaction.reply(`:warning: This interaction **is restricted** to the **server's owner**.`);
+            if (script.permission && !interaction.member.permissions.has(script.permission) && !interaction.member.permissions.has(Perms.Administrator) && interaction.user.id != interaction.guild.ownerId) return interaction.reply({ content: ":warning: You don't have the **required permissions** for this interaction.", ephemeral: true });
+            if (script.ownerOnly && interaction.user.id != guild.ownerId) return interaction.reply({ content: ":warning: This interaction **is restricted** to the **server's owner**.", ephemeral: true });
 
             console.log(`[debug] interactionCreate, ${script.name}, ${guild.id}, ${interaction.user.id}, ${Date.now()}`);
             await script.run(client, db, interaction); // Run the script.
         }
         catch (err)
         {
-            interaction.reply(`:warning: An unexpected **error** occured!\n\`\`\`${err}\`\`\``);
-            console.error(`[error], interactionCreate, ${err}, ${Date.now()}`);
+            console.error(`[error], ${this.name}, ${err}, ${Date.now()}`);
         };
     }
 };

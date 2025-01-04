@@ -41,7 +41,7 @@ module.exports =
         }
         catch (err)
         {
-            console.error(`[error] guildMemberAdd, ${err}, ${Date.now()}`);
+            console.error(`[error] ${this.name}, ${err}, ${Date.now()}`);
         };
     }
 };

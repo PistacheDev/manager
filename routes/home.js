@@ -1,4 +1,4 @@
-const { version } = require("../json/config.json");
+const config = require("../json/config.json");
 
 module.exports =
 {
@@ -7,7 +7,8 @@ module.exports =
     {
         try
         {
-            res.status(200).render("../website/html/home.ejs", { version: version }); // Render the page.
+            const appVersion = config.version;
+            res.status(200).render("../website/html/home.ejs", { version: appVersion }); // Render the page.
         }
         catch (err)
         {

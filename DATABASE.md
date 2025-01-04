@@ -36,7 +36,7 @@ CREATE TABLE config (
     warn VARCHAR(255) DEFAULT '3 1',
     antipings VARCHAR(255) DEFAULT '0 20',
     xp VARCHAR(255) DEFAULT '0',
-    xpgoals VARCHAR(255) DEFAULT '0 0 0 0',
+    xpgoals VARCHAR(255) DEFAULT '0 0 0 0 0 0 0 0 0 0',
     youtube VARCHAR(255) DEFAULT '0',
     twitch VARCHAR(255) DEFAULT '0',
     memberAdd VARCHAR(255) DEFAULT '0',

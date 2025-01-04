@@ -23,90 +23,74 @@ module.exports =
                     .setCustomId("antiswearModal")
                     .setTitle("Setup the anti swear:")
 
-                    const modalOption = new TextInputBuilder()
-                    .setCustomId("antiswearModalOption")
+                    const option1 = new TextInputBuilder()
+                    .setCustomId("option1")
                     .setLabel("Ignore Bots:")
                     .setPlaceholder("Answer by \"yes\" or \"no\".")
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
 
-                    const modalInput = new ActionRowBuilder()
-                    .addComponents(modalOption)
+                    const input1 = new ActionRowBuilder()
+                    .addComponents(option1)
 
-                    const modalOption2 = new TextInputBuilder()
-                    .setCustomId("antiswearModalOption2")
+                    const option2 = new TextInputBuilder()
+                    .setCustomId("option2")
                     .setLabel("Ignore Administrators:")
                     .setPlaceholder("Answer by \"yes\" or \"no\".")
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
 
-                    const modalInput2 = new ActionRowBuilder()
-                    .addComponents(modalOption2)
+                    const input2 = new ActionRowBuilder()
+                    .addComponents(option2)
 
-                    const modalOption3 = new TextInputBuilder()
-                    .setCustomId("antiswearModalOption3")
+                    const option3 = new TextInputBuilder()
+                    .setCustomId("option3")
                     .setLabel("Maximum Warns:")
                     .setPlaceholder("Maximum of warns before the sanction.")
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
 
-                    const modalInput3 = new ActionRowBuilder()
-                    .addComponents(modalOption3)
+                    const input3 = new ActionRowBuilder()
+                    .addComponents(option3)
 
-                    const modalOption4 = new TextInputBuilder()
-                    .setCustomId("antiswearModalOption4")
+                    const option4 = new TextInputBuilder()
+                    .setCustomId("option4")
                     .setLabel("Sanction:")
                     .setPlaceholder("Enter \"ban\" to ban or a number (in minutes) to mute.")
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
 
-                    const modalInput4 = new ActionRowBuilder()
-                    .addComponents(modalOption4)
+                    const input4 = new ActionRowBuilder()
+                    .addComponents(option4)
 
-                    modal.addComponents(modalInput, modalInput2, modalInput3, modalInput4);
+                    modal.addComponents(input1, input2, input3, input4);
                     await interaction.showModal(modal);
                 }
                 else
                 {
-                    let spamStatus = ":x: Inactive";
-                    let warnsStatus = ":x: Inactive";
-                    let pingStatus = ":x: Inactive";
-
-                    if (data[0].antispam != 0)
-                    {
-                        const [ignoreBot, maxMessages, interval, maxWarns, sanction] = data[0].antispam.split(" ");
-                        spamStatus = `:white_check_mark: Active.\n**Ignore Bots**: ${ignoreBot == 1 ? "Yes" : "No"}.\n**Spam Detection:** More than ${maxMessages} messages in ${interval} seconds.\n**Maximum Warns**: ${maxWarns} warns.\n**Sanction**: ${sanction == "ban" ? "Ban" : `Mute for ${sanction} minutes`}`;
-                    };
-
-                    if (data[0].warn != 0)
-                    {
-                        const [maxWarns, sanction] = data[0].warn.split(" ");
-                        warnsStatus = `:white_check_mark: Active.\n**Maximum Warns**: ${maxWarns} warns.\n**Sanction**: ${sanction == "ban" ? "Ban" : `Mute for ${sanction} hours`}`;
-                    };
-
-                    if (data[0].antipings != 0)
-                    {
-                        const [ignoreBots, sanction] = data[0].antipings.split(" ");
-                        pingStatus = `:white_check_mark: Active.\n**Ignore Bots**: ${ignoreBots == 1 ? "Yes" : "No"}.\n**Sanction**: ${sanction == "ban" ? "Ban" : `Mute for ${sanction} minutes`}`;
-                    };
+                    const antispam = data[0].antispam;
+                    const warn = data[0].warn;
+                    const antipings = data[0].antipings;
+                    const antilinks = data[0].antilinks;
 
                     const embed = new EmbedBuilder()
                     .setColor("Orange")
                     .setAuthor({ name: "Configuration Panel", iconURL: client.user.avatarURL() })
                     .setDescription("Press the button with the **emoji corresponding** to **the option** you want to modify.")
-                    .addFields([{ name: ":hand_splayed:・Anti spam:", value: `>>> **Status**: ${spamStatus}.\n**Function**: Prevent the members from **spamming messages**.` }])
-                    .addFields([{ name: ":no_entry:・Anti swear:", value: `>>> **Status**: :x: Inactive.\n**Function**: Prevent the members from **using bad words**.` }])
-                    .addFields([{ name: ":warning:・Warns:", value: `>>> **Status**: ${warnsStatus}.\n**Function**: The member **is sanctionned** if its warns count reached the **maximum amount**.` }])
-                    .addFields([{ name: ":loud_sound:・Anti pings:", value: `>>> **Status**: ${pingStatus}.\n**Function**: Prevent the members from using **@everyone and @here**.` }])
-                    .addFields([{ name: ":globe_with_meridians:・Anti links:", value: `>>> **Status**: ${data[0].antilinks == 0 ? ":x: Inactive" : data[0].antilinks == 1 ? ":white_check_mark: Active" : ":lock: Enforced (bots too)"}.\n**Function**: Delete messages **containing links**.` }])
+                    .addFields([{ name: ":hand_splayed:・Anti spam:", value: `➜ ${antispam == 0 ? ":red_circle:" : ":green_circle:"} Prevent the members from sending **${antispam == 0 ? "too many messages" : `more than ${antispam.split(" ")[1]} messages`}** in **${antispam == 0 ? "a short period of time" : `less than ${antispam.split(" ")[2]} seconds`}** by warning them. After **${antispam == 0 ? "the maximum configured amount of" : antispam.split(" ")[3]} warns** reached, the member will **${antispam == 0 ? "receive a sanction" : `be ${antispam.split(" ")[4] == "ban" ? "banned" : `muted for ${antispam.split(" ")[4]} minutes`}`}**. The bots **${antispam == 0 ? "can be ignored (*not recommended*)" : `${antispam.split(" ")[0] == 0 ? "aren't ignored" : "are ignored"}`}**.` }])
+                    .addFields([{ name: ":no_entry:・Anti swear:", value: "➜ :red_circle: Prevent the members from **using bad words** by warning them. After **the maximum configured amount of warns** reached, the member will **receive a sanction**. The bots **can be ignored** and the administrators **too**." }])
+                    .addFields([{ name: ":warning:・Warns:", value: `➜ ${warn == 0 ? ":red_circle:" : ":green_circle:"} The member **will be ${warn == 0 ? "sanctionned" : warn.split(" ")[1] == "ban" ? "banned" : `muted for ${warn.split(" ")[1]} hours`}** if its warns count reaches **${warn == 0 ? "the maximum amount" : `more than ${warn.split(" ")[0]} warns`}**.` }])
+                    .addFields([{ name: ":loud_sound:・Anti pings:", value: `➜ ${antipings == 0 ? ":red_circle:" : ":green_circle:"} Prevent the members from **using the everyone and here mentions** by **deleting the message** and **${antipings == 0 ? "sanctioning them" : antipings.split(" ")[1] == "ban" ? "banning them" : `muting them for ${antipings.split(" ")[1]} minutes`}**. The bots **${antipings == 0 ? "can be ignored (*not recommended*)" : antipings.split(" ")[0] == 0 ? "aren't ignored" : "are ignored"}**.` }])
+                    .addFields([{ name: ":globe_with_meridians:・Anti links:", value: `➜ ${antilinks == 0 ? ":red_circle:" : antilinks == 1 ? ":yellow_circle:" : ":green_circle:"} Delete the messages **containing links**. The bots ${antilinks == 0 ? "can be" : antilinks == 1 ? "are" : "aren't"} ignored.` }])
                     .setThumbnail(client.user.avatarURL())
                     .setTimestamp()
                     .setFooter({ text: guild.name, iconURL: guild.iconURL() })
 
+                    interaction.message.edit({ embeds: [embed] });
+
                     db.query("UPDATE config SET antiswear = ? WHERE guild = ?", [0, guild.id], async (err) =>
                     {
                         if (err) throw err;
-                        interaction.message.edit({ embeds: [embed] });
                         interaction.deferUpdate();
                     });
                 };
@@ -114,8 +98,7 @@ module.exports =
         }
         catch (err)
         {
-            interaction.reply(`:warning: An unexpected **error** occured!\n\`\`\`${err}\`\`\``);
-            console.error(`[error] antispamButton, ${err}, ${Date.now()}`);
+            console.error(`[error] ${this.name}, ${err}, ${Date.now()}`);
         };
     }
 };
