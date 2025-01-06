@@ -1,5 +1,5 @@
-const { PermissionsBitField, SlashCommandBuilder } = require("discord.js");
-const Perms = PermissionsBitField.Flags; // Shortcut.
+const { PermissionsBitField, SlashCommandBuilder, MessageFlags, EmbedBuilder } = require("discord.js");
+const Perms = PermissionsBitField.Flags;
 const { generateString } = require("../functions/stringGenerator");
 
 module.exports =
@@ -20,63 +20,107 @@ module.exports =
             const targetID = target.id;
             const ownerID = guild.ownerId;
 
-            if (target.user.bot) return interaction.reply(":warning: You can\'t warn **a bot**!");
-            if (targetID == mod.id) return interaction.reply(":warning: You can\'t warn **yourself**!");
-            if (ownerID == targetID) return interaction.reply(":warning: You can\'t warn the **server owner**!");
-            if (mod.roles.highest.comparePositionTo(target.roles.highest) <= 0) return interaction.reply(":warning: You can\'t warn **this member**!");
-            if (mod.id != ownerID && target.permissions.has(Perms.Administrator)) return interaction.reply(`:warning: **Only the owner** can warn an administrator!`);
-            if (targetID == client.user.id) return interaction.reply(":warning: You can\'t warn **the application** with this command!");
+            if (target.user.bot) return interaction.reply({ content: ":warning: You can't warn a bot!", flags: MessageFlags.Ephemeral});
+            if (targetID == mod.id) return interaction.reply({ content: ":warning: You can't warn yourself!", flags: MessageFlags.Ephemeral });
+            if (ownerID == targetID) return interaction.reply({ content: ":warning: You can't warn the server owner!", flags: MessageFlags.Ephemeral });
+            if (mod.roles.highest.comparePositionTo(target.roles.highest) <= 0) return interaction.reply({ content: ":warning: You can't warn this member!", flags: MessageFlags.Ephemeral });
+            if (mod.id != ownerID && target.permissions.has(Perms.Administrator)) return interaction.reply({ content: ":warning: Only the owner can warn an administrator!", flags: MessageFlags.Ephemeral });
+            if (targetID == client.user.id) return interaction.reply({ content: ":warning: You can't warn the application with this command!", flags: MessageFlags.Ephemeral});
 
+            let config;
+            let warnsCount;
+
+            db.query("SELECT * FROM config WHERE guild = ?", [guild.id], async (err, data) =>
+            {
+                if (err) throw err;
+                config = data[0];
+            });
+
+            if (config.warn == 0) // Option disabled.
+            {
+                interaction.reply({ content: ":warning: The warn system is turned off for this server!", falgs: MessageFlags.Ephemeral });
+                return;
+            };
+
+            db.query("SELECT * FROM warns WHERE target = ? AND guild = ?", [targetID, guild.id], async (err, data) =>
+            {
+                if (err) throw err;
+                warnsCount = data.length + 1; // Count the number of active warns.
+            });
+
+            // Add the warn to the database.
             db.query("INSERT INTO warns (`guild`, `warnID`, `target`, `moderator`, `reason`, `date`) VALUES (?, ?, ?, ?, ?, ?)", [guild.id, warnID, targetID, mod.id, reason.replace(/"/g, "\\'"), Date.now()], async (err) =>
             {
                 if (err) throw err;
-
-                db.query("SELECT * FROM warns WHERE target = ? AND guild = ?", [targetID, guild.id], async (err, data) =>
-                {
-                    if (err) throw err;
-
-                    db.query("SELECT * FROM config WHERE guild = ?", [guild.id], async (err, config) =>
-                    {
-                        if (err) throw err;
-
-                        if (config[0].warn == 0)
-                        {
-                            interaction.reply(`:warning: <@${targetID}>, you"ve been warned by <@${mod.id}>!\n:man_judge: **Reason**: \`${reason}\`.\n:paperclip: **Warn ID**: \`${warnID}\`.`);
-                        }
-                        else
-                        {
-                            const [maxWarns, sanction] = config[0].warn.split(" ");
-
-                            if (data.length > maxWarns)
-                            {
-                                if (sanction == "ban")
-                                {
-                                    target.ban({ reason: `[Warns] Banned after ${data.length} warns.` }).then(() =>
-                                    {
-                                        interaction.reply(`:man_judge: @${target.user.username} (${targetID}) has been **banned for too many warns**!`);
-                                    });
-                                }
-                                else
-                                {
-                                    target.timeout(sanction * 3600000).then(() =>
-                                    {
-                                        message.reply(`:man_judge: <@${targetID}>, you"ve been **muted for ${sanction} hours** for too many warns!`);
-                                        db.query("DELETE FROM warns WHERE target = ? AND guild = ?", [targetID, guild.id], async (err) =>
-                                        {
-                                            if (err) throw err;
-                                        });
-                                    });
-                                };
-                            }
-                            else
-                            {
-                                interaction.reply(`:warning: <@${targetID}>, you have been warned by <@${mod.id}>!\n:man_judge: **Reason**: \`${reason}\`.\n:paperclip: **Warn ID**: \`${warnID}\`.`);
-                                if (data.length == maxWarns) interaction.channel.send(`:man_judge: Next time, you **will be ${sanction == "ban" ? "ban" : `mute for ${sanction} hours`}** for too many warns!`);
-                            };
-                        };
-                    });
-                });
             });
+
+            // Read the config.
+            const [maxWarns, sanction] = config.warn.split(" ");
+
+            if (warnsCount > maxWarns)
+            {
+                if (sanction == "ban")
+                {
+                    target.ban({ reason: `[Warns] Banned after ${data.length} warns.` }).then(() =>
+                    {
+                        const embed = new EmbedBuilder()
+                        .setColor("Red")
+                        .setThumbnail(target.user.avatarURL())
+                        .setDescription(`:man_judge: <@${targetID}> has been banned after ${warnsCount} warns!`)
+                        .addFields([{ name: ":man_judge:・Moderator:", value: `>>> **User**: <@${mod.id}> @${mod.user.username}.\n**ID**: ${mod.id}.\n**Ban Date**: <t:${Math.floor(Date.now() / 1000)}:F>.` }])
+                        .addFields([{ name: ":grey_question:・Reason:", value: `\`\`\`${reason}\`\`\`` }])
+                        .setTimestamp()
+                        .setFooter({ text: target.user.username, iconURL: target.user.avatarURL() })
+
+                        interaction.channel.send({ embeds: [embed] });
+                        interaction.deferUpdate();
+
+                        const notif = new EmbedBuilder()
+                        .setColor("Red")
+                        .setThumbnail(guild.iconURL())
+                        .setDescription(`:scales: You have been banned from **${guild.name}** after ${warnsCount} warns!`)
+                        .addFields([{ name: ":man_judge:・Moderator:", value: `>>> **User**: <@${mod.id}> @${mod.user.username}.\n**ID**: ${mod.id}.\n**Ban Date**: <t:${Math.floor(Date.now() / 1000)}:F>.` }])
+                        .addFields([{ name: ":grey_question:・Reason:", value: `\`\`\`${reason}\`\`\`` }])
+                        .setTimestamp()
+                        .setFooter({ text: guild.name, iconURL: guild.iconURL() })
+
+                        target.user.createDM({ force: true }).send({ embeds: [notif] });
+                    });
+                }
+                else
+                {
+                    target.timeout(sanction * 3600000).then(() =>
+                    {
+                        const embed = new EmbedBuilder()
+                        .setColor("Yellow")
+                        .setThumbnail(target.user.avatarURL())
+                        .setDescription(`:man_judge: <@${targetID}> has been muted after ${warnsCount} warns!`)
+                        .addFields([{ name: ":man_judge:・Moderator :", value: `>>> **User**: <@${mod.id}> @${mod.user.username}.\n**ID**: ${mod.id}.\n**Mute Duration**: ${time} ${scaleStr}.\n**Sanction Date** : <t:${Math.floor(Date.now() / 1000)}:F>.` }])
+                        .addFields([{ name: ":grey_question:・Reason :", value: `\`\`\`${reason}\`\`\`` }])
+                        .setTimestamp()
+                        .setFooter({ text: target.user.username, iconURL: target.user.avatarURL() })
+
+                        interaction.channel.send({ embeds: [embed] });
+                        interaction.deferUpdate();
+
+                        const notif = new EmbedBuilder()
+                        .setColor("Yellow")
+                        .setThumbnail(guild.iconURL())
+                        .setDescription(`:scales: You have been muted in **${guild.name}** after ${warnsCount} warns!`)
+                        .addFields([{ name: ":man_judge:・Moderator :", value: `>>> **User**: <@${mod.id}> @${mod.user.username}.\n**ID**: ${mod.id}.\n**Mute Duration**: ${time} ${scaleStr}.\n**Sanction Date** : <t:${Math.floor(Date.now() / 1000)}:F>.` }])
+                        .addFields([{ name: ":grey_question:・Reason :", value: `\`\`\`${reason}\`\`\`` }])
+                        .setTimestamp()
+                        .setFooter({ text: guild.name, iconURL: guild.iconURL() })
+
+                        target.user.createDM({ force: true }).send({ embeds: [notif] });
+                    });
+                };
+            }
+            else
+            {
+                interaction.channel.send(`:warning: <@${targetID}>, you have been warned by <@${mod.id}>!\n:paperclip: **Warn ID**: \`${warnID}\`.\n:man_judge: **Reason**: \`${reason}\`.`);
+                interaction.deferUpdate();
+            };
         }
         catch (err)
         {

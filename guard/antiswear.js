@@ -31,23 +31,19 @@ async function antiswear(message)
                 {
                     member.ban({ reason: `[Anti swear] Still being unpolite after ${warnsCount}/${maxWarns} warns.` }).then(() =>
                     {
-                        message.channel.send(`:man_judge: @${member.username} (${author.id}) has been **banned for being unpolite**!`);
+                        message.channel.send(`:man_judge: @${member.username} (*${author.id}*) has been banned for being unpolite!`);
                     });
                 }
                 else
                 {
                     member.timeout(sanction * 60000).then(() =>
                     {
-                        message.channel.send(`:man_judge: <@${author.id}>, you've been **muted for ${sanction} minutes** for being unpolite!`);
+                        message.channel.send(`:man_judge: <@${author.id}> has been muted for ${sanction} minutes for being unpolite!`);
                         warnings.set(author.id, 0);
                     });
                 };
             }
-            else
-            {
-                message.channel.send(`:warning: <@${author.id}>, this is your **warning ${warnsCount}/${maxWarns}** for being unpolite!`);
-                if (warnsCount == maxWarns) message.channel.send(`:man_judge: Next time, you **will be ${sanction == "ban" ? "banned" : "muted"}** for being unpolite!`);
-            };
+            else message.channel.send(`:warning: <@${author.id}>, this is your warning ${warnsCount}/${maxWarns} for being unpolite!${warnsCount == maxWarns ? ` Next time, you will be ${sanction == "ban" ? "ban" : "mute"} for being unpolite!` : ""}`);
 
             return true;
         };

@@ -14,8 +14,8 @@ module.exports =
 
             const option = new TextInputBuilder()
             .setCustomId("option")
-            .setLabel("Role ID:")
-            .setPlaceholder("Role to attribute to everyone.")
+            .setLabel("What role I have to attribute?")
+            .setPlaceholder("Enter the role ID.")
             .setStyle(TextInputStyle.Short)
             .setRequired(true)
 

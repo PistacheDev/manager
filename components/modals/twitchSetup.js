@@ -1,4 +1,4 @@
-const { PermissionsBitField, EmbedBuilder } = require("discord.js");
+const { PermissionsBitField, EmbedBuilder, MessageFlags } = require("discord.js");
 const { fixMissingConfig } = require("../../functions/missingConfig");
 const axios = require("axios");
 
@@ -13,7 +13,7 @@ module.exports =
             const roleID = interaction.fields.getTextInputValue("option1");
             const channelURL = interaction.fields.getTextInputValue("option2");
             const guild = interaction.guild;
-            if (roleID != "@everyone" && !guild.roles.cache.get(roleID)) return interaction.reply(":warning: This role doesn't exist!");
+            if (roleID != "@everyone" && !guild.roles.cache.get(roleID)) return interaction.reply({ content: ":warning: This role doesn't exist!", flags: MessageFlags.Ephemeral });
 
             db.query("SELECT * FROM config WHERE guild = ?", [guild.id], async (err, config) =>
             {
@@ -21,7 +21,17 @@ module.exports =
                 let data = config;
                 if (config.length < 1) data = await fixMissingConfig(guild);
 
-                await axios.get(channelURL);
+                try
+                {
+                    await axios.get(channelURL);
+                }
+                catch (err)
+                {
+                    interaction.reply({ content: ":warning: This Twitch channel doesn't exist!", flags: MessageFlags.Ephemeral });
+                    console.error(`[error] ${this.name}, request, ${err}, ${Date.now()}`);
+                    return;
+                };
+
                 const channelID = data[0].twitch.split(" ")[0];
                 const twitchID = channelURL.split("twitch.tv/")[1];
                 const yt = data[0].youtube;
@@ -37,11 +47,11 @@ module.exports =
                 .setFooter({ text: guild.name, iconURL: guild.iconURL() })
 
                 interaction.message.edit({ embeds: [embed] });
+                interaction.deferUpdate();
 
                 db.query("UPDATE config SET twitch = ? WHERE guild = ?", [`${channelID} ${roleID} ${twitchID} 0 0`, guild.id], async (err) =>
                 {
                     if (err) throw err;
-                    interaction.deferUpdate();
                 });
             });
         }

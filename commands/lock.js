@@ -1,4 +1,4 @@
-const { PermissionsBitField, EmbedBuilder, SlashCommandBuilder } = require("discord.js");
+const { PermissionsBitField, EmbedBuilder, SlashCommandBuilder, MessageFlags } = require("discord.js");
 
 module.exports =
 {
@@ -10,29 +10,26 @@ module.exports =
         try
         {
             var channel = interaction.options.getChannel("channel");
-            if (!channel) channel = interaction.channel; // Select the current channel if nothing is specified.
+            if (!channel) channel = interaction.channel; // Select the current channel if nothing's specified.
             const reason = interaction.options.getString("reason");
 
             const guild = interaction.guild;
             const mod = interaction.member;
 
-            if (channel.permissionOverwrites.cache.get(guild.roles.everyone.id)?.deny.toArray(false).includes("SendMessages")) return interaction.reply(":warning: This channel is **already locked**!");
-            if (!channel.manageable) return interaction.reply(":warning: **Impossible** to lock this channel!");
+            if (channel.permissionOverwrites.cache.get(guild.roles.everyone.id)?.deny.toArray(false).includes("SendMessages")) return interaction.reply({ content: ":warning: This channel is already locked!", flags: MessageFlags.Ephemeral });
+            if (!channel.manageable) return interaction.reply({ content: ":warning: Impossible to lock this channel!", flags: MessageFlags.Ephemeral });
 
 	        channel.permissionOverwrites.edit(guild.roles.everyone.id,
             {
-                SendMessages: false // Remove the SendMessages permission for the @everyone role.
+                SendMessages: false // Remove the SendMessages permission for everyone.
     	    }).then(() =>
             {
                 const embed = new EmbedBuilder()
     	        .setColor("Red")
-    	        .setDescription(`:lock: **This channel** is now **locked**.\n:man_judge: **Moderator**: <@${mod.id}>.\n:grey_question: **Reason**: ${reason}.`)
+    	        .setDescription(`:lock: This channel is now locked.\n:man_judge: **Moderator**: <@${mod.id}>.\n:grey_question: **Reason**: ${reason}.`)
 
-                if (channel.id != interaction.channel.id)
-                {
-                    channel.send({ embeds: [embed] });
-    	            interaction.reply(`:white_check_mark: <#${channel.id}> has been **locked successfully**!`);
-                } else interaction.reply({ embeds: [embed] });
+                channel.send({ embeds: [embed] });
+    	        interaction.deferUpdate();
     	    });
         }
         catch (err)

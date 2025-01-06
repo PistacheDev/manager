@@ -1,4 +1,4 @@
-const { PermissionsBitField, EmbedBuilder, SlashCommandBuilder } = require("discord.js");
+const { PermissionsBitField, EmbedBuilder, SlashCommandBuilder, MessageFlags } = require("discord.js");
 
 module.exports =
 {
@@ -14,25 +14,34 @@ module.exports =
 
             guild.bans.fetch().then(async bans =>
             {
-                const targetID = interaction.options.getString("id");
-                const bannedUser = bans.find(banned => banned.user.id == targetID); // Get the user in the bans list.
+                const ID = interaction.options.getString("id");
+                const bannedUser = bans.find(banned => banned.user.id == ID); // Get the user in the bans list.
 
-                if (!client.users.cache.get(targetID)) return interaction.reply(":warning: This user **doesn't exist**!");
-                if (!bannedUser) return interaction.reply(":warning: This user **isn't banned** from this server!");
+                if (!client.users.cache.get(ID)) return interaction.reply({ content: ":warning: This user doesn't exist!", flags: MessageFlags.Ephemeral });
+                if (!bannedUser) return interaction.reply({ content: ":warning: This user isn't banned from this server!", flags: MessageFlags.Ephemeral });
 
                 await guild.members.unban(bannedUser.user).then(() =>
                 {
-                    interaction.reply(`:white_check_mark: @${client.users.cache.get(targetID).username} (\`${targetID}\`) has been **unbanned successfully**!`);
-
                     const embed = new EmbedBuilder()
                     .setColor("Green")
+                    .setThumbnail(bannedUser.user.avatarURL())
+                    .setDescription(`:man_judge: @${bannedUser.user.username} (${ID}) has been unbanned!`)
+                    .addFields([{ name: ":man_judge:・Moderator :", value: `>>> **User**: <@${mod.id}> @${mod.user.username}.\n**ID**: ${mod.id}.\n**Unban Date**: <t:${Math.floor(Date.now() / 1000)}:F>.` }])
+                    .setTimestamp()
+                    .setFooter({ text: bannedUser.user.username, iconURL: bannedUser.user.avatarURL() })
+
+                    interaction.channel.send({ embeds: [embed] });
+                    interaction.deferUpdate();
+
+                    const notif = new EmbedBuilder()
+                    .setColor("Green")
                     .setThumbnail(guild.iconURL())
-                    .setDescription(`:scales: You"ve been unbanned from **${guild.name}**!`)
+                    .setDescription(`:scales: You have been unbanned from **${guild.name}**!`)
                     .addFields([{ name: ":man_judge:・Moderator :", value: `>>> **User**: <@${mod.id}> @${mod.user.username}.\n**ID**: ${mod.id}.\n**Unban Date**: <t:${Math.floor(Date.now() / 1000)}:F>.` }])
                     .setTimestamp()
                     .setFooter({ text: guild.name, iconURL: guild.iconURL() })
 
-                    client.users.cache.get(targetID).createDM({ force: true }).send({ embeds: [embed] });
+                    client.users.cache.get(ID).createDM({ force: true }).send({ embeds: [notif] });
                 });
             });
         }

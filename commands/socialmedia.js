@@ -1,4 +1,4 @@
-const { EmbedBuilder, SlashCommandBuilder } = require("discord.js");
+const { EmbedBuilder, SlashCommandBuilder, MessageFlags } = require("discord.js");
 
 module.exports =
 {
@@ -13,7 +13,7 @@ module.exports =
             .setThumbnail(client.user.avatarURL())
             .setDescription("# Official links:\n\n・**Website**: https://manager.pistachedev.fr.\n・**GitHub**: https://github.com/PistacheDev/manager.\n・**Discord**: https://discord.com/invite/RkB3ZQsmGV")
 
-            interaction.reply({ embeds: [embed] });
+            interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
         }
         catch (err)
         {

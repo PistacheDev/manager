@@ -10,7 +10,7 @@ const fs = require("fs");
 // Create a Discord client.
 const client = new Client
 ({
-    intents: [ IntentsBitField.Flags.Guilds, IntentsBitField.Flags.GuildModeration, IntentsBitField.Flags.GuildEmojisAndStickers, IntentsBitField.Flags.GuildIntegrations, IntentsBitField.Flags.GuildWebhooks, IntentsBitField.Flags.GuildInvites, IntentsBitField.Flags.GuildVoiceStates, IntentsBitField.Flags.GuildMessageReactions, IntentsBitField.Flags.GuildMessageTyping, IntentsBitField.Flags.DirectMessages, IntentsBitField.Flags.DirectMessageReactions, IntentsBitField.Flags.DirectMessageTyping, IntentsBitField.Flags.GuildScheduledEvents, IntentsBitField.Flags.GuildPresences, IntentsBitField.Flags.GuildMembers, IntentsBitField.Flags.GuildMessages, IntentsBitField.Flags.MessageContent ],
+    intents: [ IntentsBitField.Flags.Guilds, IntentsBitField.Flags.GuildModeration, IntentsBitField.Flags.GuildExpressions, IntentsBitField.Flags.GuildIntegrations, IntentsBitField.Flags.GuildWebhooks, IntentsBitField.Flags.GuildInvites, IntentsBitField.Flags.GuildVoiceStates, IntentsBitField.Flags.GuildMessageReactions, IntentsBitField.Flags.GuildMessageTyping, IntentsBitField.Flags.DirectMessages, IntentsBitField.Flags.DirectMessageReactions, IntentsBitField.Flags.DirectMessageTyping, IntentsBitField.Flags.GuildScheduledEvents, IntentsBitField.Flags.GuildPresences, IntentsBitField.Flags.GuildMembers, IntentsBitField.Flags.GuildMessages, IntentsBitField.Flags.MessageContent ],
     partials: [ Partials.Channel, Partials.GuildMember, Partials.GuildScheduledEvent, Partials.Message, Partials.Reaction, Partials.ThreadMember, Partials.User ],
     presence:
     {
@@ -57,7 +57,7 @@ db.getConnection((err, connection) =>
 {
     if (err)
     {
-        console.error(`[error] Connection to the database failed! Error:\n${err}\nThe process has been killed (database required).`);
+        console.error(`[error] Connection to the database failed! Error: ${err}\nThe process has been killed (the database is required).`);
         return process.exit(); // Kill the process (the database is required).
     };
 

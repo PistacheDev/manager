@@ -1,7 +1,7 @@
 const { Collection } = require("discord.js");
 const fs = require("fs");
-const { PermissionsBitField } = require("discord.js");
-const Perms = PermissionsBitField.Flags; // Shortcut.
+const { PermissionsBitField, MessageFlags } = require("discord.js");
+const Perms = PermissionsBitField.Flags;
 
 // Create a class to contain every commands and components.
 class Scripts
@@ -45,11 +45,11 @@ module.exports =
 
             let script = this.scripts.list.get(interaction.commandName); // Search a corresponding script in the scripts list with the command name.
             if (!script) script = this.scripts.list.get(interaction.customId); // If nothing correspond, try again with the interaction customId.
-            if (!script) return interaction.reply({ content: ":warning: Command or component **not found**!", ephemeral: true }); // If still nothing, return an error.
+            if (!script) return interaction.reply({ content: ":warning: Command or component not found!", flags: MessageFlags.Ephemeral }); // If still nothing, return an error.
 
             // Some permissions verifications.
-            if (script.permission && !interaction.member.permissions.has(script.permission) && !interaction.member.permissions.has(Perms.Administrator) && interaction.user.id != interaction.guild.ownerId) return interaction.reply({ content: ":warning: You don't have the **required permissions** for this interaction.", ephemeral: true });
-            if (script.ownerOnly && interaction.user.id != guild.ownerId) return interaction.reply({ content: ":warning: This interaction **is restricted** to the **server's owner**.", ephemeral: true });
+            if (script.permission && !interaction.member.permissions.has(script.permission) && !interaction.member.permissions.has(Perms.Administrator) && interaction.user.id != interaction.guild.ownerId) return interaction.reply({ content: ":warning: You don't have the required permissions for this interaction.", flags: MessageFlags.Ephemeral });
+            if (script.ownerOnly && interaction.user.id != guild.ownerId) return interaction.reply({ content: ":warning: This interaction is restricted to the server owner.", flags: MessageFlags.Ephemeral });
 
             console.log(`[debug] interactionCreate, ${script.name}, ${guild.id}, ${interaction.user.id}, ${Date.now()}`);
             await script.run(client, db, interaction); // Run the script.

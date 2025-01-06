@@ -176,7 +176,7 @@ module.exports =
                     if (goal == 0) goals++; // Calculate the empty goals.
                 };
 
-                embed.addFields([{ name: ":gear:・XP system:", value: `➜ ${xp == 0 ? ":red_circle:" : ":green_circle:"} Gives XP points to the members per **each message sent**, **between 1** and **${xp == 0 ? "the maximum amount of XP points configured" : `${xp.split(" ")[1]} XP points`}**. Each time the members pass the **goal to level up**, their level **increase by 1**. The maximum level is **${xp == 0 ? "the configured level" : `the level ${xp.split(" ")[2]}`}**. The members **${xp == 0 ? "can be" : xp.split(" ")[0] == 1 ? "are" : "aren't"} notified** when they level up.` }])
+                embed.addFields([{ name: ":gear:・XP system:", value: `➜ ${xp == 0 ? ":red_circle:" : ":green_circle:"} Gives XP points to the members per **each message sent**, **between 1** and **${xp == 0 ? "the maximum amount of XP points configured" : `${xp.split(" ")[1]} XP points`}**. Each time the members pass the **goal to level up**, their level **increases by 1**. The maximum level is **${xp == 0 ? "the configured level" : `the level ${xp.split(" ")[2]}`}**. The members **${xp == 0 ? "can be" : xp.split(" ")[0] == 1 ? "are" : "aren't"} notified** when they level up.` }])
                 embed.addFields([{ name: ":trophy:・Goals:", value: `➜ ${xp == 0 ? ":red_circle:" : goals == 10 ? ":yellow_circle:" : ":green_circle:"} When a member **reaches a certain level**, the application **gives a role** to this member. Yet, **${goals == 10 ? "no roles have been configured" : `it remains ${goals} roles configurable available`}**.` }])
 
                 var buttons = new ActionRowBuilder()

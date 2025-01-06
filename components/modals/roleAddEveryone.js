@@ -1,4 +1,4 @@
-const { PermissionsBitField } = require("discord.js");
+const { PermissionsBitField, MessageFlags } = require("discord.js");
 
 module.exports =
 {
@@ -10,17 +10,16 @@ module.exports =
         {
             const guild = interaction.guild;
             const role = interaction.fields.getTextInputValue("option");
-            if (!guild.roles.cache.get(role)) return interaction.reply(":warning: This role **doesn't exist**!");
+            if (!guild.roles.cache.get(role)) return interaction.reply({ content: ":warning: This role doesn't exist!", flags: MessageFlags.Ephemeral });
 
             interaction.message.delete();
+            interaction.deferUpdate();
             const members = await guild.members.fetch();
 
             members.forEach(member =>
             {
-                member.roles.add(role).catch(err => interaction.channel.send(`:warning: **Impossible** to give the role to <@${member.id}>!\n\`\`\`${err}\`\`\``));
+                member.roles.add(role).catch(() => {});
             });
-
-            await interaction.reply(`:white_check_mark: Successfully **attribuated the @${guild.roles.cache.get(role).name} role** to **${members.size} members**!`);
         }
         catch (err)
         {

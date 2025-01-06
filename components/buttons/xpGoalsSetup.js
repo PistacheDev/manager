@@ -14,7 +14,7 @@ module.exports =
 
             const option1 = new TextInputBuilder()
             .setCustomId("option1")
-            .setLabel("Targeted goal:")
+            .setLabel("What's the goal's number?")
             .setPlaceholder("Targeted goal (1 ~ 10).")
             .setStyle(TextInputStyle.Short)
             .setRequired(true)
@@ -24,7 +24,7 @@ module.exports =
 
             const option2 = new TextInputBuilder()
             .setCustomId("option2")
-            .setLabel("Level:")
+            .setLabel("What's the level to reach?")
             .setPlaceholder("Level to reach to get the role (10 ~ 100).")
             .setStyle(TextInputStyle.Short)
             .setRequired(true)
@@ -34,7 +34,7 @@ module.exports =
 
             const option3 = new TextInputBuilder()
             .setCustomId("option3")
-            .setLabel("Role ID:")
+            .setLabel("What role I have to attribute? (Role ID)")
             .setPlaceholder("To disable this goal, let this field empty.")
             .setStyle(TextInputStyle.Short)
             .setRequired(false)

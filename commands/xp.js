@@ -1,6 +1,6 @@
+const { EmbedBuilder, SlashCommandBuilder, MessageFlags } = require("discord.js");
 const { fixMissingConfig } = require("../functions/missingConfig");
 const { calculXP } = require("../functions/xpRanking");
-const { EmbedBuilder, SlashCommandBuilder } = require("discord.js");
 
 module.exports =
 {
@@ -13,18 +13,19 @@ module.exports =
             const guild = interaction.guild;
 
             var target = interaction.options.getUser("user");
-            if (!target) target = interaction.member; // Select the current user if nothing is specified.
+            if (!target) target = interaction.member; // Select the current user if nothing's specified.
             target = guild.members.cache.get(target.id); // Get the user in the server list.
 
-            db.query("SELECT * FROM config WHERE guild = ?", [guild.id], async (err, conf) =>
+            db.query("SELECT * FROM config WHERE guild = ?", [guild.id], async (err, config) =>
             {
                 if (err) throw err;
-                let config = conf;
+                let data = config;
+                if (config.length < 1) data = await fixMissingConfig(guild);
 
-                if (conf.length < 1) config = await fixMissingConfig(guild);
-                if (config[0].xp == 0) return interaction.reply(":warning: The XP system is **disabled** in this server!");
+                if (data[0].xp == 0) return interaction.reply({ content: ":warning: The XP system is disabled in this server!", flags: MessageFlags.Ephemeral });
 
-                switch (interaction.options.getSubcommand()) // Check what sub command has been executed.
+                // Check what sub command has been executed.
+                switch (interaction.options.getSubcommand())
                 {
                     case "rank":
                         displayRank(config[0]);
@@ -33,25 +34,27 @@ module.exports =
                         displayLeaderboard(config[0]);
                         break;
                     default:
-                        interaction.reply(":warning: Unknown **command**!");
+                        interaction.reply({ content: ":warning: Command not found!", flags: MessageFlags.Ephemeral});
                         break;
                 };
             });
 
+            // Display the rank of a member.
             function displayRank(config)
             {
+                if (target.user.bot) return interaction.reply({ content: ":warning: The application doesn't give XP to bots!", flags: MessageFlags.Ephemeral });
+
                 db.query("SELECT * FROM xp WHERE guild = ? AND user = ?", [guild.id, target.user.id], async (err, data) =>
                 {
                     if (err) throw err;
-                    if (data.length < 1) return interaction.reply(":warning: This user **doesn't have any XP**!");
-                    if (target.user.bot) return interaction.reply(":warning: The application doesn't **give XP** to **bots**!");
+                    if (data.length < 1) return interaction.reply({ content: ":warning: This user doesn't have any XP!", flags: MessageFlags.Ephemeral});
 
                     db.query("SELECT * FROM xp WHERE guild = ?", [guild.id], async (err, all) =>
                     {
                         if (err) throw err;
-                        // Calculate the user's position in the server XP.
-                        all = await all.sort((a, b) => (calculXP(parseInt(b.xp), parseInt(b.level)) - calculXP(parseInt(a.xp), parseInt(a.level))));
+                        all = await all.sort((a, b) => (calculXP(parseInt(b.xp), parseInt(b.level)) - calculXP(parseInt(a.xp), parseInt(a.level)))); // Calculate the user's position in the server XP.
 
+                        // Define required data.
                         const currentXP = parseInt(data[0].xp);
                         const currentLevel = parseInt(data[0].level);
                         const nextLevel = 500 + (currentLevel * 10);
@@ -64,17 +67,19 @@ module.exports =
                         .setThumbnail(target.user.avatarURL())
                         .setDescription(`>>> **XP**: ${currentXP}${maxLevel > currentLevel ? `/${nextLevel}` : ""}.\n**Level**: ${currentLevel}/${maxLevel}.\n**Rank**: ${userRank}/${(await guild.members.fetch()).filter(member => !member.user.bot).size}.`)
 
-                        await interaction.reply({ embeds: [embed] });
+                        await interaction.channel.send({ embeds: [embed] });
+                        interaction.deferUpdate();
                     });
                 });
             };
 
+            // Display the guild's leaderboard.
             function displayLeaderboard(config)
             {
                 db.query("SELECT * FROM xp WHERE guild = ?", [guild.id], async (err, data) =>
                 {
                     if (err) throw err;
-                    if (data.length < 1) return interaction.reply(":warning: No members have XP on this server!");
+                    if (data.length < 1) return interaction.reply({ content: ":warning: No members have XP on this server!", flags: MessageFlags.Ephemeral });
 
                     // Calculate the leaderboard.
                     let leaderboard = data.sort((a, b) => (calculXP(parseInt(b.xp), parseInt(b.level)) - calculXP(parseInt(a.xp), parseInt(a.level))));
@@ -89,15 +94,17 @@ module.exports =
 
                     for (let i = 0; i < (data.length > 10 ? 10 : data.length); i++)
                     {
+                        // Define required data.
                         const data = leaderboard[i];
                         const rank = i + 1;
-                        const emojis = ["first", "second", "third"]; // To handle the three medals Discord's emoji.
+                        const emojis = ["first", "second", "third"]; // Medals emoji.
                         const nextLevel = 500 + (data.level * 10);
 
                         embed.addFields([{ name: `${rank < 4 ? `:${emojis[rank - 1]}_place:` : ":medal:"} Top #${rank}`, value: `>>> **User**: <@${data.user}>.\n**Level**: ${data.level}/${maxLevel}.\n**XP**: ${data.xp}${maxLevel > data.level ? `/${nextLevel}` : ""}.` }])
                     };
 
-                    await interaction.reply({ embeds: [embed] });
+                    await interaction.channel.send({ embeds: [embed] });
+                    interaction.deferUpdate();
                 });
             };
         }

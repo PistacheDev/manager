@@ -25,7 +25,7 @@ module.exports =
 
                     const option1 = new TextInputBuilder()
                     .setCustomId("option1")
-                    .setLabel("Alert when level up:")
+                    .setLabel("Do I have to notify the members?")
                     .setPlaceholder("Answer by \"yes\" or \"no\".")
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
@@ -35,7 +35,7 @@ module.exports =
 
                     const option2 = new TextInputBuilder()
                     .setCustomId("option2")
-                    .setLabel("XP per message:")
+                    .setLabel("What's the maximum amount of XP?")
                     .setPlaceholder("Enter the max amount of XP per message (1 ~ 50).")
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
@@ -45,7 +45,7 @@ module.exports =
 
                     const option3 = new TextInputBuilder()
                     .setCustomId("option3")
-                    .setLabel("Maximum Level:")
+                    .setLabel("What will be the maximum level?")
                     .setPlaceholder("Enter the max level wanted (10 ~ 100).")
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
@@ -70,18 +70,18 @@ module.exports =
                     .setColor("Orange")
                     .setAuthor({ name: "Configuration Panel", iconURL: client.user.avatarURL() })
                     .setDescription("Press the button with the **emoji corresponding** to **the option** you want to modify.")
-                    .addFields([{ name: ":gear:・XP system:", value: "➜ :red_circle: Gives XP points to the members per **each message sent**, **between 1** and **the maximum amount of XP points configured**. Each time the members pass the **goal to level up**, their level **increase by 1**. The maximum level is **the configured level**. The members **can be notified** when they level up." }])
+                    .addFields([{ name: ":gear:・XP system:", value: "➜ :red_circle: Gives XP points to the members per **each message sent**, **between 1** and **the maximum amount of XP points configured**. Each time the members pass the **goal to level up**, their level **increases by 1**. The maximum level is **the configured level**. The members **can be notified** when they level up." }])
                     .addFields([{ name: ":trophy:・Goals:", value: `➜ :red_circle: When a member **reaches a certain level**, the application **gives a role** to this member. Yet, **${goals == 10 ? "no roles have been configured" : `it remains ${goals} roles configurable available`}**.` }])
                     .setThumbnail(client.user.avatarURL())
                     .setTimestamp()
                     .setFooter({ text: guild.name, iconURL: guild.iconURL() })
 
                     interaction.message.edit({ embeds: [embed] });
+                    interaction.deferUpdate();
 
                     db.query("UPDATE config SET xp = ? WHERE guild = ?", [0, guild.id], async (err) =>
                     {
                         if (err) throw err;
-                        interaction.deferUpdate();
                     });
                 };
             });

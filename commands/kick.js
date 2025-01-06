@@ -1,4 +1,4 @@
-const { PermissionsBitField, EmbedBuilder, SlashCommandBuilder } = require("discord.js");
+const { PermissionsBitField, EmbedBuilder, SlashCommandBuilder, MessageFlags } = require("discord.js");
 const Perms = PermissionsBitField.Flags;
 
 module.exports =
@@ -18,28 +18,37 @@ module.exports =
             const targetID = target.id;
             const ownerID = guild.ownerId;
 
-            if (targetID == mod.id) return interaction.reply(":warning: You can't kick **yourself**!");
-            if (ownerID == targetID) return interaction.reply(":warning: You can't kick the **server owner**.");
-            if (mod.roles.highest.comparePositionTo(target.roles.highest) <= 0) return interaction.reply(":warning: You **can't kick** this member!");
-            if (targetID == client.user.id) return interaction.reply(":warning: You can't **kick the application** with this command!");
-            if (mod.id != ownerID && target.permissions.has(Perms.Administrator)) return interaction.reply(`:warning: **Only the owner** can kick an administrator!`);
-            if (!target.kickable) return interaction.reply(":warning: **Impossible** to kick this member!");
+            if (targetID == mod.id) return interaction.reply({ content: ":warning: You can't kick yourself!", flags: MessageFlags.Ephemeral });
+            if (ownerID == targetID) return interaction.reply({ content: ":warning: You can't kick the server owner.", flags: MessageFlags.Ephemeral });
+            if (mod.roles.highest.comparePositionTo(target.roles.highest) <= 0) return interaction.reply({ content: ":warning: You can't kick this member!", flags: MessageFlags.Ephemeral });
+            if (targetID == client.user.id) return interaction.reply({ content: ":warning: You can't kick the application with this command!", flags: MessageFlags.Ephemeral });
+            if (mod.id != ownerID && target.permissions.has(Perms.Administrator)) return interaction.reply({ content: ":warning: Only the owner can kick an administrator!", flags: MessageFlags.Ephemeral });
+            if (!target.kickable) return interaction.reply({ content: ":warning: Impossible to kick this member!", flags: MessageFlags.Ephemeral });
 
             target.kick({ reason: `[${mod.id}] ${reason}` }).then(() =>
             {
-                interaction.channel.send(`:man_judge: ${target.user.username} (${target.id}) has been kicked by <@${mod.id}>!\n**Reason**: **\`${reason}\`**`);
+                const embed = new EmbedBuilder()
+                .setColor("Orange")
+                .setThumbnail(target.user.avatarURL())
+                .setDescription(`:man_judge: <@${targetID}> has been kicked!`)
+                .addFields([{ name: ":man_judge:・Moderator:", value: `>>> **User**: <@${mod.id}> @${mod.user.username}.\n**ID**: ${mod.id}.\n**Ban Date**: <t:${Math.floor(Date.now() / 1000)}:F>.` }])
+                .addFields([{ name: ":grey_question:・Reason:", value: `\`\`\`${reason}\`\`\`` }])
+                .setTimestamp()
+                .setFooter({ text: target.user.username, iconURL: target.user.avatarURL() })
+
+                interaction.message.channel({ embeds: [embed] });
                 interaction.deferUpdate();
 
-                const embed = new EmbedBuilder()
-                .setColor("Red")
+                const notif = new EmbedBuilder()
+                .setColor("Orange")
                 .setThumbnail(guild.iconURL())
-                .setDescription(`:scales: You"ve been kicked from **${guild.name}**!`)
+                .setDescription(`:scales: You have been kicked from **${guild.name}**!`)
                 .addFields([{ name: ":man_judge:・Moderator:", value: `>>> **User**: <@${mod.id}> @${mod.user.username}.\n**ID**: ${mod.id}.\n**Kick Date**: <t:${Math.floor(Date.now() / 1000)}:F>.` }])
                 .addFields([{ name: ":grey_question:・Reason:", value: `\`\`\`${reason}\`\`\`` }])
                 .setTimestamp()
                 .setFooter({ text: guild.name, iconURL: guild.iconURL() })
 
-                target.user.createDM({ force: true }).send({ embeds: [embed] });
+                target.user.createDM({ force: true }).send({ embeds: [notif] });
             });
         }
         catch (err)

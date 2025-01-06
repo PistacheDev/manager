@@ -1,4 +1,4 @@
-const { PermissionsBitField, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, SlashCommandBuilder } = require("discord.js");
+const { PermissionsBitField, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, SlashCommandBuilder, MessageFlags } = require("discord.js");
 
 module.exports =
 {
@@ -9,16 +9,18 @@ module.exports =
     {
         try
         {
-            switch (interaction.options.getSubcommand()) // Check what sub command has been executed.
+            // Check what sub command has been executed.
+            switch (interaction.options.getSubcommand())
             {
                 case "add":
                     addRole();
                     break;
                 default:
-                    interaction.reply(":warning: Unknown **command**!");
+                    interaction.reply({ content: ":warning: Command not found!", flags: MessageFlags.Ephemeral});
 					break;
             };
 
+            // Add role to a type of members.
             function addRole()
             {
                 const embed = new EmbedBuilder()
@@ -45,7 +47,7 @@ module.exports =
                     .setStyle(ButtonStyle.Primary)
                 )
 
-                interaction.reply({ embeds: [embed], components: [buttons] });
+                interaction.reply({ embeds: [embed], components: [buttons], flags: MessageFlags.Ephemeral });
             };
         }
         catch (err)
@@ -57,7 +59,7 @@ module.exports =
     {
         return new SlashCommandBuilder()
 		.setName(this.name)
-		.setDescription("Role dedicated commands.")
+		.setDescription("Roles dedicated commands.")
 		.addSubcommand(
 			cmd => cmd
 			.setName("add")

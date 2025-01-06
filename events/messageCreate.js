@@ -1,9 +1,11 @@
+const { MessageFlags } = require("discord.js");
 const { generateNumber } = require("../functions/numberGenerator");
 const { antilinks } = require("../guard/antilinks");
 const { antispam } = require("../guard/antispam");
 const { antipings } = require("../guard/antipings");
 const { antiswear } = require("../guard/antiswear");
 const { bansdef } = require("../guard/bansdef");
+const { levelUp } = require("../functions/levels");
 
 module.exports =
 {
@@ -26,7 +28,7 @@ module.exports =
 
             if (isBanned || isInsulting || isSpamming || containLinks || forbiddenPing) return;
             if (message.author.bot) return;
-            if (message.content == `<@${client.user.id}>`) return message.reply(`:wave: Hey <@${author.id}>! I'm online and functionnal!`);
+            if (message.content == `<@${client.user.id}>`) return message.reply({ content: `:wave: Hey <@${author.id}>! I'm online and functionnal!`, flags: MessageFlags.Ephemeral });
 
             db.query("SELECT * FROM config WHERE guild = ?", [guild.id], async (err, config) =>
             {
@@ -46,36 +48,17 @@ module.exports =
                     };
 
                     const [alert, maxXP, maxLevel] = config[0].xp.split(" ");
-                    let currentXP = parseInt(data[0].xp) + generateNumber(maxXP);
-                    let currentLevel = parseInt(data[0].level);
+                    const xp = parseInt(data[0].xp) + generateNumber(maxXP);
+                    const level = parseInt(data[0].level);
 
-                    if (maxLevel > currentLevel && 500 + (currentLevel * 10) <= currentXP) // Level up the user if he has enough XP to pass to the next level.
+                    if (maxLevel > level && 500 + (level * 10) <= xp) // Check if the user can level up.
                     {
-                        currentXP = currentXP - (500 + (currentLevel * 10));
-                        db.query("UPDATE xp SET xp = ?, level = ? WHERE guild = ? AND user = ?", [currentXP, currentLevel + 1, guild.id, author.id], async (err) =>
-                        {
-                            if (err) throw err;
-                        });
-
-                        if (alert == 1) message.channel.send(`:tada: Congratulation <@${author.id}> @${author.username}! You just passed to **level ${currentLevel + 1}**!`);
-                        for (let i = 0; i < 10; i++)
-                        {
-                            const goal = config[0].xpgoals.split(" ")[i];
-
-                            if (goal != 0)
-                            {
-                                const [requiredLevel, roleID] = goal.split("-");
-
-                                if (currentLevel + 1 >= requiredLevel && !member.roles.cache.has(roleID))
-                                {
-                                    member.roles.add(roleID);
-                                };
-                            };
-                        };
+                        levelUp(guild, member, level, maxLevel, xp);
+                        if (alert == 1) message.reply({ content: `:tada: Congratulation <@${author.id}> @${author.username}! You just passed to **level ${level + 1}**!`, flags: MessageFlags.Ephemeral });
                     }
                     else
                     {
-                        db.query("UPDATE xp SET xp = ? WHERE guild = ? AND user = ?", [currentXP, guild.id, author.id], async (err) =>
+                        db.query("UPDATE xp SET xp = ? WHERE guild = ? AND user = ?", [xp, guild.id, author.id], async (err) =>
                         {
                             if (err) throw err;
                         });

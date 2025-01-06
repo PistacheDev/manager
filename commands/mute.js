@@ -1,4 +1,4 @@
-const { PermissionsBitField, EmbedBuilder, SlashCommandBuilder } = require("discord.js");
+const { PermissionsBitField, EmbedBuilder, SlashCommandBuilder, MessageFlags } = require("discord.js");
 const Perms = PermissionsBitField.Flags;
 
 module.exports =
@@ -21,13 +21,13 @@ module.exports =
             const ownerID = guild.ownerId;
             const scaleStr = scale == "m" ? "minutes" : scale == "h" ? "hours" : "days";
 
-            if (targetID == mod.id) return interaction.reply(":warning: You can't mute **yourself**!");
-            if (ownerID == targetID) return interaction.reply(":warning: You can't mute the **server owner**!");
-            if (mod.roles.highest.comparePositionTo(target.roles.highest) <= 0) return interaction.reply(":warning: You **can't mute** this member!");
-            if (targetID == client.user.id) return interaction.reply(":warning: You **can't mute the application** with this command!");
-            if (target.isCommunicationDisabled()) return interaction.reply(":warning: This member is **already muted**.");
-            if (mod.id != ownerID && target.permissions.has(Perms.Administrator)) return interaction.reply(`:warning: **Only the owner** can ban an administrator!`);
-            if (!target.moderatable) return interaction.reply(":warning: **Impossible** to mute this member!");
+            if (targetID == mod.id) return interaction.reply({ content: ":warning: You can't mute yourself!", flags: MessageFlags.Ephemeral });
+            if (ownerID == targetID) return interaction.reply({ content: ":warning: You can't mute the server owner!", flags: MessageFlags.Ephemeral });
+            if (mod.roles.highest.comparePositionTo(target.roles.highest) <= 0) return interaction.reply({ content: ":warning: You can't mute this member!", flags: MessageFlags.Ephemeral });
+            if (targetID == client.user.id) return interaction.reply({ content: ":warning: You can't mute the application with this command!", flags: MessageFlags.Ephemeral });
+            if (target.isCommunicationDisabled()) return interaction.reply({ content: ":warning: This member is already muted.", flags: MessageFlags.Ephemeral });
+            if (mod.id != ownerID && target.permissions.has(Perms.Administrator)) return interaction.reply({ content: ":warning: Only the owner can mute an administrator!", flags: MessageFlags.Ephemeral});
+            if (!target.moderatable) return interaction.reply({ content: ":warning: Impossible to mute this member!", flags: MessageFlags.Ephemeral });
 
             let timeMs;
             if (scale == "m" || scale == "h" || scale == "d")
@@ -36,23 +36,32 @@ module.exports =
                 if (scale == "m") timeMs = time * 60000;
                 if (scale == "h") timeMs = time * 3600000;
                 if (scale == "d") timeMs = time * 86400000;
-            } else return interaction.reply(":warning: The **scale** that you provided is **incorrect**!\nEnter `m` for **minutes**, `h` for **hours** or `d` for **days**.")
+                if (timeMs < 60000 || timeMs > 604800000) return interaction.reply({ content: ":warning: You can't mute a member less than 1 minute and more than 7 days!", flags: MessageFlags.Ephemeral });
+            } else return interaction.reply({ content: ":warning: The scale that you provided is incorrect!\nEnter `m` for minutes, `h` for hours, or `d` for days.", flags: MessageFlags.Ephemeral })
 
-            if (timeMs < 60000 || timeMs > 604800000) return interaction.reply(":warning: You can't mute a member **less than 1 minute** and **more than 7 days**!");
             target.timeout(timeMs).then(() => {
-                interaction.channel.send(`:man_judge: ${target.user.username} (${targetID}) has been muted by <@${mod.id}> for ${time} ${scaleStr}!\n**Reason**: **\`${reason}\`**`);
-                interaction.deferUpdate();
-
                 const embed = new EmbedBuilder()
                 .setColor("Yellow")
+                .setThumbnail(target.user.avatarURL())
+                .setDescription(`:man_judge: <@${targetID}> has been muted!`)
+                .addFields([{ name: ":man_judge:・Moderator :", value: `>>> **User**: <@${mod.id}> @${mod.user.username}.\n**ID**: ${mod.id}.\n**Mute Duration**: ${time} ${scaleStr}.\n**Sanction Date** : <t:${Math.floor(Date.now() / 1000)}:F>.` }])
+                .addFields([{ name: ":grey_question:・Reason :", value: `\`\`\`${reason}\`\`\`` }])
+                .setTimestamp()
+                .setFooter({ text: target.user.username, iconURL: target.user.avatarURL() })
+
+                interaction.channel.send({ embeds: [embed] });
+                interaction.deferUpdate();
+
+                const notif = new EmbedBuilder()
+                .setColor("Yellow")
                 .setThumbnail(guild.iconURL())
-                .setDescription(`:scales: You"ve been muted in **${guild.name}**!`)
+                .setDescription(`:scales: You have been muted in **${guild.name}**!`)
                 .addFields([{ name: ":man_judge:・Moderator :", value: `>>> **User**: <@${mod.id}> @${mod.user.username}.\n**ID**: ${mod.id}.\n**Mute Duration**: ${time} ${scaleStr}.\n**Sanction Date** : <t:${Math.floor(Date.now() / 1000)}:F>.` }])
                 .addFields([{ name: ":grey_question:・Reason :", value: `\`\`\`${reason}\`\`\`` }])
                 .setTimestamp()
                 .setFooter({ text: guild.name, iconURL: guild.iconURL() })
 
-                target.user.createDM({ force: true }).send({ embeds: [embed] });
+                target.user.createDM({ force: true }).send({ embeds: [notif] });
             });
         }
         catch (err)

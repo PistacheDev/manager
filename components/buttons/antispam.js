@@ -11,7 +11,7 @@ module.exports =
         {
             const guild = interaction.guild;
 
-            db.query(`SELECT * FROM config WHERE guild = ?`, [guild.id], async (err, config) =>
+            db.query("SELECT * FROM config WHERE guild = ?", [guild.id], async (err, config) =>
             {
                 if (err) throw err;
                 let data = config;
@@ -25,7 +25,7 @@ module.exports =
 
                     const option1 = new TextInputBuilder()
                     .setCustomId("option1")
-                    .setLabel("Ignore Bots:")
+                    .setLabel("Do I have to ignore the bots?")
                     .setPlaceholder("Answer by \"yes\" or \"no\".")
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
@@ -35,8 +35,8 @@ module.exports =
 
                     const option2 = new TextInputBuilder()
                     .setCustomId("option2")
-                    .setLabel("Maximum messages:")
-                    .setPlaceholder("Maximum number of messages during the interval.")
+                    .setLabel("What is the maximum number of messages?")
+                    .setPlaceholder("Max number of messages during the interval (1 ~ 10).")
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
 
@@ -45,8 +45,8 @@ module.exports =
 
                     const option3 = new TextInputBuilder()
                     .setCustomId("option3")
-                    .setLabel("Interval:")
-                    .setPlaceholder("Interval of time in seconds.")
+                    .setLabel("What's the interval of time studied?")
+                    .setPlaceholder("Interval of time in seconds (1 ~ 10).")
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
 
@@ -55,8 +55,8 @@ module.exports =
 
                     const option4 = new TextInputBuilder()
                     .setCustomId("option4")
-                    .setLabel("Maximum Warns:")
-                    .setPlaceholder("Maximum of warns before the sanction.")
+                    .setLabel("What's the maximum amount of warnings?")
+                    .setPlaceholder("Maximum of warns before the sanction (1 ~ 5).")
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
 
@@ -65,7 +65,7 @@ module.exports =
 
                     const option5 = new TextInputBuilder()
                     .setCustomId("option5")
-                    .setLabel("Sanction:")
+                    .setLabel("What sanction I have to apply?")
                     .setPlaceholder("Enter \"ban\" to ban or a number (in minutes) to mute.")
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
@@ -97,11 +97,11 @@ module.exports =
                     .setFooter({ text: guild.name, iconURL: guild.iconURL() })
 
                     interaction.message.edit({ embeds: [embed] });
+                    interaction.deferUpdate();
 
                     db.query("UPDATE config SET antispam = ? WHERE guild = ?", [0, guild.id], async (err) =>
                     {
                         if (err) throw err;
-                        interaction.deferUpdate();
                     });
                 };
             });

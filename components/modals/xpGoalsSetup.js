@@ -1,4 +1,4 @@
-const { PermissionsBitField, EmbedBuilder } = require("discord.js");
+const { PermissionsBitField, EmbedBuilder, MessageFlags } = require("discord.js");
 const { fixMissingConfig } = require("../../functions/missingConfig");
 
 module.exports =
@@ -14,18 +14,18 @@ module.exports =
             const roleID = interaction.fields.getTextInputValue("option3");
             const guild = interaction.guild;
 
-            if (isNaN(goal) || isNaN(level)) return interaction.reply(":warning: Please, enter a **number**!");
-            if (goal < 1 || goal > 4) return interaction.reply(":warning: The goal must be **between 1 and 4**!");
-            if (level < 10 || level > 100) return interaction.reply(":warning: The level must be **between 10 and 100**!");
-            if (roleID && !guild.roles.cache.get(roleID)) return interaction.reply(":warning: This role **doesn't exist**!");
+            if (isNaN(goal) || isNaN(level)) return interaction.reply({ content: ":warning: Please, enter a number!", flags: MessageFlags.Ephemeral });
+            if (goal < 1 || goal > 4) return interaction.reply({ content: ":warning: The goal must be between 1 and 4!", flags: MessageFlags.Ephemeral });
+            if (level < 10 || level > 100) return interaction.reply({ content: ":warning: The level must be between 10 and 100!", flgs: MessageFlags.Ephemeral });
+            if (roleID && !guild.roles.cache.get(roleID)) return interaction.reply({ content: ":warning: This role doesn't exist!", flags: MessageFlags.Ephemeral });
 
             db.query("SELECT * FROM config WHERE guild = ?", [guild.id], async (err, config) =>
             {
                 if (err) throw err;
                 let data = config;
                 if (config.length < 1) data = await fixMissingConfig(guild);
+                if (data[0].xp == 0) return interaction.reply({ content: ":warning: The XP system is disabled for this server!", flags: MessageFlags.Ephemeral });
 
-                if (data[0].xp == 0) return interaction.reply(":warning: The XP system is **disabled** in this server!");
                 const xpGoals = data[0].xpgoals.split(" ");
                 xpGoals[goal - 1] = roleID ? `${level}-${roleID}` : 0;
 
@@ -39,11 +39,11 @@ module.exports =
                 };
 
                 interaction.message.edit({ embeds: [embed] });
+                interaction.deferUpdate();
 
                 db.query(`UPDATE config SET xpgoals = ? WHERE guild = ?`, [`${xpGoals[0]} ${xpGoals[1]} ${xpGoals[2]} ${xpGoals[3]} ${xpGoals[4]} ${xpGoals[5]} ${xpGoals[6]} ${xpGoals[7]} ${xpGoals[8]} ${xpGoals[9]}`, guild.id], async (err) =>
                 {
                     if (err) throw err;
-                    interaction.deferUpdate();
                 });
             });
         }
