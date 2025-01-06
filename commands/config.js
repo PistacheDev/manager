@@ -9,8 +9,6 @@ module.exports =
     {
         try
         {
-            const guild = interaction.guild;
-
             var menu = new ActionRowBuilder()
             .addComponents(
                 new StringSelectMenuBuilder()
@@ -34,7 +32,7 @@ module.exports =
             .setThumbnail(client.user.avatarURL())
             .setDescription("Configure the application with **its configuration panel**. Through the different tabs, you will find all the **configurable options** of Manager.\n\n>>> When you are in a **configuration tab**, press the button with the **emoji corresponding** to **the option** you want to modify.\nSome options has **several steps** to **properly configure** them.")
             .setTimestamp()
-            .setFooter({ text: guild.name, iconURL: guild.iconURL() })
+            .setFooter({ text: interaction.guild.name, iconURL: interaction.guild.iconURL() })
 
             interaction.reply({ embeds: [embed], components: [menu] });
         }

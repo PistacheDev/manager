@@ -1,5 +1,5 @@
 const { db, client } = require("../main");
-const { PermissionsBitField } = require("discord.js");
+const { PermissionsBitField, MessageFlags } = require("discord.js");
 
 const messages = new Map();
 const warnings = new Map();
@@ -38,23 +38,19 @@ async function antispam(message)
                 {
                     member.ban({ reason: `[Anti spam] Still spamming after ${warns} warns.` }).then(() =>
                     {
-                        message.reply(`:man_judge: @${member.username} (${author.id}) has been **banned for spamming**!`);
+                        message.reply(`:man_judge: @${member.username} (${author.id}) has been banned for spamming!`);
                     });
                 }
                 else
                 {
                     member.timeout(sanction * 60000).then(() =>
                     {
-                        message.reply(`:man_judge: You"ve been **muted for ${sanction} minutes** for spamming!`);
+                        message.reply({ content: `:man_judge: You've been muted for ${sanction} minutes for spamming!`, flags: MessageFlags.Ephemeral });
                         warnings.set(author.id, 0);
                     });
                 };
             }
-            else
-            {
-                message.reply(`:warning: This is your **warning ${warns}/${maxWarns}** for spamming!`);
-                if (warns == maxWarns) message.channel.send(`:man_judge: Next time, you **will be ${sanction == "ban" ? "banned" : "muted"}** for spamming!`);
-            };
+            else message.reply(`:warning: This is your warning ${warns}/${maxWarns} for spamming!\n${warns == maxWarns ? ` Next time, you will be ${sanction == "ban" ? "ban" : "mute"} for spamming!` : ""}`);
 
             return true;
         };

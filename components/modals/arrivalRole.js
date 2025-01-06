@@ -1,4 +1,4 @@
-const { PermissionsBitField, EmbedBuilder } = require("discord.js");
+const { PermissionsBitField, EmbedBuilder, MessageFlags } = require("discord.js");
 const { fixMissingConfig } = require("../../functions/missingConfig");
 
 module.exports =
@@ -11,13 +11,14 @@ module.exports =
         {
             const guild = interaction.guild;
             const newRole = interaction.fields.getTextInputValue("option");
-            if (newRole && !guild.roles.cache.get(newRole)) return interaction.reply(":warning: This role doesn't exist!");
+            if (newRole && !guild.roles.cache.get(newRole)) return interaction.reply({ content: ":warning: This role doesn't exist!", flags: MessageFlags.Ephemeral });
 
             db.query("SELECT * FROM config WHERE guild = ?", [guild.id], async (err, config) =>
             {
                 if (err) throw err;
                 let data = config;
                 if (config.length < 1) data = await fixMissingConfig(guild);
+                if ((newRole && data[0].joinRole == newRole) || (!newRole && data[0].joinRole == 0)) return interaction.deferUpdate(); // The value didn't change.
 
                 const memberAdd = data[0].memberAdd;
                 const memberRemove = data[0].memberRemove;
@@ -34,11 +35,11 @@ module.exports =
                 .setFooter({ text: guild.name, iconURL: guild.iconURL() })
 
                 interaction.message.edit({ embeds: [embed] });
+                interaction.deferUpdate();
 
                 db.query("UPDATE config SET joinRole = ? WHERE guild = ?", [newRole ? newRole : 0, guild.id], async (err) =>
                 {
                     if (err) throw err;
-                    interaction.deferUpdate();
                 });
             });
         }

@@ -11,7 +11,7 @@ module.exports =
         {
             const guild = interaction.guild;
 
-            db.query(`SELECT * FROM config WHERE guild = ?`, [guild.id], async (err, config) =>
+            db.query("SELECT * FROM config WHERE guild = ?", [guild.id], async (err, config) =>
             {
                 if (err) throw err;
                 let data = config;
@@ -25,7 +25,7 @@ module.exports =
 
                     const option1 = new TextInputBuilder()
                     .setCustomId("option1")
-                    .setLabel("Ignore Bots:")
+                    .setLabel("Do I have to ignore the bots?")
                     .setPlaceholder("Answer by \"yes\" or \"no\".")
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
@@ -35,7 +35,7 @@ module.exports =
 
                     const option2 = new TextInputBuilder()
                     .setCustomId("option2")
-                    .setLabel("Sanction:")
+                    .setLabel("What sanction I have to apply?")
                     .setPlaceholder("Enter \"ban\" to ban or a number (in minutes) to mute.")
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
@@ -67,11 +67,11 @@ module.exports =
                     .setFooter({ text: guild.name, iconURL: guild.iconURL() })
 
                     interaction.message.edit({ embeds: [embed] });
+                    interaction.deferUpdate();
 
                     db.query("UPDATE config SET antipings = ? WHERE guild = ?", [0, guild.id], async (err) =>
                     {
                         if (err) throw err;
-                        interaction.deferUpdate();
                     });
                 };
             });

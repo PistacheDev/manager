@@ -1,4 +1,4 @@
-const { PermissionsBitField, EmbedBuilder, SlashCommandBuilder } = require("discord.js");
+const { PermissionsBitField, EmbedBuilder, SlashCommandBuilder, MessageFlags } = require("discord.js");
 
 module.exports =
 {
@@ -13,23 +13,31 @@ module.exports =
             const guild = interaction.guild;
             const mod = interaction.member;
 
-            if (!target.isCommunicationDisabled()) return interaction.reply(":warning: This member **isn't muted**!");
-            if (!target.moderatable) return interaction.reply(":warning: **Impossible** to unmute this member!");
+            if (!target.isCommunicationDisabled()) return interaction.reply({ content: ":warning: This member isn't muted!", flags: MessageFlags.Ephemeral });
+            if (!target.moderatable) return interaction.reply({ content: ":warning: Impossible to unmute this member!", flags: MessageFlags.Ephemeral });
 
             target.timeout(null).then(() =>
             {
-                interaction.channel.send(`:man_judge: <@${target.id}> has been unmuted by <@${mod.id}>!`);
-                interaction.deferUpdate();
-
                 const embed = new EmbedBuilder()
                 .setColor("Green")
+                .setThumbnail(target.user.avatarURL())
+                .setDescription(`:man_judge: <@${target.id}> has been unmuted!`)
+                .addFields([{ name: ":man_judge:・Moderator:", value: `>>> **User**: <@${mod.id}> @${mod.user.username}.\n**ID**: ${mod.id}.\n**Date de votre désexclusion**: <t:${Math.floor(Date.now() / 1000)}:F>.` }])
+                .setTimestamp()
+                .setFooter({ text: target.user.username, iconURL: target.user.avatarURL() })
+
+                interaction.channel.send({ embeds: [embed] });
+                interaction.deferUpdate();
+
+                const notif = new EmbedBuilder()
+                .setColor("Green")
                 .setThumbnail(guild.iconURL())
-                .setDescription(`:scales: You"ve been unmuted in **${guild.name}**!`)
+                .setDescription(`:scales: You have been unmuted in **${guild.name}**!`)
                 .addFields([{ name: ":man_judge:・Moderator:", value: `>>> **User**: <@${mod.id}> @${mod.user.username}.\n**ID**: ${mod.id}.\n**Date de votre désexclusion**: <t:${Math.floor(Date.now() / 1000)}:F>.` }])
                 .setTimestamp()
                 .setFooter({ text: guild.name, iconURL: guild.iconURL() })
 
-                target.user.createDM({ force: true }).send({ embeds: [embed] });
+                target.user.createDM({ force: true }).send({ embeds: [notif] });
             });
         }
         catch (err)

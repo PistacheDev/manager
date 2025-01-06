@@ -1,4 +1,4 @@
-const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, SlashCommandBuilder } = require("discord.js");
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, SlashCommandBuilder, MessageFlags } = require("discord.js");
 
 module.exports =
 {
@@ -10,7 +10,7 @@ module.exports =
         {
             const embed = new EmbedBuilder()
             .setColor("Orange")
-            .setDescription("Install **the application** on your **server**!")
+            .setDescription("Install the application on your server!")
 
             var button = new ActionRowBuilder()
             .addComponents(
@@ -20,7 +20,7 @@ module.exports =
                 .setStyle(ButtonStyle.Link)
             )
 
-            interaction.reply({ embeds: [embed], components: [button] });
+            interaction.reply({ embeds: [embed], components: [button], flags: MessageFlags.Ephemeral });
         }
         catch (err)
         {

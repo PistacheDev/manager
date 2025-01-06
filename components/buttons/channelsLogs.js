@@ -14,7 +14,7 @@ module.exports =
 
             const option = new TextInputBuilder()
             .setCustomId("option")
-            .setLabel("Channel ID:")
+            .setLabel("Where I have to send the logs? (Channel ID)")
             .setPlaceholder("To disable this option, let this field empty.")
             .setStyle(TextInputStyle.Short)
             .setRequired(false)

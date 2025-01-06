@@ -25,8 +25,8 @@ module.exports =
 
                     const option1 = new TextInputBuilder()
                     .setCustomId("option1")
-                    .setLabel("Maximum Warns:")
-                    .setPlaceholder("Maximum number of warns before the sanction.")
+                    .setLabel("What is the maximum amount of warns?")
+                    .setPlaceholder("Maximum number of warns before the sanction (2 ~ 10).")
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
 
@@ -35,7 +35,7 @@ module.exports =
 
                     const option2 = new TextInputBuilder()
                     .setCustomId("option2")
-                    .setLabel("Sanction:")
+                    .setLabel("What sanction I have to apply?")
                     .setPlaceholder("Enter \"ban\" to ban or a number (in hours) to mute.")
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
@@ -67,11 +67,11 @@ module.exports =
                     .setFooter({ text: guild.name, iconURL: guild.iconURL() })
 
                     interaction.message.edit({ embeds: [embed] });
+                    interaction.deferUpdate();
 
                     db.query("UPDATE config SET warn = ? WHERE guild = ?", [0, guild.id], async (err) =>
                     {
                         if (err) throw err;
-                        interaction.deferUpdate();
                     });
                 };
             });

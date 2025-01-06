@@ -14,7 +14,7 @@ module.exports =
 
             const option = new TextInputBuilder()
             .setCustomId("option")
-            .setLabel("Role ID:")
+            .setLabel("What role I have to attribute? (Role ID)")
             .setPlaceholder("To disable this option, let this field empty.")
             .setStyle(TextInputStyle.Short)
             .setRequired(false)

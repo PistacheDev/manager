@@ -1,4 +1,4 @@
-const { EmbedBuilder, SlashCommandBuilder } = require("discord.js");
+const { EmbedBuilder, SlashCommandBuilder, MessageFlags } = require("discord.js");
 const detector = require("profanity-check");
 const filter = new detector.Filter();
 
@@ -11,7 +11,7 @@ module.exports =
         try
         {
             const message = interaction.options.getString("message");
-            if (filter.isProfane(message)) return interaction.reply(":warning: Please, be **polite**!"); // If an insult has been detected.
+            if (filter.isProfane(message)) return interaction.reply({ content: ":warning: Please, be polite!", flags: MessageFlags.Ephemeral }); // If an insult has been detected.
 
             const embed = new EmbedBuilder()
             .setColor("Orange")

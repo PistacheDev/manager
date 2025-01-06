@@ -25,7 +25,7 @@ module.exports =
 
                     const option1 = new TextInputBuilder()
                     .setCustomId("option1")
-                    .setLabel("Maximum members:")
+                    .setLabel("What is the maximum number of messages?")
                     .setPlaceholder("Maximum of new members during the interval (3 ~ 10).")
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
@@ -35,7 +35,7 @@ module.exports =
 
                     const option2 = new TextInputBuilder()
                     .setCustomId("option2")
-                    .setLabel("Interval:")
+                    .setLabel("What's the interval of time studied?")
                     .setPlaceholder("Interval of time in second (3 ~ 10).")
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
@@ -63,11 +63,11 @@ module.exports =
                     .setFooter({ text: guild.name, iconURL: guild.iconURL() })
 
                     interaction.message.edit({ embeds: [embed] });
+                    interaction.deferUpdate();
 
                     db.query("UPDATE config SET autoraidmode = ? WHERE guild = ?", [0, guild.id], async (err) =>
                     {
                         if (err) throw err;
-                        interaction.deferUpdate();
                     });
                 };
             }); 

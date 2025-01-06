@@ -9,17 +9,17 @@ module.exports =
     {
         try
         {
-            if (!oldMessage.guild) return;
+            if (!oldMessage.guild || oldMessage.author == null || oldMessage.author.bot || oldMessage.content == newMessage.content) return;
             const guild = oldMessage.guild;
+
+            const isInsulting = await antiswear(newMessage);
+            const containLink = await antilinks(newMessage);
+            if (isInsulting || containLink) return;
 
             db.query("SELECT * FROM config WHERE guild = ?", [guild.id], async (err, data) =>
             {
                 if (err) throw err;
-                if (data.length < 1) return;
-
-                const isInsulting = await antiswear(newMessage);
-                const containLink = await antilinks(newMessage);
-                if (isInsulting || containLink || data[0].messagesLogs == 0 || oldMessage.author == null || oldMessage.author.bot || oldMessage.content == newMessage.content) return;
+                if (data.length < 1 || data[0].messagesLogs == 0) return;
 
                 const embed = new EmbedBuilder()
                 .setColor("Blue")

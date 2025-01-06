@@ -1,5 +1,7 @@
-const { PermissionsBitField, SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require("discord.js");
+const { PermissionsBitField, SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags } = require("discord.js");
 const { fixMissingConfig } = require("../functions/missingConfig");
+const { levelUp, levelDown } = require("../functions/levels");
+const { removeGoalRoles } = require("../functions/xpGoals");
 
 module.exports =
 {
@@ -16,15 +18,16 @@ module.exports =
             if (!target) target = interaction.member; // Select the current user if nothing is specified.
             target = guild.members.cache.get(target.id); // Fetch the user in the server list.
 
-            db.query("SELECT * FROM config WHERE guild = ?", [guild.id], async (err, conf) =>
+            db.query("SELECT * FROM config WHERE guild = ?", [guild.id], async (err, config) =>
             {
                 if (err) throw err;
-                let config = conf;
+                let data = config;
+                if (config.length < 1) data = await fixMissingConfig(guild);
 
-                if (conf.length < 1) config = await fixMissingConfig(guild);
-                if (config[0].xp == 0) return interaction.reply(":warning: The XP system is **disabled** in this server!");
+                if (data[0].xp == 0) return interaction.reply({ content: ":warning: The XP system is disabled in this server!", flags: MessageFlags.Ephemeral });
 
-                switch (interaction.options.getSubcommand()) // Check what sub command has been executed.
+                // Check what sub command has been executed.
+                switch (interaction.options.getSubcommand())
                 {
                     case "give":
                         giveXP();
@@ -42,11 +45,12 @@ module.exports =
                         dropXP();
                         break;
                     default:
-                        interaction.reply(":warning: Unknown **command**!");
+                        interaction.reply({ content: ":warning: Command not found!", flags: MessageFlags.Ephemeral });
                         break;
                 };
             });
 
+            // Give some XP to a member.
             function giveXP()
             {
                 const xpToGive = interaction.options.getNumber("amount");
@@ -54,7 +58,7 @@ module.exports =
                 db.query("SELECT * FROM xp WHERE guild = ? AND user = ?", [guild.id, target.id], async (err, data) =>
                 {
                     if (err) throw err;
-                    if (xpToGive > 1000 || xpToGive < 1) return interaction.reply(":warning: You can't give **more than 1000 XP points** and **less than 1 XP point** per giveaway!");
+                    if (xpToGive > 1000 || xpToGive < 1) return interaction.reply({ content: ":warning: You can't give more than 1000 XP points and less than 1 XP point per giveaway!", flags: MessageFlags.Ephemeral });
                     if (data.length < 1)
                     {
                         db.query("INSERT INTO xp (`user`, `guild`, `xp`) VALUES (?, ?, ?)", [target.id, guild.id, 0], async (err) =>
@@ -67,55 +71,24 @@ module.exports =
                     db.query("UPDATE xp SET xp = ? WHERE guild = ? AND user = ?", [xpToGive + parseInt(data[0].xp), guild.id, target.id], async (err) =>
                     {
                         if (err) throw err;
-                        interaction.reply(`:white_check_mark: **${xpToGive} XP points** were gave to <@${target.id}>!`);
+                        interaction.deferUpdate();
 
                         db.query("SELECT * FROM config WHERE guild = ?", [guild.id], async (err, config) =>
                         {
                             if (err) throw err;
 
-                            let currentXP = parseInt(xpToGive + parseInt(data[0].xp));
-                            let currentLevel = parseInt(data[0].level);
+                            const currentXP = parseInt(xpToGive + parseInt(data[0].xp));
+                            const currentLevel = parseInt(data[0].level);
                             const [alert, maxXP, maxLevel] = config[0].xp.split(" ");
+
                             if (currentLevel == maxLevel || currentLevel > maxLevel) return;
-
-                            let nextLevel = 500 + (currentLevel * 10);
-                            let loop = 0; // To avoid to create an infinite loop.
-
-                            while (currentXP >= nextLevel && loop < 3) // Level up while the user has enough XP.
-                            {
-                                currentXP -= nextLevel;
-                                currentLevel += 1;
-                                nextLevel = 500 + (currentLevel * 10);
-                                loop += 1;
-                                if (currentLevel > maxLevel) currentLevel = maxLevel;
-
-                                for (let i = 0; i < 10; i++)
-                                {
-                                    const goal = config[0].xpgoals.split(" ")[i];
-
-                                    if (goal != 0)
-                                    {
-                                        const [requiredLevel, roleID] = goal.split("-");
-
-                                        if (currentLevel >= requiredLevel && !target.roles.cache.has(roleID))
-                                        {
-                                            target.roles.add(roleID);
-                                        };
-                                    };
-                                };
-
-                                db.query("UPDATE xp SET xp = ?, level = ? WHERE guild = ? AND user = ?", [currentXP, currentLevel, guild.id, target.id], async (err) =>
-                                {
-                                    if (err) throw err;
-                                });
-
-                                if (currentLevel == maxLevel) break; // Stop level up the user if he reached the max level.
-                            };
+                            levelUp(guild, target, currentLevel, maxLevel, currentXP);
                         });
                     });
                 });
             };
 
+            // Remove some XP to a member.
             function removeXP()
             {
                 const xpToRemove = interaction.options.getNumber("amount");
@@ -123,77 +96,65 @@ module.exports =
                 db.query("SELECT * FROM xp WHERE guild = ? AND user = ?", [guild.id, target.id], async (err, data) =>
                 {
                     if (err) throw err;
-                    if (data.length < 1) return interaction.reply(":warning: This user **doesn't have** any XP!");
-                    if (xpToRemove > 1000 || xpToRemove < 1) return interaction.reply(":warning: You can't remove **more than 1000 XP points** and **less than 1 XP point** per sanction!");
+                    if (data.length < 1) return interaction.reply({ content: ":warning: This user doesn't have any XP!", flags: MessageFlags.Ephemeral });
+                    if (xpToRemove > 1000 || xpToRemove < 1) return interaction.reply({ content: ":warning: You can't remove more than 1000 XP points and less than 1 XP point per sanction!", flags: MessageFlags.Ephemeral });
 
                     db.query("UPDATE xp SET xp = ? WHERE guild = ? AND user = ?", [parseInt(data[0].xp) - xpToRemove, guild.id, target.id], async (err) =>
                     {
                         if (err) throw err;
-                        interaction.reply(`:white_check_mark: **${xpToRemove} XP points** were removed from <@${target.id}>!`);
+                        interaction.deferUpdate();
 
-                        let currentXP = parseInt(parseInt(data[0].xp) - xpToRemove);
-                        let currentLevel = parseInt(data[0].level);
-                        let previousLevel = 500 + ((currentLevel - 1) * 10);
-                        let loop = 0; // To avoid to create an infinite loop.
-
-                        while (currentXP < 0 && loop < 3) // Level down the user while his amount of XP is negative.
-                        {
-                            currentXP += previousLevel;
-                            currentLevel -= 1;
-                            previousLevel = 500 + ((currentLevel - 1) * 10);
-                            loop += 1;
-
-                            if (currentLevel < 0)
-                            {
-                                currentLevel = 0;
-                                currentXP = 0;
-                            };
-
-                            db.query("UPDATE xp SET xp = ?, level = ? WHERE guild = ? AND user = ?", [currentXP, currentLevel, guild.id, target.id], async (err) =>
-                            {
-                                if (err) throw err;
-                            });
-
-                            if (currentLevel == 0 && currentXP == 0) break; // Stop level down the user if it's now impossible.
-                        };
+                        const xp = parseInt(parseInt(data[0].xp) - xpToRemove);
+                        const level = parseInt(data[0].level);
+                        levelDown(guild, target, level, xp);
                     });
                 });
             };
 
+            // Remove the XP for the whole server.
             function removeAll()
             {
-                if (interaction.user.id != guild.ownerId) return interaction.reply({ content: ":warning: This interaction **is restricted** to the **server's owner**.", ephemeral: true });
+                if (interaction.user.id != guild.ownerId) return interaction.reply({ content: ":warning: This interaction is restricted to the server owner only.", flags: MessageFlags.Ephemeral });
 
                 db.query("DELETE FROM xp WHERE guild = ?", [guild.id], async (err) =>
                 {
                     if (err) throw err;
-                    interaction.reply(":white_check_mark: Successfully removed the XP of every members of the server!");
+                    interaction.deferUpdate();
+
+                    // Remove the goals role for everyone.
+                    guild.members.forEach(async member =>
+                    {
+                        if (member.bot) return;
+                        removeGoalRoles(member, guild, 0);
+                    });
                 });
             };
 
+            // Remove the whole XP of a member.
             function clearXP()
             {
                 db.query("SELECT * FROM xp WHERE guild = ? AND user = ?", [guild.id, target.id], async (err, data) =>
                 {
                     if (err) throw err;
-                    if (data.length < 1) return interaction.reply(":warning: This user **doesn't have** any XP!");
+                    if (data.length < 1) return interaction.reply({ content: ":warning: This user doesn't have any XP!", flags: MessageFlags.Ephemeral });
 
                     db.query("DELETE FROM xp WHERE guild = ? AND user = ?", [guild.id, target.id], async (err) =>
                     {
                         if (err) throw err;
-                        interaction.reply(`:white_check_mark: **${data[0].level} levels** and **${data[0].xp} XP points** of <@${target.id}> were deleted successfully!`);
+                        interaction.deferUpdate();
                     });
                 });
             };
 
+            // Drop a little XP reward.
             function dropXP()
             {
                 const amountXP = interaction.options.getNumber("amount");
-                if (amountXP > 1000 || amountXP < 1) return interaction.reply(":warning: You can't drop **more than 1000 XP points** and **less than 1 XP point**!");
+                if (amountXP > 1000 || amountXP < 1) return interaction.reply({ content: ":warning: You can't drop more than 1000 XP points and less than 1 XP point!", flags: MessageFlags.Ephemeral });
 
                 const embed = new EmbedBuilder()
                 .setColor("Orange")
-                .setDescription(`:tada: The **first person** who click on the **button bellow** will gain **${amountXP} XP points**!`)
+                .setDescription(`:tada: The **first person** who clicks on the **button bellow** will receive **${amountXP} XP points**!\n**Giveaway by** <@${interaction.user.id}>!`)
 
                 var button = new ActionRowBuilder()
                 .addComponents(
@@ -203,7 +164,8 @@ module.exports =
                     .setStyle(ButtonStyle.Success)
                 )
 
-                interaction.reply({ content: `||[${amountXP}]||`, embeds: [embed], components: [button] });
+                interaction.channel.send({ content: `||[${amountXP}-${interaction.user.id}]||`, embeds: [embed], components: [button] });
+                interaction.deferUpdate();
             };
         }
         catch (err)

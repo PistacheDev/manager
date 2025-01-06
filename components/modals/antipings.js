@@ -1,4 +1,4 @@
-const { PermissionsBitField, EmbedBuilder } = require("discord.js");
+const { PermissionsBitField, EmbedBuilder, MessageFlags } = require("discord.js");
 const { fixMissingConfig } = require("../../functions/missingConfig");
 
 module.exports =
@@ -13,9 +13,9 @@ module.exports =
             const sanction = interaction.fields.getTextInputValue("option2");
             const guild = interaction.guild;
 
-            if (ignoreBots != "yes" && ignoreBots != "no") return interaction.reply(":warning: Your answer for the **Ignore Bots** option is invalid!");
-            if (sanction != "ban" && isNaN(sanction)) return interaction.reply(":warning: Pleasem enter a **number** or \"ban\" for the sanction!");
-            if (sanction != "ban" && (sanction < 1 || sanction > 70560)) return interaction.reply(":warning: The mute can't last **less than 1 minute** or **longer than 7 days (70560)**!");
+            if (ignoreBots != "yes" && ignoreBots != "no") return interaction.reply({ content: ":warning: Your answer for the `ignore bots` option is invalid!", flags: MessageFlags.Ephemeral });
+            if (sanction != "ban" && isNaN(sanction)) return interaction.reply({ content: ":warning: Please, enter a number or \"ban\" for the sanction!", flags: MessageFlags.Ephemeral });
+            if (sanction != "ban" && (sanction < 1 || sanction > 70560)) return interaction.reply({ content: ":warning: The mute can't last less than 1 minute or longer than 7 days (70560)!", flags: MessageFlags.Ephemeral });
 
             db.query("SELECT * FROM config WHERE guild = ?", [guild.id], async (err, config) =>
             {
@@ -42,11 +42,11 @@ module.exports =
                 .setFooter({ text: guild.name, iconURL: guild.iconURL() })
 
                 interaction.message.edit({ embeds: [embed] });
+                interaction.deferUpdate();
 
                 db.query("UPDATE config SET antipings = ? WHERE guild = ?", [`${ignoreBots == "yes" ? 1 : 0} ${sanction}`, guild.id], async (err) =>
                 {
                     if (err) throw err;
-                    interaction.deferUpdate();
                 });
             });
         }

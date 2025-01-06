@@ -1,4 +1,4 @@
-const { PermissionsBitField, EmbedBuilder, SlashCommandBuilder } = require("discord.js");
+const { PermissionsBitField, EmbedBuilder, SlashCommandBuilder, MessageFlags } = require("discord.js");
 
 module.exports =
 {
@@ -15,23 +15,20 @@ module.exports =
             const guild = interaction.guild;
             const mod = interaction.member;
 
-		    if (channel.permissionOverwrites.cache.get(guild.roles.everyone.id)?.allow.toArray(false).includes("SendMessages")) return interaction.reply(":warning: This channel **isn't locked**.");
-	        if (!channel.manageable) return interaction.reply(":warning: **Impossible** to unlock this channel.");
+		    if (channel.permissionOverwrites.cache.get(guild.roles.everyone.id)?.allow.toArray(false).includes("SendMessages")) return interaction.reply({ content: ":warning: This channel isn't locked.", flags: MessageFlags.Ephemeral });
+	        if (!channel.manageable) return interaction.reply({ content: ":warning: Impossible to unlock this channel.", flags: MessageFlags.Ephemeral });
 
 	        channel.permissionOverwrites.edit(guild.roles.everyone.id,
             {
-    	        SendMessages: true // Add the SendMessages permission for the @everyone role.
+    	        SendMessages: true // Add the SendMessages permission for everyone.
 	        }).then(() =>
             {
 	            const embed = new EmbedBuilder()
     	        .setColor("Gold")
-    	        .setDescription(`:unlock: **This channel** is now **unlocked**.\n:man_judge: **Moderator**: <@${mod.id}> @${mod.user.username}.`)
+    	        .setDescription(`:unlock: This channel is now unlocked.\n:man_judge: **Moderator**: <@${mod.id}> @${mod.user.username}.`)
 
-                if (channel.id != interaction.channel.id)
-                {
-                    channel.send({ embeds: [embed] });
-                    interaction.reply(`:white_check_mark: <#${channel.id}> has been **unlocked successfully**!`);
-                } else interaction.reply({ embeds: [embed] });
+                channel.send({ embeds: [embed] });
+                interaction.deferUpdate();
 	        });
         }
         catch (err)

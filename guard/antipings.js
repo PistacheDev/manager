@@ -25,14 +25,14 @@ async function antipings(message)
             {
                 member.ban({ reason: `Anti pings enabled!` }).then(() =>
                 {
-                    message.channel.send(`:man_judge: @${member.username} (${author.id}) has been **banned for using the ${mention} mention**!`);
+                    message.channel.send(`:man_judge: @${member.username} (*${author.id}*) has been banned for using the ${mention} mention!`);
                 });
             }
             else
             {
                 member.timeout(sanction * 60000).then(() =>
                 {
-                    message.channel.send(`:man_judge: <@${author.id}>, you"ve been **muted for ${sanction} minutes** for using the ${mention} mention!`);
+                    message.channel.send(`:man_judge: <@${author.id}> has been muted for ${sanction} minutes for using the ${mention} mention!`);
                 });
             };
 

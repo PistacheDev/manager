@@ -33,11 +33,11 @@ module.exports =
                 .setFooter({ text: guild.name, iconURL: guild.iconURL() })
 
                 interaction.message.edit({ embeds: [embed] });
+                interaction.deferUpdate();
 
                 db.query("UPDATE config SET antibots = ? WHERE guild = ?", [antibots == 0 ? 1 : 0, guild.id], async (err) =>
                 {
                     if (err) throw err;
-                    interaction.deferUpdate();
                 });
             });
         }

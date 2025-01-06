@@ -29,7 +29,7 @@ module.exports =
 
                     const option = new TextInputBuilder()
                     .setCustomId("option")
-                    .setLabel("Channel ID:")
+                    .setLabel("Where I have to send the logs? (Channel ID)")
                     .setPlaceholder("To disable this option, let this field empty.")
                     .setStyle(TextInputStyle.Short)
                     .setRequired(false)
@@ -49,7 +49,7 @@ module.exports =
 
                     const option1 = new TextInputBuilder()
                     .setCustomId("option1")
-                    .setLabel("Role ID:")
+                    .setLabel("What role will be mentioned?")
                     .setPlaceholder("Enter a role ID or @everyone.")
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
@@ -59,7 +59,7 @@ module.exports =
 
                     const option2 = new TextInputBuilder()
                     .setCustomId("option2")
-                    .setLabel("YouTube channel:")
+                    .setLabel("What's the targeted YouTube channel?")
                     .setPlaceholder("Enter the channel URL (https://www.youtube.com/@example).")
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)

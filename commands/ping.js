@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require("discord.js");
+const { SlashCommandBuilder, MessageFlags } = require("discord.js");
 
 module.exports =
 {
@@ -8,7 +8,7 @@ module.exports =
     {
         try
         {
-            await interaction.reply(`:ping_pong: **Application Latency**: \`${client.ws.ping}\`ms.`);
+            await interaction.reply({ content: `:ping_pong: Application Latency: ${client.ws.ping}ms.`, flags: MessageFlags.Ephemeral });
         }
         catch (err)
         {

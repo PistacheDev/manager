@@ -1,4 +1,4 @@
-const { PermissionsBitField, EmbedBuilder } = require("discord.js");
+const { PermissionsBitField, EmbedBuilder, MessageFlags } = require("discord.js");
 const { fixMissingConfig } = require("../../functions/missingConfig");
 
 module.exports =
@@ -13,9 +13,9 @@ module.exports =
             const sanction = interaction.fields.getTextInputValue("option2");
             const guild = interaction.guild;
 
-            if (isNaN(maxWarns) || (sanction != "ban" && isNaN(sanction))) return interaction.reply(":warning: Please! Enter a **number**!");
-            if (maxWarns < 2 || maxWarns > 10) return interaction.reply(":warning: The maximum warns count must be **between 2 and 10 warns**!");
-            if (sanction != "ban" && (sanction < 1 || sanction > 168)) return interaction.reply(":warning: The mute can't last **less than 1 hour** or **longer than 7 days (168)**!");
+            if (isNaN(maxWarns) || (sanction != "ban" && isNaN(sanction))) return interaction.reply({ content: ":warning: Please! Enter a number!", flags: MessageFlags.Ephemeral });
+            if (maxWarns < 2 || maxWarns > 10) return interaction.reply({ content: ":warning: The maximum warns count must be between 2 and 10 warns!", flags: MessageFlags.Ephemeral });
+            if (sanction != "ban" && (sanction < 1 || sanction > 168)) return interaction.reply({ content: ":warning: The mute can't last less than 1 hour or longer than 7 days (*168*)!", flags: MessageFlags.Ephemeral });
 
             db.query("SELECT * FROM config WHERE guild = ?", [guild.id], async (err, config) =>
             {
@@ -42,11 +42,11 @@ module.exports =
                 .setFooter({ text: guild.name, iconURL: guild.iconURL() })
 
                 interaction.message.edit({ embeds: [embed] });
+                interaction.deferUpdate();
 
                 db.query("UPDATE config SET warn = ? WHERE guild = ?", [`${maxWarns} ${sanction}`, guild.id], async (err) =>
                 {
                     if (err) throw err;
-                    interaction.deferUpdate();
                 });
             });
         }

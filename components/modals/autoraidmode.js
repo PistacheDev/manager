@@ -1,4 +1,4 @@
-const { EmbedBuilder } = require("discord.js");
+const { EmbedBuilder, MessageFlags } = require("discord.js");
 const { fixMissingConfig } = require("../../functions/missingConfig");
 
 module.exports =
@@ -13,9 +13,9 @@ module.exports =
             const maxMembers = interaction.fields.getTextInputValue("option1");
             const interval = interaction.fields.getTextInputValue("option2");
 
-            if (isNaN(maxMembers) || isNaN(interval)) return interaction.reply(":warning: Please, enter a **number**!");
-            if (maxMembers < 3 || maxMembers > 10) return interaction.reply(":warning: The maximum members must be **between 3 and 10**!");
-            if (interval < 3 || interval > 10) return interaction.reply(":warning: The interval must be **between 1 and 10 seconds**");
+            if (isNaN(maxMembers) || isNaN(interval)) return interaction.reply({ content: ":warning: Please, enter a number!", flags: MessageFlags.Ephemeral });
+            if (maxMembers < 3 || maxMembers > 10) return interaction.reply({ content: ":warning: The maximum members must be between 3 and 10!", flags: MessageFlags.Ephemeral });
+            if (interval < 3 || interval > 10) return interaction.reply({ content: ":warning: The interval must be between 1 and 10 seconds!", flags: MessageFlags.Ephemeral });
 
             db.query("SELECT * FROM config WHERE guild = ?", [guild.id], async (err, config) =>
             {
@@ -38,11 +38,11 @@ module.exports =
                 .setFooter({ text: guild.name, iconURL: guild.iconURL() })
 
                 interaction.message.edit({ embeds: [embed] });
+                interaction.deferUpdate();
 
                 db.query("UPDATE config SET autoraidmode = ? WHERE guild = ?", [`${maxMembers} ${interval}`, guild.id], async (err) =>
                 {
                     if (err) throw err;
-                    interaction.deferUpdate();
                 });
             });
         }

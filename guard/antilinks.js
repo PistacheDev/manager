@@ -1,5 +1,5 @@
 const { db, client } = require("../main");
-const { PermissionsBitField } = require("discord.js");
+const { PermissionsBitField, MessageFlags } = require("discord.js");
 const url = require("../json/url.json");
 
 async function antilinks(message)
@@ -26,11 +26,9 @@ async function antilinks(message)
 
         if (occurences > 0 && (!isGif || isGif && occurences > 1))
         {
-            message.delete().then(() =>
-            {
-                message.channel.send(`:warning: <@${author.id}>, links aren't allowed in this server!`);
-                return true;
-            });
+            message.reply({ content: `:warning: <@${author.id}>, links aren't allowed in this server!`, flags: MessageFlags.Ephemeral });
+            message.delete();
+            return true;
         };
 
         return false;

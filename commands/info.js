@@ -1,4 +1,4 @@
-const { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, PermissionsBitField, SlashCommandBuilder } = require("discord.js");
+const { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, PermissionsBitField, SlashCommandBuilder, MessageFlags } = require("discord.js");
 const { boot } = require("../main");
 const config = require("../json/config.json");
 const package = require("../package.json");
@@ -15,7 +15,8 @@ module.exports =
         {
             const guild = interaction.guild;
 
-            switch (interaction.options.getSubcommand()) // Check what sub command has been executed.
+            // Check what sub command has been executed.
+            switch (interaction.options.getSubcommand())
             {
                 case "application":
                     appInfo();
@@ -36,10 +37,11 @@ module.exports =
                     userInfo();
                     break;
                 default:
-                    interaction.reply(":warning: Unknown **command**!");
+                    interaction.reply({ content: ":warning: Command not found!", flags: MessageFlags.Ephemeral });
                     break;
             };
 
+            // App's information.
             async function appInfo()
             {
                 const embed = new EmbedBuilder()
@@ -51,6 +53,11 @@ module.exports =
 
                 var buttons = new ActionRowBuilder()
                 .addComponents(
+                    new ButtonBuilder()
+                    .setURL("https://manager.pistachedev.fr/home")
+                    .setLabel("Website")
+                    .setStyle(ButtonStyle.Link)
+                ).addComponents(
                     new ButtonBuilder()
                     .setURL(client.user.avatarURL())
                     .setLabel("Icon")
@@ -67,14 +74,15 @@ module.exports =
                     .setStyle(ButtonStyle.Link)
                 )
 
-                await interaction.reply({ embeds: [embed], components: [buttons] });
+                await interaction.reply({ embeds: [embed], components: [buttons], flags: MessageFlags.Ephemeral });
             };
 
+            // Emoji's information.
             async function emojiInfo()
             {
                 const emojiID = interaction.options.getString("id");
                 const emoji = guild.emojis.cache.get(emojiID); // Get the emoji in the server list.
-                if (!emoji) return interaction.reply(":warning: This emoji **doesn't exist**!");
+                if (!emoji) return interaction.reply({ content: ":warning: This emoji **doesn't exist**!", flags: MessageFlags.Ephemeral });
 
                 const embed = new EmbedBuilder()
                 .setColor("Orange")
@@ -89,34 +97,38 @@ module.exports =
                     .setStyle(ButtonStyle.Link)
                 )
 
-                await interaction.reply({ embeds: [embed], components: [button] });
+                await interaction.reply({ embeds: [embed], components: [button], flags: MessageFlags.Ephemeral });
             };
 
+            // Role's information.
             async function roleInfo()
             {
                 const role = interaction.options.getRole("role");
+                if (!guild.roles.cache.get(role)) return interaction.reply({ content: ":warning: This role doesn't exist!", flags: MessageFlags.Ephemeral });
 
                 const embed = new EmbedBuilder()
                 .setColor("Orange")
                 .setThumbnail(guild.iconURL())
                 .setDescription(`### Role information:\n >>> **Name**: <@&${role.id}> \`${role.name}\`.\n**ID**: ${role.id}.\n**Administrator**: ${role.permissions.has(PermissionsBitField.Flags.Administrator) ? "Yes" : "No"}.\n**Mentionable**: ${role.mentionable ? "Yes" : "No"}.\n**Color**: ${role.hexColor}.\n**Position**: ${role.guild.roles.cache.size - role.position}/${role.guild.roles.cache.size}.\n**Creation Date**: <t:${Math.floor(role.createdAt / 1000)}:F>`)
 
-                await interaction.reply({ embeds: [embed] });
+                await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
             };
 
+            // Channel's information.
             async function channelInfo()
             {
                 var channel = interaction.options.getChannel("channel");
-                if (!channel) channel = interaction.channel; // Select the current channel if nothing is specified.
+                if (!channel) channel = interaction.channel; // Select the current channel if nothing's specified.
 
                 const embed = new EmbedBuilder()
                 .setColor("Orange")
                 .setThumbnail(guild.iconURL())
                 .setDescription(`### Channel information:\n >>> **Name**: <#${channel.id}> \`${channel.name}\`.\n**Type**: ${channelTypes[channel.type.toString()]}.\n**Public**: ${channel.permissionOverwrites.cache.get(channel.guild.roles.everyone.id)?.deny.toArray(false).includes("ViewChannel") ? "No" : "Yes"}.\n**ID**: ${channel.id}.\n**Category**: ${channel.parent ? channel.parent.name : "None"}.\n**Position**: ${channel.position + 1}.\n**Creation Date**: <t:${Math.floor(channel.createdAt / 1000)}:F>.`)
 
-                await interaction.reply({ embeds: [embed] });
+                await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
             };
 
+            // Guild's information.
             async function guildInfo()
             {
                 const embed = new EmbedBuilder()
@@ -135,24 +147,22 @@ module.exports =
                     .setStyle(ButtonStyle.Link)
                 )
 
-                await interaction.reply({ embeds: [embed], components: [button] });
+                await interaction.reply({ embeds: [embed], components: [button], flags: MessageFlags.Ephemeral });
             };
 
+            // User's information.
             async function userInfo()
             {
                 var target = interaction.options.getUser("user");
-                if (!target) target = interaction.member; // Select the current user if nothing is specified.
-
+                if (!target) target = interaction.member; // Select the current user if nothing's specified.
                 target = guild.members.cache.get(target.id); // Get the user in the server list.
                 let userRoles = "";
 
                 target.roles.cache.forEach(role =>
                 {
-                    if (role.name == "@everyone") return;
+                    if (role.name == "@everyone") return; // Ignore @everyone.
                     if (userRoles == "") userRoles = `<@&${role.id}>`;
-
-                    // Update the list.
-                    userRoles = `${userRoles}, <@&${role.id}>`;
+                    userRoles = `${userRoles}, <@&${role.id}>`; // Update the list.
                 });
 
                 db.query("SELECT * FROM warns WHERE guild = ? AND target = ?", [guild.id, target.id], async (err, warns) =>
@@ -183,7 +193,7 @@ module.exports =
                             .setStyle(ButtonStyle.Link)
                         )
 
-                        await interaction.reply({ embeds: [embed], components: [button] });
+                        await interaction.reply({ embeds: [embed], components: [button], flags: MessageFlags.Ephemeral });
                     });
                 });
             };

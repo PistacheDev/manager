@@ -17,8 +17,7 @@ module.exports =
                 if (data.length < 1 || data[0].channelsLogs == 0) return;
 
                 const auditLogs = await guild.fetchAuditLogs({ type: AuditLogEvent.ChannelCreate, limit: 10 }); // Fetch server logs.
-                const results = auditLogs.entries;
-                const log = results.find(entry => entry.targetId == channel.id); // Fetch for the latest log with the channel ID.
+                const log = auditLogs.entries.find(entry => entry.targetId == channel.id); // Fetch for the latest log with the channel ID.
                 if (!log) return;
 
                 const embed = new EmbedBuilder()

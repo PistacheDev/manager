@@ -1,4 +1,4 @@
-const { PermissionsBitField, EmbedBuilder } = require("discord.js");
+const { PermissionsBitField, EmbedBuilder, MessageFlags } = require("discord.js");
 const { fixMissingConfig } = require("../../functions/missingConfig");
 
 module.exports =
@@ -11,13 +11,14 @@ module.exports =
         {
             const guild = interaction.guild;
             const newChannel = interaction.fields.getTextInputValue("option");
-            if (newChannel && !guild.channels.cache.get(newChannel)) return interaction.reply(":warning: This channel doesn't exist or the application can't access it!");
+            if (newChannel && !guild.channels.cache.get(newChannel)) return interaction.reply({ content: ":warning: This channel doesn't exist or the application can't access it!", flags: MessageFlags.Ephemeral });
 
             db.query("SELECT * FROM config WHERE guild = ?", [guild.id], async (err, config) =>
             {
                 if (err) throw err;
                 let data = config;
                 if (config.length < 1) data = await fixMissingConfig(guild);
+                if ((newChannel && data[0].messagesLogs == newChannel) || (!newChannel && data[0].messagesLogs == 0)) return interaction.deferUpdate(); // The value didn't change.
 
                 const channelsLogs = data[0].channelsLogs;
                 const bansLogs = data[0].bansLogs;
@@ -34,11 +35,11 @@ module.exports =
                 .setFooter({ text: guild.name, iconURL: guild.iconURL() })
 
                 interaction.message.edit({ embeds: [embed] });
+                interaction.deferUpdate();
 
                 db.query("UPDATE config SET messagesLogs = ? WHERE guild = ?", [newChannel ? newChannel : 0, guild.id], async (err) =>
                 {
                     if (err) throw err;
-                    interaction.deferUpdate();
                 });
             });
         }

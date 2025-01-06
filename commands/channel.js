@@ -1,4 +1,4 @@
-const { PermissionsBitField, SlashCommandBuilder } = require("discord.js");
+const { PermissionsBitField, SlashCommandBuilder, MessageFlags } = require("discord.js");
 
 module.exports =
 {
@@ -10,36 +10,39 @@ module.exports =
 		try
 		{
 			var channel = interaction.options.getChannel("channel");
-			if (!channel) channel = interaction.channel; // Select the current channel if nothing is specified.
+			if (!channel) channel = interaction.channel; // Select the current channel if nothing's specified.
 
-			switch (interaction.options.getSubcommand()) // Check what sub command has been executed.
+			// Check what sub command has been executed.
+			switch (interaction.options.getSubcommand())
 			{
 				case "clone":
-					cloneChannel();
+					clone();
 					break;
 				case "recreate":
-					recreateChannel();
+					recreate();
 					break;
 				default:
-					interaction.reply(":warning: Unknown **command**!");
+					interaction.reply({ content: ":warning: Command not found!", flags: MessageFlags.Ephemeral });
 					break;
 			};
 
-			function cloneChannel()
+			// Clone the channel.
+			function clone()
 			{
 				channel.clone().then(async () =>
 				{
-					await interaction.reply(`:white_check_mark: <#${channel.id}> has been **cloned** successfully!`);
+					interaction.deferUpdate();
 				});
 			};
 
-			function recreateChannel()
+			// Clone and delete the original channel.
+			function recreate()
 			{
 				channel.clone().then(newChannel =>
 				{
 					channel.delete();
 					newChannel.send(`:repeat: Channel **recreated**!`);
-					if (channel.id != interaction.channel.id) interaction.reply(`:white_check_mark: <#${channel.id}> has been **recreated** successfully!`);
+					interaction.deferUpdate();
 				});
 			};
 		}

@@ -1,4 +1,4 @@
-const { PermissionsBitField, EmbedBuilder } = require("discord.js");
+const { PermissionsBitField, EmbedBuilder, MessageFlags } = require("discord.js");
 const { fixMissingConfig } = require("../../functions/missingConfig");
 const axios = require("axios");
 const cheerio = require("cheerio");
@@ -15,8 +15,20 @@ module.exports =
             const channelURL = interaction.fields.getTextInputValue("option2");
             const guild = interaction.guild;
 
-            if (roleID != "@everyone" && !guild.roles.cache.get(roleID)) return interaction.reply(":warning: This role doesn't exist!");
-            const request = await axios.get(`${channelURL}/videos`);
+            if (roleID != "@everyone" && !guild.roles.cache.get(roleID)) return interaction.reply({ content: ":warning: This role doesn't exist!", flags: MessageFlags.Ephemeral });
+            let request;
+
+            try
+            {
+                request = await axios.get(`${channelURL}/videos`)
+            }
+            catch (err)
+            {
+                interaction.reply({ content: ":warning: This YouTube channel doesn't exist!", flags: MessageFlags.Ephemeral });
+                console.error(`[error] ${this.name}, request, ${err}, ${Date.now()}`);
+                return;
+            };
+
             const html = cheerio.load(request.data).html();
             const regex = /"webCommandMetadata":{"url":"\/watch\?v=([^"]+)"/;
             const latestVideoID = `${html.match(regex) ? html.match(regex)[1] : 0}`;
@@ -42,11 +54,11 @@ module.exports =
                 .setFooter({ text: guild.name, iconURL: guild.iconURL() })
 
                 interaction.message.edit({ embeds: [embed] });
+                interaction.deferUpdate();
 
                 db.query("UPDATE config SET youtube = ? WHERE guild = ?", [`${channelID} ${roleID} ${youtubeID} ${latestVideoID} 0`, guild.id], async (err) =>
                 {
                     if (err) throw err;
-                    interaction.deferUpdate();
                 });
             });
         }

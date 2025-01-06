@@ -1,4 +1,4 @@
-const { PermissionsBitField, SlashCommandBuilder } = require("discord.js");
+const { PermissionsBitField, SlashCommandBuilder, MessageFlags } = require("discord.js");
 
 module.exports =
 {
@@ -10,39 +10,26 @@ module.exports =
         try
         {
             var channel = interaction.options.getChannel("channel");
-            if (!channel) channel = interaction.channel; // Select the current channel if nothing is specified.
+            if (!channel) channel = interaction.channel; // Select the current channel if nothing's specified.
 
             const amount = interaction.options.getNumber("amount");
 	        const messages = await channel.messages.fetch({ limit: 100 }); // Fetch the 100 latest messages.
 
-    	    if (amount < 1 || amount > 100) return interaction.reply(":warning: Please! Enter a number **between 1** and **100**!");
-    	    if (messages.length <= 0) return interaction.reply(":warning: **No message available** in this channel!");
+    	    if (amount < 1 || amount > 100) return interaction.reply({ content: ":warning: Please! Enter a number between 1 and 100!", flags: MessageFlags.Ephemeral });
+    	    if (messages.length <= 0) return interaction.reply({ content: ":warning: No message available in this channel!", flags: MessageFlags.Ephemeral });
 
 	        channel.bulkDelete(amount).then(async () =>
             {
     	        const deletedCount = Math.min(amount, messages.size); // Calculate the number of deleted messages.
-                let messageToDelete;
 
-                if (channel.id != interaction.channel.id)
+                channel.send(`\`${deletedCount}\` messages were **deleted** by <@${interaction.user.id}>.`).then(sentMessage =>
                 {
-                    interaction.reply(`:white_check_mark: **${deletedCount} messages** has been **successfully deleted** in <#${channel.id}>!`);
-                    channel.send(`\`${deletedCount}\` messages were **deleted** by <@${interaction.user.id}>.`).then(sentMessage =>
+                    interaction.deferUpdate();
+                    setTimeout(() =>
                     {
-                        messageToDelete = sentMessage; // Set the message to delete.
-                    });
-                }
-                else
-                {
-                    interaction.reply(`:white_check_mark: **${deletedCount} messages** has been **successfully deleted**!`).then(sentMessage =>
-                    {
-                        messageToDelete = sentMessage;
-                    });
-                };
-
-                setTimeout(() =>
-                {
-                    messageToDelete.delete(); // Delete the message after 2 seconds.
-                }, 2000);
+                        sentMessage.delete(); // Delete the message after 2 seconds.
+                    }, 2000);
+                });
 	        });
         }
         catch (err)

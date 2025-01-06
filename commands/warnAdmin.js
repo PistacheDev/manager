@@ -1,4 +1,4 @@
-const { PermissionsBitField, EmbedBuilder, SlashCommandBuilder } = require("discord.js");
+const { PermissionsBitField, EmbedBuilder, SlashCommandBuilder, MessageFlags } = require("discord.js");
 
 module.exports =
 {
@@ -11,7 +11,8 @@ module.exports =
         {
             const guild = interaction.guild;
 
-            switch (interaction.options.getSubcommand()) // Check what sub command has been executed.
+            // Check what sub command has been executed.
+            switch (interaction.options.getSubcommand())
             {
                 case "list":
                     warnsList();
@@ -23,10 +24,11 @@ module.exports =
                     warnsClear();
                     break;
                 default:
-                    interaction.reply(":warning: Unknown **command**!");
+                    interaction.reply({ content: ":warning: Command not found!", flags: MessageFlags.Ephemeral });
                     break;
             };
 
+            // List the warns of a member.
             function warnsList()
             {
                 const target = guild.members.cache.get(interaction.options.getUser("user").id); // Fetch the user in the server list.
@@ -34,7 +36,7 @@ module.exports =
                 db.query("SELECT * FROM warns WHERE guild = ? AND target = ?", [guild.id, target.user.id], async (err, data) =>
                 {
                     if (err) throw err;
-                    if (data.length < 1) return interaction.reply(":warning: This member **has never been warned** in this server!");
+                    if (data.length < 1) return interaction.reply({ content: ":warning: This member has never been warned in this server!", flags: MessageFlags.Ephemeral });
                     await data.sort((a, b) => parseInt(b.date) - parseInt(a.date)); // Sort by recent date.
 
                     let embed = new EmbedBuilder()
@@ -44,8 +46,7 @@ module.exports =
                     .setDescription(`Warns count: **${data.length.toString()} warns**.`)
                     .setTimestamp()
 
-                    // Build the embed.
-                    for (let i = 0; i < data.length; i++)
+                    for (let i = 0; i < data.length; i++) // Build the embed.
                     {
                         embed.addFields([{ name: `${i + 1}) Warn \`${data[i].warnID}\`:`, value: `**Moderator**: <@${await data[i].moderator}>.\n**Sanction Date**: <t:${Math.floor(parseInt(data[i].date / 1000))}>.\n**Reason**: \`${data[i].reason}\`.` }]); 
                     };
@@ -54,6 +55,7 @@ module.exports =
                 });
             };
 
+            // Remove a warn by ID.
             function warnRemove()
             {
                 const warnID = interaction.options.getString("id");
@@ -61,16 +63,17 @@ module.exports =
                 db.query("SELECT * FROM warns WHERE guild = ? AND warnID = ?", [guild.id, warnID], async (err, data) =>
                 {
                     if (err) throw err;
-                    if (data.length < 1) return interaction.reply(":warning: This warn **doesn't exist**!");
+                    if (data.length < 1) return interaction.reply({ content: ":warning: This warn doesn't exist!", flags: MessageFlags.Ephemeral });
 
                     db.query("DELETE FROM warns WHERE guild = ? AND warnID = ?", [guild.id, warnID], async (err, data) =>
                     {
                         if (err) throw err;
-                        interaction.reply(`:white_check_mark: \`${warnID}\` has been **removed successfully**!`);
+                        interaction.deferUpdate();
                     });
                 });
             };
 
+            // Remove every warns of a member.
             function warnsClear()
             {
                 const target = guild.members.cache.get(interaction.options.getUser("user").id); // Fetch the user in the server list.
@@ -80,8 +83,8 @@ module.exports =
                     if (err) throw err;
                     const deletedCount = data.affectedRows; // Calculate the number of removed warns.
 
-                    if (deletedCount < 1) return interaction.reply(":warning: This member **has never been warned** in this server!");
-                    interaction.reply(`:white_check_mark: **${deletedCount} warns** of <@${target.id}> @${target.user.username} have been **removed successfully**!`);
+                    if (deletedCount < 1) return interaction.reply({ content: ":warning: This member has never been warned in this server!", flags: MessageFlags.Ephemeral });
+                    interaction.deferUpdate();
                 });
             };
         }
