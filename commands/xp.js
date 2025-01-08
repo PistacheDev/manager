@@ -68,7 +68,7 @@ module.exports =
                         .setDescription(`>>> **XP**: ${currentXP}${maxLevel > currentLevel ? `/${nextLevel}` : ""}.\n**Level**: ${currentLevel}/${maxLevel}.\n**Rank**: ${userRank}/${(await guild.members.fetch()).filter(member => !member.user.bot).size}.`)
 
                         await interaction.channel.send({ embeds: [embed] });
-                        interaction.deferUpdate();
+                        interaction.reply({ content: ":white_check_mark: Done!", flags: MessageFlags.Ephemeral });
                     });
                 });
             };
@@ -104,7 +104,7 @@ module.exports =
                     };
 
                     await interaction.channel.send({ embeds: [embed] });
-                    interaction.deferUpdate();
+                    interaction.reply({ content: ":white_check_mark: Done!", flags: MessageFlags.Ephemeral });
                 });
             };
         }

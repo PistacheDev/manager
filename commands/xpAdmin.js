@@ -71,7 +71,7 @@ module.exports =
                     db.query("UPDATE xp SET xp = ? WHERE guild = ? AND user = ?", [xpToGive + parseInt(data[0].xp), guild.id, target.id], async (err) =>
                     {
                         if (err) throw err;
-                        interaction.deferUpdate();
+                        interaction.reply({ content: ":white_check_mark: Done!", flags: MessageFlags.Ephemeral });
 
                         db.query("SELECT * FROM config WHERE guild = ?", [guild.id], async (err, config) =>
                         {
@@ -102,7 +102,7 @@ module.exports =
                     db.query("UPDATE xp SET xp = ? WHERE guild = ? AND user = ?", [parseInt(data[0].xp) - xpToRemove, guild.id, target.id], async (err) =>
                     {
                         if (err) throw err;
-                        interaction.deferUpdate();
+                        interaction.reply({ content: ":white_check_mark: Done!", flags: MessageFlags.Ephemeral });
 
                         const xp = parseInt(parseInt(data[0].xp) - xpToRemove);
                         const level = parseInt(data[0].level);
@@ -119,7 +119,7 @@ module.exports =
                 db.query("DELETE FROM xp WHERE guild = ?", [guild.id], async (err) =>
                 {
                     if (err) throw err;
-                    interaction.deferUpdate();
+                    interaction.reply({ content: ":white_check_mark: Done!", flags: MessageFlags.Ephemeral });
 
                     // Remove the goals role for everyone.
                     guild.members.forEach(async member =>
@@ -141,7 +141,7 @@ module.exports =
                     db.query("DELETE FROM xp WHERE guild = ? AND user = ?", [guild.id, target.id], async (err) =>
                     {
                         if (err) throw err;
-                        interaction.deferUpdate();
+                        interaction.reply({ content: ":white_check_mark: Done!", flags: MessageFlags.Ephemeral });
                     });
                 });
             };
@@ -165,7 +165,7 @@ module.exports =
                 )
 
                 interaction.channel.send({ content: `||[${amountXP}-${interaction.user.id}]||`, embeds: [embed], components: [button] });
-                interaction.deferUpdate();
+                interaction.reply({ content: ":white_check_mark: Done!", flags: MessageFlags.Ephemeral });
             };
         }
         catch (err)

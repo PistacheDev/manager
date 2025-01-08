@@ -66,7 +66,7 @@ module.exports =
                     db.query("DELETE FROM bans WHERE user = ? AND guild = ?", [member.id, guild.id], async (err) =>
                     {
                         if (err) throw err;
-                        interaction.deferUpdate();
+                        interaction.reply({ content: ":white_check_mark: Done!", flags: MessageFlags.Ephemeral });
                     });
                 });
             };

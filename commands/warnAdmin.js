@@ -68,7 +68,7 @@ module.exports =
                     db.query("DELETE FROM warns WHERE guild = ? AND warnID = ?", [guild.id, warnID], async (err, data) =>
                     {
                         if (err) throw err;
-                        interaction.deferUpdate();
+                        interaction.reply({ content: ":white_check_mark: Done!", flags: MessageFlags.Ephemeral });
                     });
                 });
             };
@@ -84,7 +84,7 @@ module.exports =
                     const deletedCount = data.affectedRows; // Calculate the number of removed warns.
 
                     if (deletedCount < 1) return interaction.reply({ content: ":warning: This member has never been warned in this server!", flags: MessageFlags.Ephemeral });
-                    interaction.deferUpdate();
+                    interaction.reply({ content: ":white_check_mark: Done!", flags: MessageFlags.Ephemeral });
                 });
             };
         }

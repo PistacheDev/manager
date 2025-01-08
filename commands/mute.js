@@ -50,7 +50,7 @@ module.exports =
                 .setFooter({ text: target.user.username, iconURL: target.user.avatarURL() })
 
                 interaction.channel.send({ embeds: [embed] });
-                interaction.deferUpdate();
+                interaction.reply({ content: ":white_check_mark: Done!", flags: MessageFlags.Ephemeral });
 
                 const notif = new EmbedBuilder()
                 .setColor("Yellow")

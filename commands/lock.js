@@ -29,7 +29,7 @@ module.exports =
     	        .setDescription(`:lock: This channel is now locked.\n:man_judge: **Moderator**: <@${mod.id}>.\n:grey_question: **Reason**: ${reason}.`)
 
                 channel.send({ embeds: [embed] });
-    	        interaction.deferUpdate();
+    	        interaction.reply({ content: ":white_check_mark: Done!", flags: MessageFlags.Ephemeral });
     	    });
         }
         catch (err)

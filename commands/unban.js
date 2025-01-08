@@ -31,7 +31,7 @@ module.exports =
                     .setFooter({ text: bannedUser.user.username, iconURL: bannedUser.user.avatarURL() })
 
                     interaction.channel.send({ embeds: [embed] });
-                    interaction.deferUpdate();
+                    interaction.reply({ content: ":white_check_mark: Done!", flags: MessageFlags.Ephemeral });
 
                     const notif = new EmbedBuilder()
                     .setColor("Green")
