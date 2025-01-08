@@ -26,9 +26,9 @@ module.exports =
             if (targetID == client.user.id) return interaction.reply({ content: ":warning: You can't ban the application with this command!", flags: MessageFlags.Ephemeral });
             if (mod.id != ownerID && target.permissions.has(Perms.Administrator)) return interaction.reply({ content: ":warning: Only the owner can ban an administrator!", flags: MessageFlags.Ephemeral });
             if (!target.bannable) return interaction.reply({ content: ":warning: Impossible to ban this member!", flags: MessageFlags.Ephemeral });
-            if (deleteTime && (deleteTime < 1 || deleteTime > 7)) return interaction.reply({ content: ":warning: You can't delete messages older than 7 days and the minimum allowed is 1 day.", flags: MessageFlags.Ephemeral });
+            if (deleteTime && (deleteTime < 1 || deleteTime > 604800)) return interaction.reply({ content: ":warning: You can't delete messages older than 7 days (604800 seconds) and the minimum allowed is 1 second.", flags: MessageFlags.Ephemeral });
 
-            target.ban({ reason: `[${mod.id}] ${reason}`, deleteMessageDays: deleteTime ? deleteTime : 0 }).then(() =>
+            target.ban({ reason: `[${mod.id}] ${reason}`, deleteMessageSeconds: deleteTime ? deleteTime : 0 }).then(() =>
             {
                 const embed = new EmbedBuilder()
                 .setColor("Red")
@@ -40,7 +40,7 @@ module.exports =
                 .setFooter({ text: target.user.username, iconURL: target.user.avatarURL() })
 
                 interaction.channel.send({ embeds: [embed] });
-                interaction.deferUpdate();
+                interaction.reply({ content: ":white_check_mark: Done!", flags: MessageFlags.Ephemeral });
 
                 const notif = new EmbedBuilder()
                 .setColor("Red")
@@ -90,7 +90,7 @@ module.exports =
         ).addNumberOption(
             opt => opt
             .setName("messages")
-            .setDescription("Delete the messages sent in a period of time in days.")
+            .setDescription("Delete the messages sent in a period of time in seconds.")
         ).setDefaultMemberPermissions(this.permission)
     }
 };

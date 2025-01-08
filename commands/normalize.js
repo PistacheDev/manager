@@ -23,7 +23,7 @@ module.exports =
             if (current != normalized)
             {
                 await target.setNickname(normalized); // Change the target's nickname.
-                interaction.reply({ content: `:white_check_mark: **${current}** ➜ **${normalized}**.`, flags: MessageFlags.Ephemeral })
+                interaction.reply({ content: `:white_check_mark: **${current}** ➜ **${normalized}**.`, flags: MessageFlags.Ephemeral });
             }
             else interaction.reply({ content: ":warning: This pseudo can't be normalized!", flags: MessageFlags.Ephemeral});
         }

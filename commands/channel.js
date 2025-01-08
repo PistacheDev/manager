@@ -31,7 +31,7 @@ module.exports =
 			{
 				channel.clone().then(async () =>
 				{
-					interaction.deferUpdate();
+					interaction.reply({ content: ":white_check_mark: Done!", flags: MessageFlags.Ephemeral });
 				});
 			};
 
@@ -42,7 +42,7 @@ module.exports =
 				{
 					channel.delete();
 					newChannel.send(`:repeat: Channel **recreated**!`);
-					interaction.deferUpdate();
+					if (channel.id != newChannel.id) interaction.reply({ content: ":white_check_mark: Done!", flags: MessageFlags.Ephemeral });
 				});
 			};
 		}

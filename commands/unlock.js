@@ -28,7 +28,7 @@ module.exports =
     	        .setDescription(`:unlock: This channel is now unlocked.\n:man_judge: **Moderator**: <@${mod.id}> @${mod.user.username}.`)
 
                 channel.send({ embeds: [embed] });
-                interaction.deferUpdate();
+                interaction.reply({ content: ":white_check_mark: Done!", flags: MessageFlags.Ephemeral });
 	        });
         }
         catch (err)

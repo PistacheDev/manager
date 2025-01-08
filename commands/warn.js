@@ -73,7 +73,7 @@ module.exports =
                         .setFooter({ text: target.user.username, iconURL: target.user.avatarURL() })
 
                         interaction.channel.send({ embeds: [embed] });
-                        interaction.deferUpdate();
+                        interaction.reply({ content: ":white_check_mark: Done!", flags: MessageFlags.Ephemeral });
 
                         const notif = new EmbedBuilder()
                         .setColor("Red")
@@ -119,7 +119,7 @@ module.exports =
             else
             {
                 interaction.channel.send(`:warning: <@${targetID}>, you have been warned by <@${mod.id}>!\n:paperclip: **Warn ID**: \`${warnID}\`.\n:man_judge: **Reason**: \`${reason}\`.`);
-                interaction.deferUpdate();
+                interaction.reply({ content: ":white_check_mark: Done!", flags: MessageFlags.Ephemeral });
             };
         }
         catch (err)

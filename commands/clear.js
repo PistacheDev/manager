@@ -21,15 +21,7 @@ module.exports =
 	        channel.bulkDelete(amount).then(async () =>
             {
     	        const deletedCount = Math.min(amount, messages.size); // Calculate the number of deleted messages.
-
-                channel.send(`\`${deletedCount}\` messages were **deleted** by <@${interaction.user.id}>.`).then(sentMessage =>
-                {
-                    interaction.deferUpdate();
-                    setTimeout(() =>
-                    {
-                        sentMessage.delete(); // Delete the message after 2 seconds.
-                    }, 2000);
-                });
+                interaction.reply({ content: ":white_check_mark: Done! ${deletedCount} messages were deleted!", flags: MessageFlags.Ephemeral });
 	        });
         }
         catch (err)

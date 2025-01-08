@@ -1,5 +1,5 @@
 {
-    "version": "3.10",
+    "version": "3.10.1",
     "debug": true,
     "express":
     {
