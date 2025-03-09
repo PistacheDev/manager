@@ -12,7 +12,6 @@ module.exports =
             const guild = interaction.guild;
             const member = interaction.member;
 
-            // Check what sub command has been executed.
             switch (interaction.options.getSubcommand())
 		    {
 	    		case "list":

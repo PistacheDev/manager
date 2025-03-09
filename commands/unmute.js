@@ -21,7 +21,7 @@ module.exports =
                 const embed = new EmbedBuilder()
                 .setColor("Green")
                 .setThumbnail(target.user.avatarURL())
-                .setDescription(`:man_judge: <@${target.id}> has been unmuted!`)
+                .setDescription(`:man_judge: <@${target.id}> @${target.user.username} has been unmuted!`)
                 .addFields([{ name: ":man_judge:・Moderator:", value: `>>> **User**: <@${mod.id}> @${mod.user.username}.\n**ID**: ${mod.id}.\n**Date de votre désexclusion**: <t:${Math.floor(Date.now() / 1000)}:F>.` }])
                 .setTimestamp()
                 .setFooter({ text: target.user.username, iconURL: target.user.avatarURL() })

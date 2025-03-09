@@ -30,7 +30,7 @@ module.exports =
                 const embed = new EmbedBuilder()
                 .setColor("Orange")
                 .setThumbnail(target.user.avatarURL())
-                .setDescription(`:man_judge: <@${targetID}> has been kicked!`)
+                .setDescription(`:man_judge: <@${targetID}> @${target.user.username} has been kicked!`)
                 .addFields([{ name: ":man_judge:・Moderator:", value: `>>> **User**: <@${mod.id}> @${mod.user.username}.\n**ID**: ${mod.id}.\n**Ban Date**: <t:${Math.floor(Date.now() / 1000)}:F>.` }])
                 .addFields([{ name: ":grey_question:・Reason:", value: `\`\`\`${reason}\`\`\`` }])
                 .setTimestamp()

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Members - <%= guildName %> - Manager</title>
+    <link rel="shortcut icon" href="/assets/icon.png">
+    <link rel="stylesheet" href="/css/all.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/guild.css">
+</head>
+
+<body>
+    <nav class="guilds">
+        <ul>
+            <% for (var i = 0; i < availableGuilds.length; i++) { %>
+                <li>
+                    <a href="/dashboard/<%= availableGuilds[i].id %>/members">
+                        <img src="https://cdn.discordapp.com/icons/<%= availableGuilds[i].id %>/<%= availableGuilds[i].icon %>">
+                    </a>
+                </li>
+            <% }; %> <br>
+        </ul>
+    </nav>
+
+    <main>
+        <div class="menu">
+            <img src="<%= guildIcon %>">
+            <p class="title"><%= guildName %></p> <br>
+
+            <a href="/dashboard/<%= guildID %>/security">Security</a> <br>
+            <a href="/dashboard/<%= guildID %>/moderation">Moderation</a> <br>
+            <a href="/dashboard/<%= guildID %>/experience"">Experience</a> <br>
+            <a href="/dashboard/<%= guildID %>/connections">Connections</a> <br>
+            <a class="current" href="/dashboard/<%= guildID %>/members">Members</a> <br>
+            <a href="/dashboard/<%= guildID %>/logs">Logs</a> <br> <br>
+
+            <a href="/dashboard">Back to dashboard</a>
+        </div>
+
+        <div class="config">
+            <form action="/dashboard/<%= guildID %>/members/config">
+                <p>Once you finished, don't forget to: </p>
+                <input type="submit" class="submit" value="Submit the modifications"> <br> <br>
+
+                <% if (memberadd == 0) { %>
+                    <input id="memberadd" class="box" type="checkbox" name="memberadd"/>
+                    <label for="memberadd">Arrival Messages</label> <br>
+                    <input list="channels" class="search" type="search" name="memberaddID" placeholder="Search for a channel name. Double click to show suggestions!"/>
+                    <p>Sends a message in the configured channel when a user joins the server.</p>
+                <% } else { %>
+                    <input id="memberadd" class="box" type="checkbox" name="memberadd" checked/>
+                    <label for="memberadd">Arrival Messages</label> <br>
+                    <input list="channels" class="search" type="search" name="memberaddID" placeholder="Search for a channel name. Double click to show suggestions!"/>
+                    <p>Sends a message in <%= memberadd %> when a user joins the server.</p>
+                <% }; %> <br>
+
+                <% if (joinrole == 0) { %>
+                    <input id="joinrole" class="box" type="checkbox" name="joinrole"/>
+                    <label for="joinrole">Arrival Role Assignment</label> <br>
+                    <input list="roles" class="search" type="search" name="joinroleID" placeholder="Search for a role name. Double click to show suggestions!"/>
+                    <p>Assigns a role to the new arrived users.</p>
+                <% } else { %>
+                    <input id="joinrole" class="box" type="checkbox" name="joinrole" checked/>
+                    <label for="joinrole">Arrival Role Assignment</label> <br>
+                    <input list="roles" class="search" type="search" name="joinroleID" placeholder="Search for a role name. Double click to show suggestions!"/>
+                    <p>Assigns <%= joinrole %> to the new arrived users.</p>
+                <% }; %> <br>
+
+                <% if (autonormalizer == 0) { %>
+                    <input id="autonormalizer" class="box" type="checkbox" name="autonormalizer"/>
+                <% } else { %>
+                    <input id="autonormalizer" class="box" type="checkbox" name="autonormalizer" checked/>
+                <% }; %>
+
+                <label for="autonormalizer">Auto Normalizer</label> <br>
+                <p>Auto normalize the pseudo of the members who join the server and the members who modify their profile.</p><br>
+
+                <% if (memberremove == 0) { %>
+                    <input id="memberremove" class="box" type="checkbox" name="memberremove"/>
+                    <label for="memberremove">Departure messages</label> <br>
+                    <input list="channels" class="search" type="search" name="memberremoveID" placeholder="Search for a channel name. Double click to show suggestions!"/>
+                    <p>Sends a message in the configured channel when a user leaves the server.</p>
+                <% } else { %>
+                    <input id="memberremove" class="box" type="checkbox" name="memberremove" checked/>
+                    <label for="memberremove">Departure messages</label> <br>
+                    <input list="channels" class="search" type="search" name="memberremoveID" placeholder="Search for a channel name. Double click to show suggestions!"/>
+                    <p>Sends a message in <%= memberremove %> when a user leaves the server.</p>
+                <% }; %>
+
+                <datalist id="channels">
+                    <% for (let channelName in channels) { %>
+                        <option value="<%= channels[channelName] %>"><%= channelName %></option>
+                    <% } %>
+                </datalist>
+
+                <datalist id="roles">
+                    <% for (let roleName in roles) { %>
+                        <option value="<%= roles[roleName] %>"><%= roleName %></option>
+                    <% } %>
+                </datalist>
+            </form>
+        </div>
+    </main>
+
+    <nav class="navbar">
+        <a href="/home" class="logo">Manager</a>
+    
+        <div class="nav-links">
+            <ul>
+                <li>
+                    <a href="/home">Home</a>
+                </li>
+                <li class="display">
+                    <a href="/dashboard">Dashboard</a>
+                </li>
+                <li>
+                    <a href="https://github.com/PistacheDev/manager">GitHub</a>
+                </li>
+                <li>
+                    <a href="https://discord.com/invite/RkB3ZQsmGV">Support</a>
+                </li>
+            </ul>
+        </div>
+
+        <img src="/assets/menu.png" alt="menu.png" class="hamburgerMenu">
+    </nav>
+
+    <script src="/js/menu.js"></script>
+</body>
+</html>

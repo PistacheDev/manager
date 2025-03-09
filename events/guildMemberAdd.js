@@ -1,6 +1,7 @@
 const { EmbedBuilder } = require("discord.js");
 const { antibots } = require("../guard/antibots");
 const { autoraidmode } = require("../guard/autoraidmode");
+const normalizer = require("replace-special-characters")
 
 module.exports =
 {
@@ -36,6 +37,12 @@ module.exports =
                 if (data[0].joinRole != 0) member.roles.add(data[0].joinRole);
                 if (data[0].raidmode == 1) member.kick();
                 if (data[0].antibots == 1 && member.user.bot) antibots(member);
+                if (data[0].autoNormalizer == 1)
+                {
+                    const normalized = normalizer(member.displayName);
+                    await member.setNickname(normalized);
+                };
+
                 autoraidmode(data, member);
             });
         }

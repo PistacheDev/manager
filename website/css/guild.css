@@ -1,0 +1,116 @@
+main
+{
+    display: flex;
+    position: absolute;
+    width: calc(100vw - 80px);
+    margin-left: 80px;
+    top: 100px;
+}
+
+main div.menu
+{
+    width: 20%;
+    height: calc(100vh - 100px);
+    background-color: rgb(40, 40, 40);
+    text-align: center;
+    overflow: auto;
+    flex-shrink: 0;
+}
+
+main div.menu img
+{
+    width: 40%;
+    margin-top: 35px;
+}
+
+main div.menu p
+{
+    color: rgb(255, 255, 255);
+    font-weight: 900;
+    font-size: calc(6px + 1vw);
+}
+
+main div.menu a
+{
+    color: rgb(255, 255, 255);
+    font-weight: 900;
+    font-size: calc(4px + 1vw);
+}
+
+main div.menu a.display
+{
+    color: rgb(255, 0, 0);
+}
+
+main div.menu a:hover
+{
+    color: rgb(255, 0, 0);
+    text-decoration: underline;
+}
+
+main div.config
+{
+    overflow: scroll;
+    max-height: 89.5vh;
+}
+
+main div.config p
+{
+    margin-top: 6px;
+    margin-left: 10px;
+    color: rgb(255, 255, 255);
+    font-weight: 900;
+    font-size: calc(4px + 1vw);
+}
+
+main div.config p.title
+{
+    text-decoration: underline;
+    font-size: calc(15px + 1vw);
+}
+
+main .menu a.current
+{
+    color: red;
+}
+
+span.range
+{
+    color: red;
+}
+
+input
+{
+    margin-left: 10px;
+}
+
+input.box
+{
+    width: calc(1vw - 1px);
+    height: calc(1vw - 1px);
+}
+
+input.submit
+{
+    font-size: calc(1vw - 2px);
+    padding: 2px 5px;
+}
+
+input.range
+{
+    width: 70%;
+}
+
+label
+{
+    margin-left: 3px;
+    color: rgb(255, 255, 255);
+    font-weight: 900;
+    font-size: calc(4px + 1vw);
+}
+
+input.search
+{
+    font-size: calc(3px + 1vw);
+    width: 32vw;
+}

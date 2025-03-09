@@ -8,11 +8,11 @@ module.exports =
         try
         {
             const appVersion = config.version;
-            res.status(200).render("../website/html/home.ejs", { version: appVersion }); // Render the page.
+            res.status(200).render("../website/html/home.ejs", { version: appVersion }); // Render and display the page.
         }
         catch (err)
         {
-            res.status(500).send("An unexpected error occured! Please, try again later!");
+            res.status(500).send("An unexpected error occured! Please, try again!");
             console.error(`[error] website, home, ${err}, ${Date.now()}`);
         };
     }

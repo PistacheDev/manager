@@ -12,7 +12,6 @@ module.exports =
 			var channel = interaction.options.getChannel("channel");
 			if (!channel) channel = interaction.channel; // Select the current channel if nothing's specified.
 
-			// Check what sub command has been executed.
 			switch (interaction.options.getSubcommand())
 			{
 				case "clone":
