@@ -6,6 +6,7 @@ const mysql = require("mysql2");
 const express = require("express");
 const path = require("path");
 const fs = require("fs");
+const cookieParser = require("cookie-parser");
 
 // Create a Discord client.
 const client = new Client
@@ -18,26 +19,6 @@ const client = new Client
         status: "online"
     },
 });
-
-if (process.env.DB_USER == "root")
-{
-    if (!config.debug)
-    {
-        console.error("[error] You can't use the database's root user in release mode.\nThe process has been killed (security reason).");
-        return process.exit(); // Kill the process (root user used in release mode).
-    }
-    else console.warn("[warn] You are currently using the database's root user! Be careful!");
-};
-
-if (process.env.DB_PASSWORD.length < 12)
-{
-    if (!config.debug)
-    {
-        console.error("[error] Your database's password is too weak for the release mode.\nThe process has been killed (security reason).");
-        return process.exit(); // Kill the process (password too weak in release mode).
-    }
-    else console.warn("[warn] You are currently using a weak password for the database! Be careful!");
-};
 
 // Create a pool connection to the database.
 const db = mysql.createPool
@@ -61,11 +42,35 @@ db.getConnection((err, connection) =>
         return process.exit(); // Kill the process (the database is required).
     };
 
-    console.log("[debug] Connection to the database created successfully!");
+    if (process.env.DB_HOST != "localhost")
+        console.warn("[warn] You are currently using a remote connection for the database! Be careful!");
+    
+    if (process.env.DB_USER == "root")
+    {
+        if (!config.debug)
+        {
+            console.error("[error] You can't use the database's root user in release mode.\nThe process has been killed (security reason).");
+            return process.exit(); // Kill the process (root user used in release mode).
+        }
+        else console.warn("[warn] You are currently using the database's root user! Be careful!");
+    };
+    
+    if (process.env.DB_PASSWORD.length < 12)
+    {
+        if (!config.debug)
+        {
+            console.error("[error] Your database's password is too weak for the release mode.\nThe process has been killed (security reason).");
+            return process.exit(); // Kill the process (password too weak in release mode).
+        }
+        else console.warn("[warn] You are currently using a weak password for the database! Be careful!");
+    };
+
+    console.log(`[debug] Connection to the database ${process.env.DB_DATABASE} (${process.env.DB_HOST}) created successfully!`);
     connection.release();
 });
 
 const app = express(); // Create a web server.
+app.use(cookieParser());
 app.set("etag", false);
 app.use(express.static(`${__dirname}/website`)); // Force express to use the "website" folder only.
 app.use(express.urlencoded({ extended: true }));
@@ -74,8 +79,36 @@ app.listen(config.express.port, config.express.host, () => console.log(`[debug] 
 
 try
 {
-    const events = fs.readdirSync("./events").filter(files => files.endsWith(".js"));
     const routes = fs.readdirSync("./routes").filter(files => files.endsWith(".js"));
+    let routesCount = 0;
+
+    // Middleware.
+    app.get("*", async (req, res, next) =>
+    {
+        if (req.get("host").startsWith(config.express.host) && !config.debug) return res.redirect(`https://manager.pistachedev.fr${req.url}`); // Enforce the domain name if we are in release mode.
+        if (![".css", ".png", ".js", ".ico"].includes(path.extname(req.url)) && !req.url.startsWith("/callback")) console.log(`[middleware] ${req.url}, ${req.method}, ${res.statusCode}, ${req.ip}, ${Date.now()}`); // We create a log only if the request isn't an another file or a sensitive page.
+        next();
+    });
+
+    for (const route of routes)
+    {
+        const script = require(`./routes/${route}`);
+
+        if (script.name && script.run) // Add the page to the website if it's valid.
+        {
+            app.get(script.name, script.run);
+            routesCount++;
+        };
+    };
+
+    // Error 404.
+    app.get("*", async (req, res) =>
+    {
+        if (![".css", ".png", ".js", ".ico"].includes(path.extname(req.url))) res.redirect("/home?error=404")
+    });
+
+    console.log(`[debug] ${routesCount} website routes were successfully deployed!`);
+    const events = fs.readdirSync("./events").filter(files => files.endsWith(".js"));
 
     for (const event of events)
     {
@@ -85,26 +118,6 @@ try
         if (script.once) client.once(script.name, (...args) => script.run(client, db, ...args));
         else client.on(script.name, (...args) => script.run(client, db, ...args));
     };
-
-    // Middleware.
-    app.get("*", async (req, res, next) =>
-    {
-        if (req.get("host").startsWith(config.express.host) && !config.debug) return res.redirect(`https://manager.pistachedev.fr${req.url}`); // Enforce the domain name if we are in release mode.
-        if (![".css", ".png", ".js", ".ico"].includes(path.extname(req.url)) && !req.url.startsWith("/callback")) console.log(`[debug] website, ${req.url}, ${req.method}, ${res.statusCode}, ${req.ip}, ${Date.now()}`); // We create a log only if the request isn't an another file or a sensitive page.
-        next();
-    });
-
-    for (const route of routes)
-    {
-        const script = require(`./routes/${route}`);
-        if (script.name && script.run) app.get(script.name, script.run); // Add the page to the website.
-    };
-
-    // Error 404.
-    app.get("*", async (req, res) =>
-    {
-        if (![".css", ".png", ".js", ".ico"].includes(path.extname(req.url))) res.redirect("/home?error=404")
-    });
 }
 catch (err)
 {

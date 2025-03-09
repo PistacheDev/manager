@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logs - <%= guildName %> - Manager</title>
+    <link rel="shortcut icon" href="/assets/icon.png">
+    <link rel="stylesheet" href="/css/all.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/guild.css">
+</head>
+
+<body>
+    <nav class="guilds">
+        <ul>
+            <% for (var i = 0; i < availableGuilds.length; i++) { %>
+                <li>
+                    <a href="/dashboard/<%= availableGuilds[i].id %>/logs">
+                        <img src="https://cdn.discordapp.com/icons/<%= availableGuilds[i].id %>/<%= availableGuilds[i].icon %>">
+                    </a>
+                </li>
+            <% }; %> <br>
+        </ul>
+    </nav>
+
+    <main>
+        <div class="menu">
+            <img src="<%= guildIcon %>">
+            <p class="title"><%= guildName %></p> <br>
+
+            <a href="/dashboard/<%= guildID %>/security">Security</a> <br>
+            <a href="/dashboard/<%= guildID %>/moderation">Moderation</a> <br>
+            <a href="/dashboard/<%= guildID %>/experience"">Experience</a> <br>
+            <a href="/dashboard/<%= guildID %>/connections">Connections</a> <br>
+            <a href="/dashboard/<%= guildID %>/members">Members</a> <br>
+            <a class="current" href="/dashboard/<%= guildID %>/logs">Logs</a> <br> <br>
+
+            <a href="/dashboard">Back to dashboard</a>
+        </div>
+
+        <div class="config">
+            <form action="/dashboard/<%= guildID %>/logs/config">
+                <p>Once you finished, don't forget to: </p>
+                <input type="submit" class="submit" value="Submit the modifications"> <br> <br>
+
+                <% if (messageslogs == 0) { %>
+                    <input id="messageslogs" class="box" type="checkbox" name="messageslogs"/>
+                    <label for="messageslogs">Messages Logs</label> <br>
+                    <input list="channels" class="search" type="search" name="messageslogsID" placeholder="Search for a channel name. Double click to show suggestions!"/>
+                    <p>Sends a message in the configured channel when a message is deleted or edited.</p>
+                <% } else { %>
+                    <input id="messageslogs" class="box" type="checkbox" name="messageslogs" checked/>
+                    <label for="messageslogs">Messages Logs</label> <br>
+                    <input list="channels" class="search" type="search" name="messageslogsID" placeholder="Search for a channel name. Double click to show suggestions!"/>
+                    <p>Sends a log in <%= messageslogs %> when a message is deleted or edited.</p>
+                <% }; %> <br>
+
+                <% if (channelslogs == 0) { %>
+                    <input id="channelslogs" class="box" type="checkbox" name="channelslogs"/>
+                    <label for="channelslogs">Channels Logs</label> <br>
+                    <input list="channels" class="search" type="search" name="channelslogsID" placeholder="Search for a channel name. Double click to show suggestions!"/>
+                    <p>Sends a message in the configured channel when a channel is created, deleted, or edited.</p>
+                <% } else { %>
+                    <input id="channelslogs" class="box" type="checkbox" name="channelslogs" checked/>
+                    <label for="channelslogs">Channels Logs</label> <br>
+                    <input list="channels" class="search" type="search" name="channelslogsID" placeholder="Search for a channel name. Double click to show suggestions!"/>
+                    <p>Sends a log in <%= channelslogs %> when a channel is created, deleted, or edited.</p>
+                <% }; %> <br>
+
+                <% if (banslogs == 0) { %>
+                    <input id="banslogs" class="box" type="checkbox" name="banslogs"/>
+                    <label for="banslogs">Bans Logs</label> <br>
+                    <input list="channels" class="search" type="search" name="banslogsID" placeholder="Search for a channel name. Double click to show suggestions!"/>
+                    <p>Sends a message in the configured channel when a ban is issued or revoked.</p>
+                <% } else { %>
+                    <input id="banslogs" class="box" type="checkbox" name="banslogs" checked/>
+                    <label for="banslogs">Bans Logs</label> <br>
+                    <input list="channels" class="search" type="search" name="banslogsID" placeholder="Search for a channel name. Double click to show suggestions!"/>
+                    <p>Sends a log <%= banslogs %> when a ban is issued or revoked.</p>
+                <% }; %>
+
+                <datalist id="channels">
+                    <% for (let channelName in channels) { %>
+                        <option value="<%= channels[channelName] %>"><%= channelName %></option>
+                    <% } %>
+                </datalist>
+            </form>
+        </div>
+    </main>
+
+    <nav class="navbar">
+        <a href="/home" class="logo">Manager</a>
+
+        <div class="nav-links">
+            <ul>
+                <li>
+                    <a href="/home">Home</a>
+                </li>
+                <li class="display">
+                    <a href="/dashboard">Dashboard</a>
+                </li>
+                <li>
+                    <a href="https://github.com/PistacheDev/manager">GitHub</a>
+                </li>
+                <li>
+                    <a href="https://discord.com/invite/RkB3ZQsmGV">Support</a>
+                </li>
+            </ul>
+        </div>
+
+        <img src="/assets/menu.png" alt="menu.png" class="hamburgerMenu">
+    </nav>
+
+    <script src="/js/menu.js"></script>
+</body>
+</html>

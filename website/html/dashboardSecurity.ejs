@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security - <%= guildName %> - Manager</title>
+    <link rel="shortcut icon" href="/assets/icon.png">
+    <link rel="stylesheet" href="/css/all.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/guild.css">
+</head>
+
+<body>
+    <nav class="guilds">
+        <ul>
+            <% for (var i = 0; i < availableGuilds.length; i++) { %>
+                <li>
+                    <a href="/dashboard/<%= availableGuilds[i].id %>/security">
+                        <img src="https://cdn.discordapp.com/icons/<%= availableGuilds[i].id %>/<%= availableGuilds[i].icon %>">
+                    </a>
+                </li>
+            <% }; %> <br>
+        </ul>
+    </nav>
+
+    <main>
+        <div class="menu">
+            <img src="<%= guildIcon %>">
+            <p class="title"><%= guildName %></p> <br>
+
+            <a class="current" href="/dashboard/<%= guildID %>/security">Security</a> <br>
+            <a href="/dashboard/<%= guildID %>/moderation">Moderation</a> <br>
+            <a href="/dashboard/<%= guildID %>/experience"">Experience</a> <br>
+            <a href="/dashboard/<%= guildID %>/connections">Connections</a> <br>
+            <a href="/dashboard/<%= guildID %>/members">Members</a> <br>
+            <a href="/dashboard/<%= guildID %>/logs">Logs</a> <br> <br>
+
+            <a href="/dashboard">Back to dashboard</a>
+        </div>
+
+        <div class="config">
+            <form action="/dashboard/<%= guildID %>/security/config">
+                <p>Once you finished, don't forget to: </p>
+                <input type="submit" class="submit" value="Submit the modifications"> <br> <br>
+
+                <% if (raidmode == 0) { %>
+                    <input id="raidmode" class="box" type="checkbox" name="raidmode"/>
+                <% } else { %>
+                    <input id="raidmode" class="box" type="checkbox" name="raidmode" checked/>
+                <% }; %>
+
+                <label for="raidmode">Raidmode</label>
+                <p>Blocks the arrival of new members on the server.</p> <br>
+
+                <% if (autoraidmode == 0) { %>
+                    <input id="autoraidmode" class="box" type="checkbox" name="autoraidmode"/>
+                    <label for="autoraidmode">Auto Raidmode</label>
+                    <p>Enable the raidmode when too many users join the server in a short period of time.</p>
+
+                    <input class="range" type="range" id="messagesRange" name="messages" min="3" max="10" value="5" oninput="updateValue(this.value, 'messages')"/> 
+                    <span class="range" id="messages">5</span><br>
+                    <input class="range" type="range" id="intervalRange" name="interval" min="3" max="10" value="5" oninput="updateValue(this.value, 'interval')"/> 
+                    <span class="range" id="interval">5</span><br>
+                <% } else { %>
+                    <input id="autoraidmode" class="box" type="checkbox" name="autoraidmode" checked/>
+                    <label for="autoraidmode">Auto Raidmode</label>
+                    <% const [messages, interval] = autoraidmode.split(" "); %>
+                    <p>Enable the raidmode when more than <%= messages %> users join the server in less than <%= interval %> seconds.</p>
+
+                    <input class="range" type="range" id="messagesRange" name="messages" min="3" max="10" value="<%= messages %>" oninput="updateValue(this.value, 'messages')"/> 
+                    <span class="range" id="messages"><%= messages %></span><br>
+                    <input class="range" type="range" id="intervalRange" name="interval" min="3" max="10" value="<%= interval %>" oninput="updateValue(this.value, 'interval')"/> 
+                    <span class="range" id="interval"><%= interval %></span><br>
+                <% }; %> <br>
+
+                <% if (antibots == 0) { %>
+                    <input id="antibots" class="box" type="checkbox" name="antibots"/>
+                <% } else { %>
+                    <input id="antibots" class="box" type="checkbox" name="antibots" checked/>
+                <% }; %>
+
+                <label for="antibots">Anti Bots</label>
+                <p>Blocks the addition of applications, except if it has been added by the server owner.</p>
+            </form>
+        </div>
+    </main>
+
+    <nav class="navbar">
+        <a href="/home" class="logo">Manager</a>
+    
+        <div class="nav-links">
+            <ul>
+                <li>
+                    <a href="/home">Home</a>
+                </li>
+                <li class="display">
+                    <a href="/dashboard">Dashboard</a>
+                </li>
+                <li>
+                    <a href="https://github.com/PistacheDev/manager">GitHub</a>
+                </li>
+                <li>
+                    <a href="https://discord.com/invite/RkB3ZQsmGV">Support</a>
+                </li>
+            </ul>
+        </div>
+
+        <img src="/assets/menu.png" alt="menu.png" class="hamburgerMenu">
+    </nav>
+
+    <script src="/js/menu.js"></script>
+    <script src="/js/values.js"></script>
+</body>
+</html>

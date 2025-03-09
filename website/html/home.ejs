@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,28 +9,38 @@
     <link rel="stylesheet" href="/css/all.css">
     <link rel="stylesheet" href="/css/home.css">
 </head>
+
 <body>
     <nav class="navbar">
         <a href="/home" class="logo">Manager</a>
+
         <div class="nav-links">
             <ul>
-                <li class="display"><a href="/home">Home</a></li>
-                <li><a href="https://github.com/PistacheDev/manager">GitHub</a></li>
-                <li><a href="https://discord.com/invite/RkB3ZQsmGV">Discord</a></li>
+                <li class="display">
+                    <a href="/home">Home</a>
+                </li>
+                <li>
+                    <a href="/dashboard">Dashboard</a>
+                </li>
+                <li>
+                    <a href="https://github.com/PistacheDev/manager">GitHub</a>
+                </li>
+                <li>
+                    <a href="https://discord.com/invite/RkB3ZQsmGV">Discord</a>
+                </li>
             </ul>
         </div>
+
         <img src="/assets/menu.png" alt="menu.png" class="hamburgerMenu">
     </nav>
+
     <header>
         <img src="/assets/icon.png">
-        <p class="title">
-            Manager v<%= version %>
-        </p>
-        <p class="subtitle">
-            Multifunctional Open Source Discord Application
-        </p>
+        <p class="title"> Manager v<%= version %> </p>
+        <p class="subtitle"> Multifunctional Open Source Discord Application </p>
         <a href="https://discord.com/oauth2/authorize?client_id=1211390696334958654&permissions=8&integration_type=0&scope=bot+applications.commands">Add the application</a>
     </header>
+
     <main>
         <p>
             <span>Open Source</span> <br>
@@ -57,10 +68,12 @@
             This feature is incomplete at the moment, but we're working on it! <br>
         </p>
     </main>
+
     <footer>
         Developed with ❤️ <br>
         2024 <br>
     </footer>
+
     <script src="/js/menu.js"></script>
 </body>
 </html>

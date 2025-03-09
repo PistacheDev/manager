@@ -36,7 +36,7 @@ module.exports =
                     const option2 = new TextInputBuilder()
                     .setCustomId("option2")
                     .setLabel("What is the maximum number of messages?")
-                    .setPlaceholder("Max number of messages during the interval (1 ~ 10).")
+                    .setPlaceholder("Max number of messages during the interval (2 ~ 10).")
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
 
@@ -46,7 +46,7 @@ module.exports =
                     const option3 = new TextInputBuilder()
                     .setCustomId("option3")
                     .setLabel("What's the interval of time studied?")
-                    .setPlaceholder("Interval of time in seconds (1 ~ 10).")
+                    .setPlaceholder("Interval of time in seconds (2 ~ 10).")
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
 

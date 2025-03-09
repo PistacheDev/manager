@@ -73,7 +73,7 @@ nav.navbar img.hamburgerMenu
     width: 35px;
 }
 
-@media screen and (max-width: 800px)
+@media screen and (max-width: 900px)
 {
     nav.navbar a.logo
     {
@@ -108,6 +108,7 @@ nav.navbar img.hamburgerMenu
         align-items: center;
         margin-left: -100%;
         transition: all 0.5s ease;
+        overflow: auto;
     }
 
     nav.navbar div.nav-links.mobile-menu

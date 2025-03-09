@@ -26,7 +26,6 @@ module.exports =
 
                 if (data[0].xp == 0) return interaction.reply({ content: ":warning: The XP system is disabled in this server!", flags: MessageFlags.Ephemeral });
 
-                // Check what sub command has been executed.
                 switch (interaction.options.getSubcommand())
                 {
                     case "give":

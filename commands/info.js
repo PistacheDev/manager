@@ -15,7 +15,6 @@ module.exports =
         {
             const guild = interaction.guild;
 
-            // Check what sub command has been executed.
             switch (interaction.options.getSubcommand())
             {
                 case "application":
@@ -41,7 +40,7 @@ module.exports =
                     break;
             };
 
-            // App's information.
+            // App information.
             async function appInfo()
             {
                 const embed = new EmbedBuilder()
@@ -77,7 +76,7 @@ module.exports =
                 await interaction.reply({ embeds: [embed], components: [buttons], flags: MessageFlags.Ephemeral });
             };
 
-            // Emoji's information.
+            // Emoji information.
             async function emojiInfo()
             {
                 const emojiID = interaction.options.getString("id");
@@ -100,7 +99,7 @@ module.exports =
                 await interaction.reply({ embeds: [embed], components: [button], flags: MessageFlags.Ephemeral });
             };
 
-            // Role's information.
+            // Role information.
             async function roleInfo()
             {
                 const role = interaction.options.getRole("role");
@@ -114,7 +113,7 @@ module.exports =
                 await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
             };
 
-            // Channel's information.
+            // Channel information.
             async function channelInfo()
             {
                 var channel = interaction.options.getChannel("channel");
@@ -128,7 +127,7 @@ module.exports =
                 await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
             };
 
-            // Guild's information.
+            // Guild information.
             async function guildInfo()
             {
                 const embed = new EmbedBuilder()
@@ -150,7 +149,7 @@ module.exports =
                 await interaction.reply({ embeds: [embed], components: [button], flags: MessageFlags.Ephemeral });
             };
 
-            // User's information.
+            // User information.
             async function userInfo()
             {
                 var target = interaction.options.getUser("user");

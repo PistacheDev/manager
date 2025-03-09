@@ -14,7 +14,7 @@ module.exports =
     {
         try
         {
-            if (!message.guild || message.content == "" || message.author.id == client.user.id) return;
+            if (!message.guild || !message.author.id || message.content == "" || message.author.id == client.user.id) return;
 
             const guild = message.guild;
             const author = message.author;

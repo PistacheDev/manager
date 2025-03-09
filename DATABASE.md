@@ -41,6 +41,7 @@ CREATE TABLE config (
     twitch VARCHAR(255) DEFAULT '0',
     memberAdd VARCHAR(255) DEFAULT '0',
     joinRole VARCHAR(255) DEFAULT '0',
+    autoNormalizer VARCHAR(255) DEFAULT '1',
     memberRemove VARCHAR(255) DEFAULT '0',
     messagesLogs VARCHAR(255) DEFAULT '0',
     channelsLogs VARCHAR(255) DEFAULT '0',

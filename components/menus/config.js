@@ -223,10 +223,12 @@ module.exports =
             {
                 const memberAdd = data.memberAdd;
                 const role = data.joinRole;
+                const normalizer = data.autoNormalizer;
                 const memberRemove = data.memberRemove;
 
                 embed.addFields([{ name: ":airplane_arriving:・Arrival Messages:", value: `➜ ${memberAdd == 0 ? ":red_circle:" : ":green_circle:"} **Sends a message** in ${memberAdd == 0 ? "the **configured channel**" : `<#${memberAdd}>`} when a user **joins the server**.` }])
                 embed.addFields([{ name: ":envelope_with_arrow:・Arrival Role:", value: `➜ ${role == 0 ? ":red_circle:" : ":green_circle:"} **Assigns ${role == 0 ? "a role" : `<@&${role}>`}** to the new arrived users.` }])
+                embed.addFields([{ name: ":label:・Auto Normalizer:", value: `➜ ${normalizer == 0 ? ":red_circle:" : ":green_circle:"} **Auto normalize the pseudo** of the members who **join the server** and the members who **modify their profile**.` }])
                 embed.addFields([{ name: ":airplane_departure:・Departure Messages:", value: `➜ ${memberRemove == 0 ? ":red_circle:" : ":green_circle:"} **Sends a message** in ${memberRemove == 0 ? "the **configured channel**" : `<#${memberRemove}>`} when a user **leaves the server**.` }])
 
                 var buttons = new ActionRowBuilder()
@@ -239,6 +241,11 @@ module.exports =
                     new ButtonBuilder()
                     .setCustomId("arrivalRoleButton")
                     .setEmoji("📩")
+                    .setStyle(ButtonStyle.Secondary)
+                ).addComponents(
+                    new ButtonBuilder()
+                    .setCustomId("autoNormalizerButton")
+                    .setEmoji("🏷️")
                     .setStyle(ButtonStyle.Secondary)
                 ).addComponents(
                     new ButtonBuilder()

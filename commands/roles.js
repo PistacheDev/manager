@@ -9,7 +9,6 @@ module.exports =
     {
         try
         {
-            // Check what sub command has been executed.
             switch (interaction.options.getSubcommand())
             {
                 case "add":

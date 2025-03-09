@@ -3,4 +3,10 @@
     <url>
         <loc>https://manager.pistachedev.fr/home</loc>
     </url>
+    <url>
+        <loc>https://manager.pistachedev.fr/dashboard</loc>
+    </url>
+    <url>
+        <loc>https://manager.pistachedev.fr/wiki</loc>
+    </url>
 </urlset>

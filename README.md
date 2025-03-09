@@ -3,8 +3,8 @@ Official Manager source code!
 ONLY PistacheDev is allowed to modificate the .gitignore file!
 
 ## Required
-- Nodejs
-- Python (if you want to run some tools like update.py)
+- Nodejs.
+- Python (if you want to run some tools like update.py).
 - MySQL database.
 
 ## Run the application
@@ -33,9 +33,11 @@ If you've edited the json/config.json, your pull request will be rejected (excep
 Create a new file called ".env" in the main folder.
 Copy the following text into it and fill in with your information:
 ``` js
-DB_HOST='URL OR IP TO YOUR DATABASE'
-DB_DATABASE='DATABASE NAME'
-DB_USER='YOUR USERNAME'
-DB_PASSWORD='YOUR PASSWORD'
-APP_TOKEN='DISCORD BOT TOKEN'
+DB_HOST="URL OR IP TO YOUR DATABASE"
+DB_DATABASE="DATABASE NAME"
+DB_USER="YOUR USERNAME"
+DB_PASSWORD="YOUR PASSWORD"
+APP_TOKEN="DISCORD BOT TOKEN"
+APP_SECRET="DISCORD BOT SECRET"
+ENCRYPTION_KEY="CREATE YOUR OWN ENCRYPTION KEY"
 ```

@@ -43,7 +43,7 @@ module.exports =
                 const embed = new EmbedBuilder()
                 .setColor("Yellow")
                 .setThumbnail(target.user.avatarURL())
-                .setDescription(`:man_judge: <@${targetID}> has been muted!`)
+                .setDescription(`:man_judge: <@${targetID}> @${target.user.username} has been muted!`)
                 .addFields([{ name: ":man_judge:・Moderator :", value: `>>> **User**: <@${mod.id}> @${mod.user.username}.\n**ID**: ${mod.id}.\n**Mute Duration**: ${time} ${scaleStr}.\n**Sanction Date** : <t:${Math.floor(Date.now() / 1000)}:F>.` }])
                 .addFields([{ name: ":grey_question:・Reason :", value: `\`\`\`${reason}\`\`\`` }])
                 .setTimestamp()

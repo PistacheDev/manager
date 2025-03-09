@@ -18,8 +18,8 @@ module.exports =
 
             if (ignoreBots != "yes" && ignoreBots != "no") return interaction.reply({ content: ":warning: Your answer for the `ignore bots` option is invalid!", flags: MessageFlags.Ephemeral });
             if (isNaN(maxMessages) || isNaN(interval) || isNaN(maxWarns) || (sanction != "ban" && isNaN(sanction))) return interaction.reply({ content: ":warning: Please! Enter a number!", flags: MessageFlags.Ephemeral });
-            if (maxMessages < 1 || maxMessages > 10) return interaction.reply({ content: ":warning: The maximum messages must be between 1 and 10 messages!", flags: MessageFlags.Ephemeral });
-            if (interval < 1 || interval > 10) return interaction.reply({ content: ":warning: The interval must be between 1 and 10 seconds!", flags: MessageFlags.Ephemeral });
+            if (maxMessages < 2 || maxMessages > 10) return interaction.reply({ content: ":warning: The maximum messages must be between 2 and 10 messages!", flags: MessageFlags.Ephemeral });
+            if (interval < 2 || interval > 10) return interaction.reply({ content: ":warning: The interval must be between 2 and 10 seconds!", flags: MessageFlags.Ephemeral });
             if (maxWarns < 1 || maxWarns > 5) return interaction.reply({ content: ":warning: The maximum warns must be between 1 and 5 warns!", flags: MessageFlags.Ephemeral });
             if (sanction != "ban" && (sanction < 1 || sanction > 70560)) return interaction.reply({ content: ":warning: The mute can't last less than 1 minute or longer than 7 days (70560)!", flags: MessageFlags.Ephemeral });
 
