@@ -17,7 +17,7 @@ async function twitchNotifications()
                 const [channelID, roleID, twitchID, wasLive, check] = data[i].twitch.split(" ");
                 if (roleID == 0 || channelID == 0) continue; // The configuration isn't finished for this server.
 
-                setTimeout(() => {}, 300); // Wait to avoid too many requests.
+                setTimeout(() => {}, 500); // Wait to avoid too many requests.
                 const channel = await axios.get(`https://www.twitch.tv/${twitchID}`);
                 const html = cheerio.load(channel.data).html();
                 const isLive = /isLiveBroadcast/.test(html) ? 1 : 0; // Fetch if the channel's live or not.

@@ -1,4 +1,8 @@
 function updateValue(value, element)
 {
-    document.getElementById(element).innerText = value;
+    const target =  document.getElementById(element);
+    if (!target) return;
+
+    target.innerText = value;
+    target.appendChild(document.createElement("br"));
 };

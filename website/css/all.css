@@ -134,3 +134,8 @@ nav.navbar img.hamburgerMenu
         font-size: 1.5em;
     }
 }
+
+.hide
+{
+    display: none;
+}

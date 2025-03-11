@@ -1,6 +1,5 @@
 # Manager
 Official Manager source code!
-ONLY PistacheDev is allowed to modificate the .gitignore file!
 
 ## Required
 - Nodejs.
@@ -41,3 +40,7 @@ APP_TOKEN="DISCORD BOT TOKEN"
 APP_SECRET="DISCORD BOT SECRET"
 ENCRYPTION_KEY="CREATE YOUR OWN ENCRYPTION KEY"
 ```
+
+## debug folder
+In the debug folder, you can find some test scripts that can be very usefull in certaain cases.
+You can add new ones if you want to.

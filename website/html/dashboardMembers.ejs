@@ -45,27 +45,31 @@
                 <input type="submit" class="submit" value="Submit the modifications"> <br> <br>
 
                 <% if (memberadd == 0) { %>
-                    <input id="memberadd" class="box" type="checkbox" name="memberadd"/>
+                    <input id="memberadd" class="box" type="checkbox" name="memberadd" oninput="updateVisibility('memberAddIn'); updateVisibility('memberAddBr');"/>
                     <label for="memberadd">Arrival Messages</label> <br>
-                    <input list="channels" class="search" type="search" name="memberaddID" placeholder="Search for a channel name. Double click to show suggestions!"/>
                     <p>Sends a message in the configured channel when a user joins the server.</p>
+                    <input id="memberAddIn" list="channels" class="search hide" type="search" name="memberaddID" placeholder="Search for a channel name. Double click to show suggestions!"/>
+                    <br id="memberAddBr" class="hide">
                 <% } else { %>
-                    <input id="memberadd" class="box" type="checkbox" name="memberadd" checked/>
+                    <input id="memberadd" class="box" type="checkbox" name="memberadd" oninput="updateVisibility('memberAddIn'); updateVisibility('memberAddBr');" checked/>
                     <label for="memberadd">Arrival Messages</label> <br>
-                    <input list="channels" class="search" type="search" name="memberaddID" placeholder="Search for a channel name. Double click to show suggestions!"/>
                     <p>Sends a message in <%= memberadd %> when a user joins the server.</p>
+                    <input id="memberAddIn" list="channels" class="search" type="search" name="memberaddID" placeholder="Search for a channel name. Double click to show suggestions!"/>
+                    <br id="memberAddBr">
                 <% }; %> <br>
 
                 <% if (joinrole == 0) { %>
-                    <input id="joinrole" class="box" type="checkbox" name="joinrole"/>
+                    <input id="joinrole" class="box" type="checkbox" name="joinrole" oninput="updateVisibility('joinRoleIn'); updateVisibility('joinRoleBr');"/>
                     <label for="joinrole">Arrival Role Assignment</label> <br>
-                    <input list="roles" class="search" type="search" name="joinroleID" placeholder="Search for a role name. Double click to show suggestions!"/>
                     <p>Assigns a role to the new arrived users.</p>
+                    <input id="joinRoleIn" list="roles" class="search hide" type="search" name="joinroleID" placeholder="Search for a role name. Double click to show suggestions!"/>
+                    <br id="joinRoleBr" class="hide">
                 <% } else { %>
-                    <input id="joinrole" class="box" type="checkbox" name="joinrole" checked/>
+                    <input id="joinrole" class="box" type="checkbox" name="joinrole" oninput="updateVisibility('joinRoleIn'); updateVisibility('joinRoleBr');" checked/>
                     <label for="joinrole">Arrival Role Assignment</label> <br>
-                    <input list="roles" class="search" type="search" name="joinroleID" placeholder="Search for a role name. Double click to show suggestions!"/>
                     <p>Assigns <%= joinrole %> to the new arrived users.</p>
+                    <input id="joinRoleIn" list="roles" class="search" type="search" name="joinroleID" placeholder="Search for a role name. Double click to show suggestions!"/>
+                    <br id="joinRoleBr">
                 <% }; %> <br>
 
                 <% if (autonormalizer == 0) { %>
@@ -78,15 +82,15 @@
                 <p>Auto normalize the pseudo of the members who join the server and the members who modify their profile.</p><br>
 
                 <% if (memberremove == 0) { %>
-                    <input id="memberremove" class="box" type="checkbox" name="memberremove"/>
+                    <input id="memberremove" class="box" type="checkbox" name="memberremove" oninput="updateVisibility('memberRemoveIn');"/>
                     <label for="memberremove">Departure messages</label> <br>
-                    <input list="channels" class="search" type="search" name="memberremoveID" placeholder="Search for a channel name. Double click to show suggestions!"/>
                     <p>Sends a message in the configured channel when a user leaves the server.</p>
+                    <input id="memberRemoveIn" list="channels" class="search hide" type="search" name="memberremoveID" placeholder="Search for a channel name. Double click to show suggestions!"/>
                 <% } else { %>
-                    <input id="memberremove" class="box" type="checkbox" name="memberremove" checked/>
+                    <input id="memberremove" class="box" type="checkbox" name="memberremove" oninput="updateVisibility('memberRemoveIn');" checked/>
                     <label for="memberremove">Departure messages</label> <br>
-                    <input list="channels" class="search" type="search" name="memberremoveID" placeholder="Search for a channel name. Double click to show suggestions!"/>
                     <p>Sends a message in <%= memberremove %> when a user leaves the server.</p>
+                    <input id="memberRemoveIn" list="channels" class="search" type="search" name="memberremoveID" placeholder="Search for a channel name. Double click to show suggestions!"/>
                 <% }; %>
 
                 <datalist id="channels">
@@ -128,5 +132,6 @@
     </nav>
 
     <script src="/js/menu.js"></script>
+    <script src="/js/hide.js"></script>
 </body>
 </html>

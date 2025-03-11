@@ -54,24 +54,24 @@
                 <p>Blocks the arrival of new members on the server.</p> <br>
 
                 <% if (autoraidmode == 0) { %>
-                    <input id="autoraidmode" class="box" type="checkbox" name="autoraidmode"/>
+                    <input id="autoraidmode" class="box" type="checkbox" name="autoraidmode" oninput="updateVisibility('messagesRange'); updateVisibility('intervalRange'); updateVisibility('messages'); updateVisibility('interval');"/>
                     <label for="autoraidmode">Auto Raidmode</label>
                     <p>Enable the raidmode when too many users join the server in a short period of time.</p>
 
-                    <input class="range" type="range" id="messagesRange" name="messages" min="3" max="10" value="5" oninput="updateValue(this.value, 'messages')"/> 
-                    <span class="range" id="messages">5</span><br>
-                    <input class="range" type="range" id="intervalRange" name="interval" min="3" max="10" value="5" oninput="updateValue(this.value, 'interval')"/> 
-                    <span class="range" id="interval">5</span><br>
+                    <input class="range hide" type="range" id="messagesRange" name="messages" min="3" max="10" value="5" oninput="updateValue(this.value, 'messages');"/> 
+                    <span class="range hide" id="messages">5 <br></span>
+                    <input class="range hide" type="range" id="intervalRange" name="interval" min="3" max="10" value="5" oninput="updateValue(this.value, 'interval');"/> 
+                    <span class="range hide" id="interval">5 <br></span>
                 <% } else { %>
-                    <input id="autoraidmode" class="box" type="checkbox" name="autoraidmode" checked/>
+                    <input id="autoraidmode" class="box" type="checkbox" name="autoraidmode" oninput="updateVisibility('messagesRange'); updateVisibility('intervalRange'); updateVisibility('messages'); updateVisibility('interval');" checked/>
                     <label for="autoraidmode">Auto Raidmode</label>
                     <% const [messages, interval] = autoraidmode.split(" "); %>
                     <p>Enable the raidmode when more than <%= messages %> users join the server in less than <%= interval %> seconds.</p>
 
-                    <input class="range" type="range" id="messagesRange" name="messages" min="3" max="10" value="<%= messages %>" oninput="updateValue(this.value, 'messages')"/> 
-                    <span class="range" id="messages"><%= messages %></span><br>
-                    <input class="range" type="range" id="intervalRange" name="interval" min="3" max="10" value="<%= interval %>" oninput="updateValue(this.value, 'interval')"/> 
-                    <span class="range" id="interval"><%= interval %></span><br>
+                    <input class="range" type="range" id="messagesRange" name="messages" min="3" max="10" value="<%= messages %>" oninput="updateValue(this.value, 'messages');"/> 
+                    <span class="range" id="messages"><%= messages %> <br></span>
+                    <input class="range" type="range" id="intervalRange" name="interval" min="3" max="10" value="<%= interval %>" oninput="updateValue(this.value, 'interval');"/> 
+                    <span class="range" id="interval"><%= interval %> <br></span>
                 <% }; %> <br>
 
                 <% if (antibots == 0) { %>
@@ -111,5 +111,6 @@
 
     <script src="/js/menu.js"></script>
     <script src="/js/values.js"></script>
+    <script src="/js/hide.js"></script>
 </body>
 </html>
