@@ -1,5 +1,6 @@
 const { PermissionsBitField, ActionRowBuilder, StringSelectMenuBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require("discord.js");
 const { fixMissingConfig } = require("../../functions/missingConfig");
+const { fetchYouTubeName } = require("../../functions/youtube");
 
 module.exports =
 {
@@ -57,7 +58,7 @@ module.exports =
                         xpMenu(data[0]);
                         break;
                     case "API":
-                        apiMenu(data[0]);
+                        connectionsMenu(data[0]);
                         break;
                     case "members":
                         membersMenu(data[0]);
@@ -195,13 +196,13 @@ module.exports =
                 await interaction.message.edit({ embeds: [embed], components: [buttons, menu] });
             };
 
-            async function apiMenu(data)
+            async function connectionsMenu(data)
             {
                 const yt = data.youtube;
                 const twitch = data.twitch;
 
-                embed.addFields([{ name: ":video_camera:・YouTube Notifications:", value: `➜ ${yt == 0 ? ":red_circle:" : yt.split(" ")[1] == 0 ? ":yellow_circle:" : ":green_circle:"} **Sends a message** in ${yt == 0 ? "the **configured channel**" : `<#${yt.split(" ")[0]}>`} mentioning ${yt == 0 ? "the **configured role**" : yt.split(" ")[1] == 0 ? "the **future role** (setup to complete)" : yt.split(" ")[1] == "@everyone" ? "@everyone" : `<@&${yt.split(" ")[1]}>`} when ${yt == 0 ? "the **configured YouTube channel**" : yt.split(" ")[1] == 0 ? "the **future YouTube channel**" : `**${yt.split(" ")[2]}**`} releases a **new video**.` }])
-                embed.addFields([{ name: ":television:・Twitch Notifications:", value: `➜ ${twitch == 0 ? ":red_circle:" : twitch.split(" ")[1] == 0 ? ":yellow_circle:" : ":green_circle:"} **Sends a message** in ${twitch == 0 ? "the **configured channel**" : `<#${twitch.split(" ")[0]}>`} mentioning ${twitch == 0 ? "the **configured role**" : twitch.split(" ")[1] == 0 ? "the **future role** (setup to complete)" : twitch.split(" ")[1] == "@everyone" ? "@everyone" : `<@&${twitch.split(" ")[1]}>`} when ${twitch == 0 ? "the **configured Twitch channel**" : twitch.split(" ")[1] == 0 ? "the **future Twitch channel**" : `**${twitch.split(" ")[2]}**`} goes to **live**.` }])
+                embed.addFields([{ name: ":video_camera:・YouTube Notifications:", value: `➜ ${yt == 0 ? ":red_circle:" : ":green_circle:"} **Sends a message** in ${yt == 0 ? "the **configured channel**" : `<#${yt.split(" ")[0]}>`} mentioning ${yt == 0 ? "the **configured role**" : yt.split(" ")[1] == "@everyone" ? "@everyone" : `<@&${yt.split(" ")[1]}>`} when ${yt == 0 ? "the **configured YouTube channel**" : `**${await fetchYouTubeName(yt.split(" ")[2])}**`} releases a **new video**.` }])
+                embed.addFields([{ name: ":television:・Twitch Notifications:", value: `➜ ${twitch == 0 ? ":red_circle:" : ":green_circle:"} **Sends a message** in ${twitch == 0 ? "the **configured channel**" : `<#${twitch.split(" ")[0]}>`} mentioning ${twitch == 0 ? "the **configured role**" : twitch.split(" ")[1] == "@everyone" ? "@everyone" : `<@&${twitch.split(" ")[1]}>`} when ${twitch == 0 ? "the **configured Twitch channel**" : `**${twitch.split(" ")[2]}**`} goes to **live**.` }])
 
                 var buttons = new ActionRowBuilder()
                 .addComponents(

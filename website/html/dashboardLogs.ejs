@@ -45,39 +45,43 @@
                 <input type="submit" class="submit" value="Submit the modifications"> <br> <br>
 
                 <% if (messageslogs == 0) { %>
-                    <input id="messageslogs" class="box" type="checkbox" name="messageslogs"/>
+                    <input id="messageslogs" class="box" type="checkbox" name="messageslogs" oninput="updateVisibility('messagesIn'); updateVisibility('messagesBr');"/>
                     <label for="messageslogs">Messages Logs</label> <br>
-                    <input list="channels" class="search" type="search" name="messageslogsID" placeholder="Search for a channel name. Double click to show suggestions!"/>
                     <p>Sends a message in the configured channel when a message is deleted or edited.</p>
+                    <input id="messagesIn" list="channels" class="search hide" type="search" name="messageslogsID" placeholder="Search for a channel name. Double click to show suggestions!"/>
+                    <br class="hide" id="messagesBr">
                 <% } else { %>
-                    <input id="messageslogs" class="box" type="checkbox" name="messageslogs" checked/>
+                    <input id="messageslogs" class="box" type="checkbox" name="messageslogs" oninput="updateVisibility('messagesIn'); updateVisibility('messagesBr');" checked/>
                     <label for="messageslogs">Messages Logs</label> <br>
-                    <input list="channels" class="search" type="search" name="messageslogsID" placeholder="Search for a channel name. Double click to show suggestions!"/>
                     <p>Sends a log in <%= messageslogs %> when a message is deleted or edited.</p>
+                    <input id="messagesIn" list="channels" class="search" type="search" name="messageslogsID" placeholder="Search for a channel name. Double click to show suggestions!"/>
+                    <br id="messagesBr">
                 <% }; %> <br>
 
                 <% if (channelslogs == 0) { %>
-                    <input id="channelslogs" class="box" type="checkbox" name="channelslogs"/>
+                    <input id="channelslogs" class="box" type="checkbox" name="channelslogs" oninput="updateVisibility('channelsIn'); updateVisibility('channelsBr');"/>
                     <label for="channelslogs">Channels Logs</label> <br>
-                    <input list="channels" class="search" type="search" name="channelslogsID" placeholder="Search for a channel name. Double click to show suggestions!"/>
                     <p>Sends a message in the configured channel when a channel is created, deleted, or edited.</p>
+                    <input id="channelsIn" list="channels" class="search hide" type="search" name="channelslogsID" placeholder="Search for a channel name. Double click to show suggestions!"/>
+                    <br class="hide" id="channelsBr">
                 <% } else { %>
-                    <input id="channelslogs" class="box" type="checkbox" name="channelslogs" checked/>
+                    <input id="channelslogs" class="box" type="checkbox" name="channelslogs" oninput="updateVisibility('channelsIn'); updateVisibility('channelsBr');" checked/>
                     <label for="channelslogs">Channels Logs</label> <br>
-                    <input list="channels" class="search" type="search" name="channelslogsID" placeholder="Search for a channel name. Double click to show suggestions!"/>
                     <p>Sends a log in <%= channelslogs %> when a channel is created, deleted, or edited.</p>
+                    <input id="channelsIn" list="channels" class="search" type="search" name="channelslogsID" placeholder="Search for a channel name. Double click to show suggestions!"/>
+                    <br id="channelsBr">
                 <% }; %> <br>
 
                 <% if (banslogs == 0) { %>
-                    <input id="banslogs" class="box" type="checkbox" name="banslogs"/>
+                    <input id="banslogs" class="box" type="checkbox" name="banslogs" oninput="updateVisibility('bansIn');"/>
                     <label for="banslogs">Bans Logs</label> <br>
-                    <input list="channels" class="search" type="search" name="banslogsID" placeholder="Search for a channel name. Double click to show suggestions!"/>
                     <p>Sends a message in the configured channel when a ban is issued or revoked.</p>
+                    <input id="bansIn" list="channels" class="search hide" type="search" name="banslogsID" placeholder="Search for a channel name. Double click to show suggestions!"/>
                 <% } else { %>
-                    <input id="banslogs" class="box" type="checkbox" name="banslogs" checked/>
+                    <input id="banslogs" class="box" type="checkbox" name="banslogs" oninput="updateVisibility('bansIn');" checked/>
                     <label for="banslogs">Bans Logs</label> <br>
-                    <input list="channels" class="search" type="search" name="banslogsID" placeholder="Search for a channel name. Double click to show suggestions!"/>
                     <p>Sends a log <%= banslogs %> when a ban is issued or revoked.</p>
+                    <input id="bansIn" list="channels" class="search" type="search" name="banslogsID" placeholder="Search for a channel name. Double click to show suggestions!"/>
                 <% }; %>
 
                 <datalist id="channels">
@@ -113,5 +117,6 @@
     </nav>
 
     <script src="/js/menu.js"></script>
+    <script src="/js/hide.js"></script>
 </body>
 </html>

@@ -24,7 +24,7 @@ module.exports =
             // Some user verifications.
             const member = guild.members.cache.get(userInfo.data.id);
             if (!member) return res.status(403).send("You aren't a member of this server!");
-            if (!member.permissions.has(Perms.Administrator) && !member.permissions.has(Perms.ManageGuild) && guild.ownerId != userInfo.data.id) return res.status(403).send("You don't have the required permissions in this server!");
+            if (guild.ownerId != userInfo.data.id) return res.status(403).send("You don't have the required permissions in this server! These actions are for the owner only.");
 
             // Read data.
             const raidmode = req.query.raidmode;

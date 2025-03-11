@@ -20,7 +20,7 @@ module.exports =
                 grant_type: "authorization_code",
                 code: req.query.code,
                 // This redirect URL needs to be defined in the Discord Dev Portal as a "Redirect" in the "OAuth2" menu.
-                redirect_uri: `http${!config.debug ? "s" : ""}://${config.express.host}:${config.express.port}/callback`,
+                redirect_uri: `http://${config.express.host}:${config.express.port}/callback`,
                 scope: ["identify", "guilds"]
             };
 

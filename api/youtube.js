@@ -17,7 +17,7 @@ async function youtubeNotifications()
                 const [channelID, roleID, youtubeID, videoID, previousID] = data[i].youtube.split(" ");
                 if (roleID == 0 || youtubeID == 0) continue; // The configuration isn't finished for this server.
 
-                setTimeout(() => {}, 300); // Wait to avoid too many requests.
+                setTimeout(() => {}, 500); // Wait to avoid too many requests.
                 const videos = await axios.get(`https://www.youtube.com/channel/${youtubeID}/videos`);
                 const html = cheerio.load(videos.data).html(); // Convert the data in HTML.
                 const regex = /"webCommandMetadata":{"url":"\/watch\?v=([^"]+)"/;
@@ -25,7 +25,7 @@ async function youtubeNotifications()
 
                 if (latestID != videoID && latestID != 0 && latestID != previousID)
                 {
-                    setTimeout(() => {}, 300);
+                    setTimeout(() => {}, 500);
                     const video = await axios.get(`https://www.youtube.com/watch?v=${latestID}`);
                     const html = cheerio.load(video.data).html(); // Convert the data in HTML.
 

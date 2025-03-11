@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connections - <%= guildName %> - Manager</title>
+    <link rel="shortcut icon" href="/assets/icon.png">
+    <link rel="stylesheet" href="/css/all.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/guild.css">
+</head>
+
+<body>
+    <nav class="guilds">
+        <ul>
+            <% for (var i = 0; i < availableGuilds.length; i++) { %>
+                <li>
+                    <a href="/dashboard/<%= availableGuilds[i].id %>/logs">
+                        <img src="https://cdn.discordapp.com/icons/<%= availableGuilds[i].id %>/<%= availableGuilds[i].icon %>">
+                    </a>
+                </li>
+            <% }; %> <br>
+        </ul>
+    </nav>
+
+    <main>
+        <div class="menu">
+            <img src="<%= guildIcon %>">
+            <p class="title"><%= guildName %></p> <br>
+
+            <a href="/dashboard/<%= guildID %>/security">Security</a> <br>
+            <a href="/dashboard/<%= guildID %>/moderation">Moderation</a> <br>
+            <a href="/dashboard/<%= guildID %>/experience"">Experience</a> <br>
+            <a class="current" href="/dashboard/<%= guildID %>/connections">Connections</a> <br>
+            <a href="/dashboard/<%= guildID %>/members">Members</a> <br>
+            <a href="/dashboard/<%= guildID %>/logs">Logs</a> <br> <br>
+
+            <a href="/dashboard">Back to dashboard</a>
+        </div>
+
+        <div class="config">
+            <form action="/dashboard/<%= guildID %>/connections/config">
+                <p>Once you finished, don't forget to: </p>
+                <input type="submit" class="submit" value="Submit the modifications"> <br> <br>
+
+                <% if (youtube == 0) { %>
+                    <input id="youtube" class="box" type="checkbox" name="youtube" oninput="updateVisibility('youtubeChannelIn'); updateVisibility('youtubeRoleIn'); updateVisibility('youtubeUrlIn'); updateVisibility('youtubeBr');"/>
+                    <label for="youtube">YouTube Notifications</label> <br>
+                    <p>Sends a message in the configured channel mentioning the configured role when the configured YouTube channel releases a new video.</p>
+                    <input id="youtubeChannelIn" list="channels" class="search hide" type="search" name="youtubeChannel" placeholder="Search for a channel name. Double click to show suggestions!"/>
+                    <input id="youtubeRoleIn" list="roles" class="search hide" type="search" name="youtubeRole" placeholder="Search for a role name. Double click to show suggestions!"/>
+                    <input id="youtubeUrlIn" class="search hide" type="text" name="youtubeUrl" placeholder="The channel URL. Example: https://youtube.com/@example"/>
+                    <br id="youtubeBr" class="hide">
+                <% } else { %>
+                    <% const [channel, role, youtubeName] = youtube.split(" "); %>
+
+                    <input id="youtube" class="box" type="checkbox" name="youtube" oninput="updateVisibility('youtubeChannelIn'); updateVisibility('youtubeRoleIn'); updateVisibility('youtubeUrlIn'); updateVisibility('youtubeBr');" checked/>
+                    <label for="youtube">YouTube Notifications</label> <br>
+                    <p>Sends a message in <%= channel %> mentioning <%= role %> when <%= youtubeName %> releases a new video.</p>
+                    <input id="youtubeChannelIn" list="channels" class="search" type="search" name="youtubeChannel" placeholder="Search for a channel name. Double click to show suggestions!"/>
+                    <input id="youtubeRoleIn" list="roles" class="search" type="search" name="youtubeRole" placeholder="Search for a role name. Double click to show suggestions!"/>
+                    <input id="youtubeUrlIn" class="search" type="text" name="youtubeUrl" placeholder="The channel URL. Example: https://youtube.com/@example"/>
+                    <br id="youtubeBr">
+                <% }; %> <br>
+
+                <% if (twitch == 0) { %>
+                    <input id="twitch" class="box" type="checkbox" name="twitch" oninput="updateVisibility('twitchChannelIn'); updateVisibility('twitchRoleIn'); updateVisibility('twitchUrlIn');"/>
+                    <label for="twitch">Twitch Notifications</label> <br>
+                    <p>Sends a message in the configured channel mentioning the configured role when the configured Twitch channel goes to live.</p>
+                    <input id="twitchChannelIn" list="channels" class="search hide" type="search" name="twitchChannel" placeholder="Search for a channel name. Double click to show suggestions!"/>
+                    <input id="twitchRoleIn" list="roles" class="search hide" type="search" name="twitchRole" placeholder="Search for a role name. Double click to show suggestions!"/>
+                    <input id="twitchUrlIn" class="search hide" type="text" name="twitchUrl" placeholder="The channel URL. Example: https://twitch.tv/example"/>
+                <% } else { %>
+                    <% const [channel, role, twitchID] = twitch.split(" "); %>
+
+                    <input id="twitch" class="box" type="checkbox" name="twitch" oninput="updateVisibility('twitchChannelIn'); updateVisibility('twitchRoleIn'); updateVisibility('twitchUrlIn');" checked/>
+                    <label for="twitch">Twitch Notifications</label> <br>
+                    <p>Sends a message in <%= channel %> mentioning <%= role %> when <%= twitchID %> goes to live.</p>
+                    <input id="twitchChannelIn" list="channels" class="search" type="search" name="twitchChannel" placeholder="Search for a channel name. Double click to show suggestions!"/>
+                    <input id="twitchRoleIn" list="roles" class="search" type="search" name="twitchRole" placeholder="Search for a role name. Double click to show suggestions!"/>
+                    <input id="twitchUrlIn" class="search" type="text" name="twitchUrl" placeholder="The channel URL. Example: https://twitch.tv/example"/>
+                <% }; %>
+
+                <datalist id="channels">
+                    <% for (let channelName in channels) { %>
+                        <option value="<%= channels[channelName] %>"><%= channelName %></option>
+                    <% } %>
+                </datalist>
+
+                <datalist id="roles">
+                    <% for (let roleName in roles) { %>
+                        <option value="<%= roles[roleName] %>"><%= roleName %></option>
+                    <% } %>
+                </datalist>
+            </form>
+        </div>
+    </main>
+
+    <nav class="navbar">
+        <a href="/home" class="logo">Manager</a>
+
+        <div class="nav-links">
+            <ul>
+                <li>
+                    <a href="/home">Home</a>
+                </li>
+                <li class="display">
+                    <a href="/dashboard">Dashboard</a>
+                </li>
+                <li>
+                    <a href="https://github.com/PistacheDev/manager">GitHub</a>
+                </li>
+                <li>
+                    <a href="https://discord.com/invite/RkB3ZQsmGV">Support</a>
+                </li>
+            </ul>
+        </div>
+
+        <img src="/assets/menu.png" alt="menu.png" class="hamburgerMenu">
+    </nav>
+
+    <script src="/js/menu.js"></script>
+    <script src="/js/hide.js"></script>
+</body>
+</html>
