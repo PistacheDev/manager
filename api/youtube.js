@@ -24,7 +24,7 @@ async function youtubeNotifications()
                 const latestID = `${html.match(regex) ? html.match(regex)[1] : 0}`;
                 const thumbnail = html.match(/"thumbnail":\{"thumbnails":\[\{"url":"https:\/\/i\.ytimg\.com\/vi\/([^"]+)"/)[1];
 
-                if (latestID == videoID && latestID != 0 && latestID == previousID)
+                if (latestID != videoID && latestID != 0 && latestID != previousID)
                 {
                     setTimeout(() => {}, 500);
                     const video = await axios.get(`https://www.youtube.com/watch?v=${latestID}`);
