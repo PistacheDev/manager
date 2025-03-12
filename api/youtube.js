@@ -22,8 +22,9 @@ async function youtubeNotifications()
                 const html = cheerio.load(videos.data).html(); // Convert the data in HTML.
                 const regex = /"webCommandMetadata":{"url":"\/watch\?v=([^"]+)"/;
                 const latestID = `${html.match(regex) ? html.match(regex)[1] : 0}`;
+                const thumbnail = html.match(/"thumbnail":\{"thumbnails":\[\{"url":"https:\/\/i\.ytimg\.com\/vi\/([^"]+)"/)[1];
 
-                if (latestID != videoID && latestID != 0 && latestID != previousID)
+                if (latestID == videoID && latestID != 0 && latestID == previousID)
                 {
                     setTimeout(() => {}, 500);
                     const video = await axios.get(`https://www.youtube.com/watch?v=${latestID}`);
@@ -34,12 +35,12 @@ async function youtubeNotifications()
                     const channelName = html.match(/"channel":{"simpleText":"([^"]+)"}/)[1];
                     const channelIcon = html.match(/"thumbnails":\[\{"url":"https:\/\/yt3.ggpht.com\/([^"]+)"\}\]/)[1];
                     const descriptionMatch = html.match(/"attributedDescription":{"content":"([^"]+)"/);
-                    const fullVideoDescription = descriptionMatch ? descriptionMatch[1] : "No description available for this video!";
+                    const fullVideoDescription = descriptionMatch ? descriptionMatch[1] : "No description available for this video.";
                     let videoDescription = fullVideoDescription.replace(/\\n/g, " ");
 
                     // Reduce some data length if they are too long for the embed.
                     if (videoTitle.length > 40) videoTitle = `${videoTitle.slice(0, 37)}...`;
-                    if (videoDescription.length > 260) videoDescription = `${videoDescription.slice(0, 257)}...`;
+                    if (videoDescription.length > 140) videoDescription = `${videoDescription.slice(0, 137)}...`;
 
                     const embed = new EmbedBuilder()
                     .setColor("Red")
@@ -47,7 +48,7 @@ async function youtubeNotifications()
                     .setTitle(videoTitle)
                     .setThumbnail(`https://yt3.ggpht.com/${channelIcon}`)
                     .setDescription(videoDescription)
-                    .setImage(`https://i.ytimg.com/vi/${latestID}/maxresdefault.jpg`)
+                    .setImage(`https://i.ytimg.com/vi/${thumbnail}`)
                     .setTimestamp()
                     .setFooter({ text: channelName, iconURL: `https://yt3.ggpht.com/${channelIcon}` })
 
