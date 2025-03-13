@@ -9,7 +9,7 @@ module.exports =
     {
         try
         {
-            const ignoreBots = interaction.fields.getTextInputValue("option1");
+            const ignoreBots = interaction.fields.getTextInputValue("option");
             const ignoreAdmins = interaction.fields.getTextInputValue("option2");
             const maxWarns = interaction.fields.getTextInputValue("option3");
             const sanction = interaction.fields.getTextInputValue("option4");

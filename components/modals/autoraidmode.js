@@ -10,7 +10,7 @@ module.exports =
         try
         {
             const guild = interaction.guild;
-            const maxMembers = interaction.fields.getTextInputValue("option1");
+            const maxMembers = interaction.fields.getTextInputValue("option");
             const interval = interaction.fields.getTextInputValue("option2");
 
             if (isNaN(maxMembers) || isNaN(interval)) return interaction.reply({ content: ":warning: Please, enter a number!", flags: MessageFlags.Ephemeral });

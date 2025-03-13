@@ -9,7 +9,7 @@ module.exports =
     {
         try
         {
-            const ignoreBots = interaction.fields.getTextInputValue("option1");
+            const ignoreBots = interaction.fields.getTextInputValue("option");
             const sanction = interaction.fields.getTextInputValue("option2");
             const guild = interaction.guild;
 

@@ -23,15 +23,15 @@ module.exports =
                     .setCustomId("antispamModal")
                     .setTitle("Setup the anti spam:")
 
-                    const option1 = new TextInputBuilder()
-                    .setCustomId("option1")
+                    const option = new TextInputBuilder()
+                    .setCustomId("option")
                     .setLabel("Do I have to ignore the bots?")
                     .setPlaceholder("Answer by \"yes\" or \"no\".")
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
 
-                    const input1 = new ActionRowBuilder()
-                    .addComponents(option1)
+                    const input = new ActionRowBuilder()
+                    .addComponents(option)
 
                     const option2 = new TextInputBuilder()
                     .setCustomId("option2")
@@ -73,7 +73,7 @@ module.exports =
                     const input5 = new ActionRowBuilder()
                     .addComponents(option5)
 
-                    modal.addComponents(input1, input2, input3, input4, input5);
+                    modal.addComponents(input, input2, input3, input4, input5);
                     await interaction.showModal(modal);
                 }
                 else
