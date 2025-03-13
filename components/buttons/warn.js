@@ -23,15 +23,15 @@ module.exports =
                     .setCustomId("warnModal")
                     .setTitle("Setup the anti spam:")
 
-                    const option1 = new TextInputBuilder()
-                    .setCustomId("option1")
+                    const option = new TextInputBuilder()
+                    .setCustomId("option")
                     .setLabel("What is the maximum amount of warns?")
                     .setPlaceholder("Maximum number of warns before the sanction (2 ~ 10).")
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
 
-                    const input1 = new ActionRowBuilder()
-                    .addComponents(option1)
+                    const input = new ActionRowBuilder()
+                    .addComponents(option)
 
                     const option2 = new TextInputBuilder()
                     .setCustomId("option2")
@@ -43,7 +43,7 @@ module.exports =
                     const input2 = new ActionRowBuilder()
                     .addComponents(option2)
 
-                    modal.addComponents(input1, input2);
+                    modal.addComponents(input, input2);
                     await interaction.showModal(modal);
                 }
                 else

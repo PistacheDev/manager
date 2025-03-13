@@ -9,7 +9,7 @@ module.exports =
     {
         try
         {
-            const alert = interaction.fields.getTextInputValue("option1");
+            const alert = interaction.fields.getTextInputValue("option");
             const maxXP = interaction.fields.getTextInputValue("option2");
             const maxLevel = interaction.fields.getTextInputValue("option3");
             const guild = interaction.guild;
