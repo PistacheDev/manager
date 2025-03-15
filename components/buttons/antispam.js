@@ -25,8 +25,8 @@ module.exports =
 
                     const option = new TextInputBuilder()
                     .setCustomId("option")
-                    .setLabel("Do I have to ignore the bots?")
-                    .setPlaceholder("Answer by \"yes\" or \"no\".")
+                    .setLabel("What is the maximum number of messages?")
+                    .setPlaceholder("Max number of messages during the interval (2 ~ 10).")
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
 
@@ -35,8 +35,8 @@ module.exports =
 
                     const option2 = new TextInputBuilder()
                     .setCustomId("option2")
-                    .setLabel("What is the maximum number of messages?")
-                    .setPlaceholder("Max number of messages during the interval (2 ~ 10).")
+                    .setLabel("What's the interval of time studied?")
+                    .setPlaceholder("Interval of time in seconds (2 ~ 10).")
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
 
@@ -45,8 +45,8 @@ module.exports =
 
                     const option3 = new TextInputBuilder()
                     .setCustomId("option3")
-                    .setLabel("What's the interval of time studied?")
-                    .setPlaceholder("Interval of time in seconds (2 ~ 10).")
+                    .setLabel("What's the maximum amount of warnings?")
+                    .setPlaceholder("Maximum of warns before the sanction (1 ~ 5).")
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
 
@@ -55,25 +55,15 @@ module.exports =
 
                     const option4 = new TextInputBuilder()
                     .setCustomId("option4")
-                    .setLabel("What's the maximum amount of warnings?")
-                    .setPlaceholder("Maximum of warns before the sanction (1 ~ 5).")
+                    .setLabel("What sanction I have to apply?")
+                    .setPlaceholder("Enter \"ban\" to ban or a number (in minutes) to mute.")
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
 
                     const input4 = new ActionRowBuilder()
                     .addComponents(option4)
 
-                    const option5 = new TextInputBuilder()
-                    .setCustomId("option5")
-                    .setLabel("What sanction I have to apply?")
-                    .setPlaceholder("Enter \"ban\" to ban or a number (in minutes) to mute.")
-                    .setStyle(TextInputStyle.Short)
-                    .setRequired(true)
-
-                    const input5 = new ActionRowBuilder()
-                    .addComponents(option5)
-
-                    modal.addComponents(input, input2, input3, input4, input5);
+                    modal.addComponents(input, input2, input3, input4);
                     await interaction.showModal(modal);
                 }
                 else
@@ -87,11 +77,11 @@ module.exports =
                     .setColor("Orange")
                     .setAuthor({ name: "Configuration Panel", iconURL: client.user.avatarURL() })
                     .setDescription("Press the button with the **emoji corresponding** to **the option** you want to modify.")
-                    .addFields([{ name: ":hand_splayed:・Anti spam:", value: "➜ :red_circle: Prevent the members from sending **too many messages** in **a short period of time** by warning them. After **the maximum configured amount of warns** reached, the member will **receive a sanction**. The bots **can be ignored (*not recommended*)**." }])
-                    .addFields([{ name: ":no_entry:・Anti swear:", value: `➜ ${antiswear == 0 ? ":red_circle:" : ":green_circle:"} Prevent the members from **using bad words** by warning them. After **${antiswear == 0 ? "the maximum configured amount of" : antiswear.split(" ")[2]} warns** reached, the member will **${antiswear == 0 ? "receive a sanction" : `be ${antiswear.split(" ")[3] == "ban" ? "banned" : `muted for ${antiswear.split(" ")[3]} minutes`}`}**. The bots **${antiswear == 0 ? "can be" : antiswear.split(" ")[0] == 0 ? "aren't" : "are"} ignored** and the administrators **${antiswear == 0 ? "too" : antiswear.split(" ")[1] == 0 ? "aren't ignored" : "are ignored"}**.` }])
+                    .addFields([{ name: ":hand_splayed:・Anti spam:", value: "➜ :red_circle: Prevent the members from sending **too many messages** in **a short period of time** by warning them. After **the maximum configured amount of warns** reached, the member will **receive a sanction**." }])
+                    .addFields([{ name: ":no_entry:・Anti swear:", value: `➜ ${antiswear == 0 ? ":red_circle:" : ":green_circle:"} Prevent the members from **using bad words** by warning them. After **${antiswear == 0 ? "the maximum configured amount of" : antiswear.split(" ")[0]} warns** reached, the member will **${antiswear == 0 ? "receive a sanction" : `be ${antiswear.split(" ")[1] == "ban" ? "banned" : `muted for ${antiswear.split(" ")[1]} minutes`}`}**.` }])
                     .addFields([{ name: ":warning:・Warns:", value: `➜ ${warn == 0 ? ":red_circle:" : ":green_circle:"} The member **will be ${warn == 0 ? "sanctionned" : warn.split(" ")[1] == "ban" ? "banned" : `muted for ${warn.split(" ")[1]} hours`}** if its warns count reaches **${warn == 0 ? "the maximum amount" : `more than ${warn.split(" ")[0]} warns`}**.` }])
-                    .addFields([{ name: ":loud_sound:・Anti pings:", value: `➜ ${antipings == 0 ? ":red_circle:" : ":green_circle:"} Prevent the members from **using the everyone and here mentions** by **deleting the message** and **${antipings == 0 ? "sanctioning them" : antipings.split(" ")[1] == "ban" ? "banning them" : `muting them for ${antipings.split(" ")[1]} minutes`}**. The bots **${antipings == 0 ? "can be ignored (*not recommended*)" : antipings.split(" ")[0] == 0 ? "aren't ignored" : "are ignored"}**.` }])
-                    .addFields([{ name: ":globe_with_meridians:・Anti links:", value: `➜ ${antilinks == 0 ? ":red_circle:" : antilinks == 1 ? ":yellow_circle:" : ":green_circle:"} Delete the messages **containing links**. The bots ${antilinks == 0 ? "can be" : antilinks == 1 ? "are" : "aren't"} ignored.` }])
+                    .addFields([{ name: ":loud_sound:・Anti pings:", value: `➜ ${antipings == 0 ? ":red_circle:" : ":green_circle:"} Prevent the members from **using the everyone and here mentions** by **deleting the message** and **${antipings == 0 ? "sanctioning them" : antipings == "ban" ? "banning them" : `muting them for ${antipings} minutes`}**.` }])
+                    .addFields([{ name: ":globe_with_meridians:・Anti links:", value: `➜ ${antilinks == 0 ? ":red_circle:" : ":green_circle:"} Delete the messages **containing links**.` }])
                     .setThumbnail(client.user.avatarURL())
                     .setTimestamp()
                     .setFooter({ text: guild.name, iconURL: guild.iconURL() })

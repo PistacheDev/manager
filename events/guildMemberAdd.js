@@ -17,7 +17,7 @@ module.exports =
                 if (err) throw err;
                 if (data.length > 0)
                 {
-                    member.ban({ reason: "This user has been definitively banned. Run \"/bansdef remove\" to remove it." });
+                    member.ban({ reason: "This user was definitively banned. Run \"/bansdef remove\" to remove it." });
                     return;
                 };
             });

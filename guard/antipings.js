@@ -1,5 +1,6 @@
 const { db, client } = require("../main");
 const { PermissionsBitField } = require("discord.js");
+const Perms = PermissionsBitField.Flags;
 
 async function antipings(message)
 {
@@ -10,11 +11,8 @@ async function antipings(message)
     db.query("SELECT * FROM config WHERE guild = ?", [guild.id], async (err, data) =>
     {
         if (err) throw err;
-        if (data[0].length < 1 || data[0].antipings == 0) return false;
-
-        const [ignoreBots, sanction] = data[0].antipings;
-        if (ignoreBots == 1 && author.bot) return false;
-        if (author.id == client.user.id || author.id == guild.ownerId || member.permissions.has(PermissionsBitField.Flags.Administrator)) return false;
+        if (data[0].length < 1 || data[0].antipings == 0 || author.id == client.user.id || author.id == guild.ownerId || member.permissions.has(Perms.Administrator)) return false;
+        const sanction = data[0].antipings;
 
         if (message.content.includes("@everyone" || "@here"))
         {
@@ -41,6 +39,8 @@ async function antipings(message)
 
         return false;
     });
+
+    return false;
 };
 
 module.exports =
