@@ -1,5 +1,6 @@
 const { db, client } = require("../main");
 const { PermissionsBitField, MessageFlags } = require("discord.js");
+const Perms = PermissionsBitField.Flags;
 
 const messages = new Map();
 const warnings = new Map();
@@ -13,12 +14,9 @@ async function antispam(message)
     db.query("SELECT * FROM config WHERE guild = ?", [guild.id], async (err, data) =>
     {
         if (err) throw err;
-        if (data.length < 1 || data[0].antispam == 0) return false;
+        if (data.length < 1 || data[0].antispam == 0 || author.id == client.user.id || author.id == guild.ownerId || member.permissions.has(Perms.Administrator)) return false;
 
-        const [ignoreBots, maxMessages, interval, maxWarns, sanction] = data[0].antispam.split(" ");
-        if (ignoreBots == 1 && author.bot) return false;
-        if (author.id == client.user.id || author.id == guild.ownerId || member.permissions.has(PermissionsBitField.Flags.Administrator)) return false;
-
+        const [maxMessages, interval, maxWarns, sanction] = data[0].antispam.split(" ");
         const now = Date.now();
         const timestamps = messages.get(author.id) || [];
         const filter = timestamps.filter(timestamp => now - timestamp < interval * 1000);
@@ -50,13 +48,15 @@ async function antispam(message)
                     });
                 };
             }
-            else message.reply(`:warning: This is your warning ${warns}/${maxWarns} for spamming!\n${warns == maxWarns ? ` Next time, you will be ${sanction == "ban" ? "ban" : "mute"} for spamming!` : ""}`);
+            else message.reply(`:warning: This is your warning ${warns}/${maxWarns} for spamming!${warns == maxWarns ? ` Next time, you will be ${sanction == "ban" ? "banned" : "muted"} for spamming!` : ""}`);
 
             return true;
         };
 
         return false;
     });
+
+    return false;
 };
 
 module.exports =

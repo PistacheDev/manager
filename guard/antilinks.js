@@ -1,5 +1,6 @@
 const { db, client } = require("../main");
 const { PermissionsBitField, MessageFlags } = require("discord.js");
+const Perms = PermissionsBitField.Flags;
 const url = require("../json/url.json");
 
 async function antilinks(message)
@@ -11,8 +12,7 @@ async function antilinks(message)
     db.query("SELECT * FROM config WHERE guild = ?", [guild.id], async (err, data) =>
     {
         if (err) throw err;
-        if (data.length < 1 || data[0].antilinks == 0 || author.id == client.user.id) return false;
-        if (data[0].antilinks == 1 && author.bot || author.id == guild.ownerId || member.permissions.has(PermissionsBitField.Flags.Administrator)) return false;
+        if (data.length < 1 || data[0].antilinks == 0 || author.id == client.user.id || author.id == guild.ownerId || member.permissions.has(Perms.Administrator)) return false;
 
         const content = message.content.toLowerCase();
         const isGif = content.includes("tenor.com");
@@ -33,6 +33,8 @@ async function antilinks(message)
 
         return false;
     });
+
+    return false;
 };
 
 module.exports =

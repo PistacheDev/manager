@@ -1,5 +1,4 @@
 const { db, client } = require("../main");
-const { PermissionsBitField } = require("discord.js");
 const detector = require("profanity-check");
 const filter = new detector.Filter();
 const warnings = new Map();
@@ -13,11 +12,8 @@ async function antiswear(message)
     db.query("SELECT * FROM config WHERE guild = ?", [guild.id], async (err, data) =>
     {
         if (err) throw err;
-        if (data[0].length < 1 || data[0].antiswear == 0) return false;
-
-        const [ignoreBots, ignoreAdmins, maxWarns, sanction] = data[0].antiswear.split(" ");
-        if ((author.bot && ignoreBots == 1) || (member.permissions.has(PermissionsBitField.Flags.Administrator) && ignoreAdmins == 1)) return false;
-        if (author.id == client.user.id || author.id == guild.ownerId) return false;
+        if (data[0].length < 1 || data[0].antiswear == 0 || author.id == client.user.id || author.id == guild.ownerId) return false;
+        const [maxWarns, sanction] = data[0].antiswear.split(" ");
 
         if (filter.isProfane(message.content)) // If a bad word has been detected.
         {
@@ -47,7 +43,11 @@ async function antiswear(message)
 
             return true;
         };
+
+        return false;
     });
+
+    return false;
 };
 
 module.exports =
