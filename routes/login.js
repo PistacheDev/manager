@@ -8,9 +8,8 @@ module.exports =
     {
         try
         {
-            // If the user isn't logged in, redirect the user to the Discord login page.
-            if (!req.cookies.sessionKey) res.status(200).redirect(`https://discord.com/oauth2/authorize?client_id=${client.user.id}&response_type=code&redirect_uri=http%3A%2F%2F${config.express.host}%3A${config.express.port}%2Fcallback&scope=identify+guilds`)
-            else res.status(200).redirect("/dashboard");
+            const url = config.debug ? `http%3A%2F%2F${config.express.host}%3A${config.express.port}` : "https%3A%2F%2Fmanager.pistachedev.fr";
+            res.status(200).redirect(req.cookies.sessionKey ? "/dashboard" : `https://discord.com/oauth2/authorize?client_id=${client.user.id}&response_type=code&redirect_uri=${url}%2Fcallback&scope=identify+guilds`);
         }
         catch (err)
         {

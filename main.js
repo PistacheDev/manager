@@ -8,7 +8,6 @@ const path = require("path");
 const fs = require("fs");
 const cookieParser = require("cookie-parser");
 
-// Create a Discord client.
 const client = new Client
 ({
     intents: [ IntentsBitField.Flags.Guilds, IntentsBitField.Flags.GuildModeration, IntentsBitField.Flags.GuildExpressions, IntentsBitField.Flags.GuildIntegrations, IntentsBitField.Flags.GuildWebhooks, IntentsBitField.Flags.GuildInvites, IntentsBitField.Flags.GuildVoiceStates, IntentsBitField.Flags.GuildMessageReactions, IntentsBitField.Flags.GuildMessageTyping, IntentsBitField.Flags.DirectMessages, IntentsBitField.Flags.DirectMessageReactions, IntentsBitField.Flags.DirectMessageTyping, IntentsBitField.Flags.GuildScheduledEvents, IntentsBitField.Flags.GuildPresences, IntentsBitField.Flags.GuildMembers, IntentsBitField.Flags.GuildMessages, IntentsBitField.Flags.MessageContent ],
@@ -20,7 +19,6 @@ const client = new Client
     },
 });
 
-// Create a pool connection to the database.
 const db = mysql.createPool
 ({
     host: process.env.DB_HOST,
@@ -29,7 +27,7 @@ const db = mysql.createPool
     password: process.env.DB_PASSWORD
 });
 
-client.login(process.env.APP_TOKEN); // Login to the Discord bot account.
+client.login(process.env.APP_TOKEN);
 module.exports.boot = Date.now();
 module.exports.client = client;
 module.exports.db = db;
@@ -39,7 +37,7 @@ db.getConnection((err, connection) =>
     if (err)
     {
         console.error(`[error] Connection to the database failed! Error: ${err}\nThe process has been killed (the database is required).`);
-        return process.exit(); // Kill the process (the database is required).
+        return process.exit();
     };
 
     if (process.env.DB_HOST != "localhost")
@@ -50,7 +48,7 @@ db.getConnection((err, connection) =>
         if (!config.debug)
         {
             console.error("[error] You can't use the database's root user in release mode.\nThe process has been killed (security reason).");
-            return process.exit(); // Kill the process (root user used in release mode).
+            return process.exit();
         }
         else console.warn("[warn] You are currently using the database's root user! Be careful!");
     };
@@ -60,7 +58,7 @@ db.getConnection((err, connection) =>
         if (!config.debug)
         {
             console.error("[error] Your database's password is too weak for the release mode.\nThe process has been killed (security reason).");
-            return process.exit(); // Kill the process (password too weak in release mode).
+            return process.exit();
         }
         else console.warn("[warn] You are currently using a weak password for the database! Be careful!");
     };
@@ -69,10 +67,10 @@ db.getConnection((err, connection) =>
     connection.release();
 });
 
-const app = express(); // Create a web server.
+const app = express();
 app.use(cookieParser());
 app.set("etag", false);
-app.use(express.static(`${__dirname}/website`)); // Force express to use the "website" folder only.
+app.use(express.static(`${__dirname}/website`));
 app.use(express.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 app.listen(config.express.port, config.express.host, () => console.log(`[debug] Website hosted at http://${config.express.host}:${config.express.port}.`));
@@ -82,7 +80,6 @@ try
     const routes = fs.readdirSync("./routes").filter(files => files.endsWith(".js"));
     let routesCount = 0;
 
-    // Middleware.
     app.get("*", async (req, res, next) =>
     {
         if (req.get("host").startsWith(config.express.host) && !config.debug) return res.redirect(`https://manager.pistachedev.fr${req.url}`); // Enforce the domain name if we are in release mode.
@@ -94,14 +91,13 @@ try
     {
         const script = require(`./routes/${route}`);
 
-        if (script.name && script.run) // Add the page to the website if it's valid.
+        if (script.name && script.run)
         {
             app.get(script.name, script.run);
             routesCount++;
         };
     };
 
-    // Error 404.
     app.get("*", async (req, res) =>
     {
         if (![".css", ".png", ".js", ".ico"].includes(path.extname(req.url))) res.redirect("/home?error=404")
@@ -124,10 +120,10 @@ catch (err)
     console.error(`[error] main, ${err}, ${Date.now()}`);
 };
 
-function processHandler (err) // Prevent the application from crashing.
+function processHandler (err)
 {
-    if (err.code == 10062 || err.code == 40060) return; // Ignore the "unknown interaction" and "already responded" errors.
-    console.error(`[error] processHandler, ${err}, ${Date.now()}`);
+    if (err.code == 10062 || err.code == 40060) return;
+    console.error(`[error] ${err}, ${Date.now()}`);
 };
 
 process.on("unhandledRejection", processHandler);

@@ -3,28 +3,19 @@ module.exports =
     name: "guildDelete",
     async run(client, db, guild)
     {
-        try
+        db.query("DELETE FROM config WHERE guild = ?", [guild.id], async (err) =>
         {
-            // We remove everything related to this server from the database to save some space on the server disk.
+            if (err) throw err;
+        });
 
-            db.query("DELETE FROM config WHERE guild = ?", [guild.id], async (err) =>
-            {
-                if (err) throw err;
-            });
-
-            db.query("DELETE FROM warns WHERE guild = ?", [guild.id], async (err) =>
-            {
-                if (err) throw err;
-            });
-
-            db.query("DELETE FROM xp WHERE guild = ?", [guild.id], async (err) =>
-            {
-                if (err) throw err;
-            });
-        }
-        catch (err)
+        db.query("DELETE FROM warns WHERE guild = ?", [guild.id], async (err) =>
         {
-            console.error(`[error] ${this.name}, ${err}, ${Date.now()}`);
-        };
+            if (err) throw err;
+        });
+
+        db.query("DELETE FROM xp WHERE guild = ?", [guild.id], async (err) =>
+        {
+            if (err) throw err;
+        });
     }
 };

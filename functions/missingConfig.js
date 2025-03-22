@@ -8,7 +8,7 @@ async function fixMissingConfig(guild)
         {
             if (err) return reject(err);
 
-            setTimeout(() => // Wait to let the database correctly insert the data.
+            setTimeout(() =>
             {
                 db.query("SELECT * FROM config WHERE guild = ?", [guild.id], (err, data) =>
                 {

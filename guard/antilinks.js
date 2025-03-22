@@ -20,7 +20,7 @@ async function antilinks(message)
 
         url.keywords.forEach(keyword =>
         {
-            const count = content.split(keyword).length - 1; // Count the number of occurrences.
+            const count = content.split(keyword).length - 1;
             occurences += count;
         });
 

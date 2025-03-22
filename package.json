@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "@discordjs/rest": "^2.4.3",
-    "axios": "^1.8.3",
+    "axios": "^1.8.4",
     "cheerio": "^1.0.0",
     "cookie-parser": "^1.4.7",
     "discord.js": "^14.18.0",
@@ -10,7 +10,7 @@
     "express": "^4.21.2",
     "fs": "^0.0.1-security",
     "jsonwebtoken": "^9.0.2",
-    "mysql2": "^3.13.0",
+    "mysql2": "^3.14.0",
     "os": "^0.1.2",
     "path": "^0.12.7",
     "profanity-check": "^0.0.3",

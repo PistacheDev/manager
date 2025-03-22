@@ -8,7 +8,7 @@ async function levelUp(guild, member, levelDepart, maxLevel, xp)
     let nextLevel = 500 + (level * 10);
     let loop = 0;
 
-    while (XP >= nextLevel && loop < 3) // Level up while the user has enough XP.
+    while (XP >= nextLevel && loop < 3)
     {
         XP -= nextLevel;
         level += 1;
@@ -22,7 +22,7 @@ async function levelUp(guild, member, levelDepart, maxLevel, xp)
         });
 
         addGoalRoles(member, guild, level);
-        if (level == maxLevel) break; // Stop level up the user if he reached the max level.
+        if (level == maxLevel) break;
     };
 };
 
@@ -31,9 +31,9 @@ async function levelDown(guild, member, levelDepart, xp)
     let XP = xp;
     let level = levelDepart;
     let previous = 500 + ((currentLevel - 1) * 10);
-    let loop = 0; // To avoid to create an infinite loop.
+    let loop = 0;
 
-    while (XP < 0 && loop < 3) // Level down the user while his amount of XP is negative.
+    while (XP < 0 && loop < 3)
     {
         XP += previous;
         level -= 1;
@@ -52,7 +52,7 @@ async function levelDown(guild, member, levelDepart, xp)
         });
 
         removeGoalRoles(member, guild, level);
-        if (level == 0 && XP == 0) break; // Stop level down the user if it's now impossible.
+        if (level == 0 && XP == 0) break;
     };
 };
 

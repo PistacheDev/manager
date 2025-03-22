@@ -7,47 +7,40 @@ module.exports =
 	permission: PermissionsBitField.Flags.ManageChannels,
 	async run(client, db, interaction)
 	{
-		try
+		var channel = interaction.options.getChannel("channel");
+
+		if (!channel) channel = interaction.channel;
+		if (!channel.manageable) return interaction.reply({ content: ":warning: I can't manage this channel!", flags: MessageFlags.Ephemeral });
+
+		switch (interaction.options.getSubcommand())
 		{
-			var channel = interaction.options.getChannel("channel");
-			if (!channel) channel = interaction.channel; // Select the current channel if nothing's specified.
+			case "clone":
+				clone();
+				break;
+			case "recreate":
+				recreate();
+				break;
+			default:
+				interaction.reply({ content: ":warning: Command not found!", flags: MessageFlags.Ephemeral });
+				break;
+		};
 
-			switch (interaction.options.getSubcommand())
-			{
-				case "clone":
-					clone();
-					break;
-				case "recreate":
-					recreate();
-					break;
-				default:
-					interaction.reply({ content: ":warning: Command not found!", flags: MessageFlags.Ephemeral });
-					break;
-			};
-
-			// Clone the channel.
-			function clone()
-			{
-				channel.clone().then(async () =>
-				{
-					interaction.reply({ content: ":white_check_mark: Done!", flags: MessageFlags.Ephemeral });
-				});
-			};
-
-			// Clone and delete the original channel.
-			function recreate()
-			{
-				channel.clone().then(newChannel =>
-				{
-					channel.delete();
-					newChannel.send(`:repeat: Channel **recreated**!`);
-					if (channel.id != newChannel.id) interaction.reply({ content: ":white_check_mark: Done!", flags: MessageFlags.Ephemeral });
-				});
-			};
-		}
-		catch (err)
+		function clone()
 		{
-            console.error(`[error] ${this.name} ${interaction.options.getSubcommand()}, ${err}, ${Date.now()}`);
+			channel.clone().then(async () =>
+			{
+				interaction.reply({ content: ":white_check_mark: Done.", flags: MessageFlags.Ephemeral });
+			});
+		};
+
+		function recreate()
+		{
+			channel.clone().then(newChannel =>
+			{
+				channel.delete();
+				newChannel.send(`:repeat: Channel **recreated**!`);
+				if (channel.id != newChannel.id) interaction.reply({ content: ":white_check_mark: Done.", flags: MessageFlags.Ephemeral });
+			});
 		};
 	},
 	get data()
@@ -55,21 +48,17 @@ module.exports =
 		return new SlashCommandBuilder()
 		.setName(this.name)
 		.setDescription("Channel dedicated commands.")
-		.addSubcommand(
-			cmd => cmd
+		.addSubcommand(cmd => cmd
 			.setName("clone")
 			.setDescription("Clone a channel.")
-			.addChannelOption(
-				opt => opt
+			.addChannelOption(opt => opt
 				.setName("channel")
 				.setDescription("Channel to clone.")
 			)
-		).addSubcommand(
-			cmd => cmd
+		).addSubcommand(cmd => cmd
 			.setName("recreate")
 			.setDescription("Recreate a channel.")
-			.addChannelOption(
-				opt => opt
+			.addChannelOption(opt => opt
 				.setName("channel")
 				.setDescription("Channel to recreate.")
 			)

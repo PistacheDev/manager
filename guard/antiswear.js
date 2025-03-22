@@ -15,11 +15,11 @@ async function antiswear(message)
         if (data[0].length < 1 || data[0].antiswear == 0 || author.id == client.user.id || author.id == guild.ownerId) return false;
         const [maxWarns, sanction] = data[0].antiswear.split(" ");
 
-        if (filter.isProfane(message.content)) // If a bad word has been detected.
+        if (filter.isProfane(message.content))
         {
             message.delete();
             const warnsCount = (warnings.get(author.id) || 0) + 1;
-            warnings.set(author.id, warnsCount); // Add the warn to the member's count.
+            warnings.set(author.id, warnsCount);
 
             if (warnsCount > maxWarns)
             {

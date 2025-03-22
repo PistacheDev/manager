@@ -1,4 +1,4 @@
-const { requestToken } = require("../functions/discordRequest");
+const { requestToken } = require("../functions/discord");
 const { client } = require("../main");
 const config = require("../json/config.json");
 const jsonwebtoken = require("jsonwebtoken");
@@ -12,22 +12,19 @@ module.exports =
         {
             if (!req.query.code) return res.status(403).redirect("/login");
 
-            // Request to send to Discord.
             const requestData =
             {
                 client_id: client.user.id,
                 client_secret: process.env.APP_SECRET,
                 grant_type: "authorization_code",
                 code: req.query.code,
-                // This redirect URL needs to be defined in the Discord Dev Portal as a "Redirect" in the "OAuth2" menu.
                 redirect_uri: `http://${config.express.host}:${config.express.port}/callback`,
                 scope: ["identify", "guilds"]
             };
 
             const response = await requestToken(requestData);
-            const sessionKey = jsonwebtoken.sign({ data: response.data.access_token }, process.env.ENCRYPTION_KEY); // Encode the access token and sign it.
+            const sessionKey = jsonwebtoken.sign({ data: response.data.access_token }, process.env.ENCRYPTION_KEY);
 
-            // Save the encoded token into a cookie in the user's browser.
             res.cookie("sessionKey", sessionKey, { maxAge: response.data.expires_in, secure: true, httpOnly: true });
             await res.status(200).redirect("/dashboard");
         }

@@ -21,16 +21,15 @@ async function antispam(message)
         const timestamps = messages.get(author.id) || [];
         const filter = timestamps.filter(timestamp => now - timestamp < interval * 1000);
 
-        // Add the message to the Map.
         filter.push(now);
         messages.set(author.id, filter);
 
         if (filter.length >= maxMessages)
         {
             const warns = (warnings.get(author.id) || 0) + 1;
-            warnings.set(author.id, warns); // Add the warn to the member's count.
+            warnings.set(author.id, warns);
 
-            if (warns > maxWarns) // Too many warns.
+            if (warns > maxWarns)
             {
                 if (sanction == "ban")
                 {

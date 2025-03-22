@@ -10,11 +10,10 @@ async function autoraidmode(data, member)
         const timestamps = newMembers.get(guild.id) || [];
         const filter = timestamps.filter(timestamp => now - timestamp < interval * 1000);
 
-        // Add the member to the Map.
         filter.push(now);
         newMembers.set(guild.id, filter);
 
-        if (filter.length >= maxMembers) // Limit exceeded.
+        if (filter.length >= maxMembers)
         {
             db.query("UPDATE config SET raidmode = ? WHERE guild = ?", [1, guild.id], async (err) =>
             {

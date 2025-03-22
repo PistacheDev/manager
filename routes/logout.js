@@ -5,7 +5,7 @@ module.exports =
     {
         try
         {
-            res.clearCookie("sessionKey"); // Delete the "sessionKey" cookie.
+            res.clearCookie("sessionKey");
             res.status(200).redirect("/home");
         }
         catch (err)

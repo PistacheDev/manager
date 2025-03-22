@@ -4,10 +4,10 @@ function calculXP(xp, level)
 
     for (let i = 0; i < level; i++)
     {
-        xpTotal += (parseInt(level) - i * 10) * 500; // Convert the levels into XP.
+        xpTotal += (parseInt(level) - i * 10) * 500;
     };
 
-    xpTotal += parseInt(xp); // Add the remaining amount of XP.
+    xpTotal += parseInt(xp);
     return xpTotal;
 };
 

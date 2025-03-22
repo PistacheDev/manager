@@ -7,51 +7,45 @@ module.exports =
     permission: PermissionsBitField.Flags.ModerateMembers,
     async run(client, db, interaction)
     {
-        try
+        const target = interaction.guild.members.cache.get(interaction.options.getUser("user").id);
+        const guild = interaction.guild;
+        const mod = interaction.member;
+
+        if (!target.isCommunicationDisabled()) return interaction.reply({ content: ":warning: This member isn't muted!", flags: MessageFlags.Ephemeral });
+        if (!target.moderatable) return interaction.reply({ content: ":warning: Impossible to unmute this member!", flags: MessageFlags.Ephemeral });
+
+        target.timeout(null).then(() =>
         {
-            const target = interaction.guild.members.cache.get(interaction.options.getUser("user").id); // Fetch the user in the server list.
-            const guild = interaction.guild;
-            const mod = interaction.member;
+            console.log(`[${this.name}] ${guild.id}, ${mod.id}, ${target.id}, ${Date.now()}`);
 
-            if (!target.isCommunicationDisabled()) return interaction.reply({ content: ":warning: This member isn't muted!", flags: MessageFlags.Ephemeral });
-            if (!target.moderatable) return interaction.reply({ content: ":warning: Impossible to unmute this member!", flags: MessageFlags.Ephemeral });
+            const embed = new EmbedBuilder()
+            .setColor("Green")
+            .setThumbnail(target.user.avatarURL())
+            .setDescription(`:man_judge: <@${target.id}> @${target.user.username} has been unmuted!`)
+            .addFields([{ name: ":man_judge:・Moderator:", value: `>>> **User**: <@${mod.id}> @${mod.user.username}.\n**ID**: ${mod.id}.\n**Sanction removal's date**: <t:${Math.floor(Date.now() / 1000)}:F>.` }])
+            .setTimestamp()
+            .setFooter({ text: target.user.username, iconURL: target.user.avatarURL() })
 
-            target.timeout(null).then(() =>
-            {
-                const embed = new EmbedBuilder()
-                .setColor("Green")
-                .setThumbnail(target.user.avatarURL())
-                .setDescription(`:man_judge: <@${target.id}> @${target.user.username} has been unmuted!`)
-                .addFields([{ name: ":man_judge:・Moderator:", value: `>>> **User**: <@${mod.id}> @${mod.user.username}.\n**ID**: ${mod.id}.\n**Date de votre désexclusion**: <t:${Math.floor(Date.now() / 1000)}:F>.` }])
-                .setTimestamp()
-                .setFooter({ text: target.user.username, iconURL: target.user.avatarURL() })
+            interaction.channel.send({ embeds: [embed] });
+            interaction.reply({ content: ":white_check_mark: Done.", flags: MessageFlags.Ephemeral });
 
-                interaction.channel.send({ embeds: [embed] });
-                interaction.reply({ content: ":white_check_mark: Done!", flags: MessageFlags.Ephemeral });
+            const notif = new EmbedBuilder()
+            .setColor("Green")
+            .setThumbnail(guild.iconURL())
+            .setDescription(`:scales: You have been unmuted in **${guild.name}**!`)
+            .addFields([{ name: ":man_judge:・Moderator:", value: `>>> **User**: <@${mod.id}> @${mod.user.username}.\n**ID**: ${mod.id}.\n**Sanction removal's date**: <t:${Math.floor(Date.now() / 1000)}:F>.` }])
+            .setTimestamp()
+            .setFooter({ text: guild.name, iconURL: guild.iconURL() })
 
-                const notif = new EmbedBuilder()
-                .setColor("Green")
-                .setThumbnail(guild.iconURL())
-                .setDescription(`:scales: You have been unmuted in **${guild.name}**!`)
-                .addFields([{ name: ":man_judge:・Moderator:", value: `>>> **User**: <@${mod.id}> @${mod.user.username}.\n**ID**: ${mod.id}.\n**Date de votre désexclusion**: <t:${Math.floor(Date.now() / 1000)}:F>.` }])
-                .setTimestamp()
-                .setFooter({ text: guild.name, iconURL: guild.iconURL() })
-
-                target.user.createDM({ force: true }).send({ embeds: [notif] });
-            });
-        }
-        catch (err)
-        {
-            console.error(`[error] ${this.name}, ${err}, ${Date.now()}`);
-        };
+            target.user.createDM({ force: true }).send({ embeds: [notif] });
+        });
     },
     get data()
     {
         return new SlashCommandBuilder()
         .setName(this.name)
         .setDescription("Unmute a member.")
-        .addUserOption(
-            opt => opt
+        .addUserOption(opt => opt
             .setName("user")
             .setDescription("Member to unmute.")
             .setRequired(true)

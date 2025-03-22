@@ -8,7 +8,7 @@ module.exports =
         try
         {
             const appVersion = config.version;
-            res.status(200).render("../website/html/home.ejs", { version: appVersion }); // Render and display the page.
+            res.status(200).render("../website/html/home.ejs", { version: appVersion });
         }
         catch (err)
         {

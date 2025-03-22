@@ -8,6 +8,7 @@ async function bansdef(message)
     db.query("SELECT * FROM bans WHERE guild = ? AND user = ?", [guild.id, member.id], async (err, data) =>
     {
         if (err) throw err;
+
         if (data.length > 0)
         {
             message.delete();

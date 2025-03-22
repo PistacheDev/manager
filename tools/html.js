@@ -6,15 +6,7 @@ const fs = require("fs");
 
 async function saveHTML(url)
 {
-    try
-    {
-        request = await axios.get(url);
-    }
-    catch (err)
-    {
-        console.error(`[error] saveHTML, ${err}, ${Date.now()}`);
-        return;
-    };
+    request = await axios.get(url);
 
     fs.writeFile("./debug/output.html", request.data, async (err) =>
     {

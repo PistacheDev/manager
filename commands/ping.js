@@ -6,14 +6,7 @@ module.exports =
     type: "application",
     async run(client, db, interaction)
     {
-        try
-        {
-            await interaction.reply({ content: `:ping_pong: Application Latency: ${client.ws.ping}ms.`, flags: MessageFlags.Ephemeral });
-        }
-        catch (err)
-        {
-            console.error(`[error] ${this.name}, ${err}, ${Date.now()}`);
-        };
+        await interaction.reply({ content: `:ping_pong: Application Latency: ${client.ws.ping}ms.`, flags: MessageFlags.Ephemeral });
     },
     get data()
     {
