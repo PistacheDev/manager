@@ -1,4 +1,5 @@
-const { PermissionsBitField, EmbedBuilder, SlashCommandBuilder, MessageFlags, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require("discord.js");
+const { PermissionsBitField, EmbedBuilder, SlashCommandBuilder, MessageFlags } = require("discord.js");
+const { warnsButtons } = require("../prefabs/warnsButtons");
 
 module.exports =
 {
@@ -46,28 +47,8 @@ module.exports =
                     embed.addFields([{ name: `${i + 1}) Warn \`${data[i].warnID}\`:`, value: `**Moderator**: <@${await data[i].moderator}>.\n**Sanction Date**: <t:${Math.floor(parseInt(data[i].date / 1000))}>.\n**Reason**: \`${data[i].reason}\`.` }]); 
                 };
 
-                var buttons = new ActionRowBuilder()
-                .addComponents(
-                    new ButtonBuilder()
-                    .setCustomId("warnslistPrevious")
-                    .setLabel("Previous")
-                    .setStyle(ButtonStyle.Secondary)
-                    .setDisabled(true)
-                ).addComponents(
-                    new ButtonBuilder()
-                    .setCustomId("warnslistSearch")
-                    .setEmoji("🔍")
-                    .setStyle(ButtonStyle.Secondary)
-                    .setDisabled(data.length < 11)
-                ).addComponents(
-                    new ButtonBuilder()
-                    .setCustomId("warnslistNext")
-                    .setLabel("Next")
-                    .setStyle(ButtonStyle.Secondary)
-                    .setDisabled(data.length < 11)
-                );
-
-                await interaction.reply({ embeds: [embed], components: [buttons] });
+                var buttons = warnsButtons(true, data.length < 11);
+                await interaction.reply({ content: `||[${target.id}-1]||`, embeds: [embed], components: [buttons] });
             });
         };
 

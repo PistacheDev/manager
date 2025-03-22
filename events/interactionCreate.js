@@ -10,6 +10,7 @@ class Scripts
         this.list = new Collection();
         const commandsScripts = fs.readdirSync("./commands").filter(scripts => scripts.endsWith(".js"));
         const componentsFolders = ["buttons", "menus", "modals"];
+        let components = 0;
 
         for (const command of commandsScripts)
         {
@@ -24,9 +25,16 @@ class Scripts
             for (const component of componentsScripts)
             {
                 const componentScript = require(`../${folder}/${component}`);
-                if (componentScript.name && componentScript) this.list.set(componentScript.name, componentScript);
+
+                if (componentScript.name && componentScript)
+                {
+                    this.list.set(componentScript.name, componentScript);
+                    components++;
+                };
             };
         });
+
+        console.log(`[debug] ${components} components were successfully deployed!`);
     };
 };
 

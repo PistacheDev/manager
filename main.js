@@ -123,7 +123,7 @@ catch (err)
 function processHandler (err)
 {
     if (err.code == 10062 || err.code == 40060) return;
-    console.error(`[error] ${err}, ${Date.now()}`);
+    console.error(`[error] ${err.message}, ${err.code}, ${Date.now()}, ${err.stack}`);
 };
 
 process.on("unhandledRejection", processHandler);

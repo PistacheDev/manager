@@ -44,7 +44,7 @@ module.exports =
 
             for (const script of commandsScripts)
             {
-                const command = require(`../../commands/${script}`);
+                const command = require(`../commands/${script}`);
                 if (command.type != type) continue;
 
                 if (!command.data.options[0] || command.data.options[0].type) // Slash commands doesn't have any options with a type.
